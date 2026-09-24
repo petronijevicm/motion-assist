@@ -40,6 +40,8 @@ class MotionEstimator(context: Context) {
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
     private val linearAccel = sensorManager?.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
     private val rotationVector = sensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
+    private val gravitySensor = sensorManager?.getDefaultSensor(Sensor.TYPE_GRAVITY)
+    private val accelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     private val gyroscope = sensorManager?.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
 
     private var callback: Callback? = null
@@ -73,12 +75,35 @@ class MotionEstimator(context: Context) {
                     SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
                     hasRotation = true
                 }
+                Sensor.TYPE_GRAVITY -> {
+                    if (!hasRotation) {
+                        val norm = sqrt((event.values[0] * event.values[0] + event.values[1] * event.values[1] + event.values[2] * event.values[2]).toDouble()).toFloat()
+                        if (norm > 0.01f) {
+                            rotationMatrix[6] = event.values[0] / norm
+                            rotationMatrix[7] = event.values[1] / norm
+                            rotationMatrix[8] = event.values[2] / norm
+                            hasRotation = true
+                        }
+                    }
+                }
+                Sensor.TYPE_ACCELEROMETER -> {
+                    if (!hasRotation) {
+                        val norm = sqrt((event.values[0] * event.values[0] + event.values[1] * event.values[1] + event.values[2] * event.values[2]).toDouble()).toFloat()
+                        if (norm > 0.01f) {
+                            rotationMatrix[6] = event.values[0] / norm
+                            rotationMatrix[7] = event.values[1] / norm
+                            rotationMatrix[8] = event.values[2] / norm
+                            hasRotation = true
+                        }
+                    }
+                    if (linearAccel == null) {
+                        updateAccel(event.values[0], event.values[1], event.values[2], event.timestamp)
+                    }
+                }
                 Sensor.TYPE_LINEAR_ACCELERATION -> {
-                    if (!hasRotation) return
                     updateAccel(event.values[0], event.values[1], event.values[2], event.timestamp)
                 }
                 Sensor.TYPE_GYROSCOPE -> {
-                    if (!hasRotation) return
                     updateGyro(event.values[0], event.values[1], event.values[2], event.timestamp)
                 }
             }
@@ -92,20 +117,25 @@ class MotionEstimator(context: Context) {
     }
 
     private fun updateAccel(ax: Float, ay: Float, az: Float, tsNs: Long) {
-        val ux = rotationMatrix[6]
-        val uy = rotationMatrix[7]
-        val uz = rotationMatrix[8]
+        val ux = if (hasRotation) rotationMatrix[6] else 0f
+        val uy = if (hasRotation) rotationMatrix[7] else 0f
+        val uz = if (hasRotation) rotationMatrix[8] else 1f
 
         val dot = ax * ux + ay * uy + az * uz
         val hx = ax - dot * ux
         val hy = ay - dot * uy
         val hz = az - dot * uz
 
+        // Blend linear acceleration and responsive tilt component
+        // Inertia pushes opposite to vehicle acceleration / in tilt direction
+        val totalX = -hx + ux * 4.2f
+        val totalY = hy + uy * 4.2f
+
         val dt = if (lastAccelTsNs == 0L) 0.02f else max(0.001f, min(0.2f, (tsNs - lastAccelTsNs) / 1e9f))
         lastAccelTsNs = tsNs
         val alpha = dt / (ACCEL_TIME_CONSTANT_SEC + dt)
-        filteredX += alpha * (hx - filteredX)
-        filteredY += alpha * (hy - filteredY)
+        filteredX += alpha * (totalX - filteredX)
+        filteredY += alpha * (totalY - filteredY)
         filteredZ += alpha * (hz - filteredZ)
 
         lastAccelMagSq = hx * hx + hy * hy + hz * hz
@@ -206,6 +236,8 @@ class MotionEstimator(context: Context) {
         sensorManager?.let { sm ->
             linearAccel?.let { sm.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_GAME) }
             rotationVector?.let { sm.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_GAME) }
+            gravitySensor?.let { sm.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_GAME) }
+            accelerometer?.let { sm.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_GAME) }
             gyroscope?.let { sm.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_GAME) }
         }
     }

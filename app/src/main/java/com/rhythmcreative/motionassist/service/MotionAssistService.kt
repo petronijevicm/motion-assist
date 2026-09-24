@@ -152,6 +152,9 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+            }
         }
 
         windowManager.addView(view, params)
@@ -188,8 +191,10 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
     }
 
     override fun onMotionUpdated(motion: MotionVector) {
-        val dx = motion.x * 20f
-        val dy = motion.y * 20f
+        val density = resources.displayMetrics.density
+        val scale = 6.0f * density
+        val dx = motion.x * scale
+        val dy = motion.y * scale
         mainHandler.post {
             overlayView?.updateOffset(dx, dy)
         }

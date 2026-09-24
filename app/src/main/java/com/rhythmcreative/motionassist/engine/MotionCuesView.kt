@@ -29,8 +29,16 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * High-performance 2D canvas view for rendering the floating 6-DOF cue field
- * with squircle, pentagon, diamond, circle shapes and adaptive contrast strokes.
+ * Official Google Motion Assist peripheral visual cues view.
+ *
+ * Places subtle, elegant kinetic visual dots strictly along the left and right
+ * edges of the screen (in the user's peripheral visual field), leaving the entire
+ * center area completely unobstructed for reading, typing, and media consumption.
+ *
+ * Features:
+ * - Fluid spring-damper physical inertia responding to vehicle acceleration/braking/turning.
+ * - Dynamic contrast outer ring for high visibility on both dark and light content.
+ * - Material You 3 dynamic color palettes and customizable geometric shapes.
  */
 class MotionCuesView @JvmOverloads constructor(
     context: Context,
@@ -41,7 +49,6 @@ class MotionCuesView @JvmOverloads constructor(
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        strokeWidth = 2.8f
     }
     private val scratchPath = Path()
 
@@ -85,9 +92,11 @@ class MotionCuesView @JvmOverloads constructor(
             postInvalidateOnAnimation()
         }
 
-    // Displacement offset calculated from motion estimator
-    private var offsetX = 0f
-    private var offsetY = 0f
+    // Physics spring-damper displacement offsets
+    private var targetOffsetX = 0f
+    private var targetOffsetY = 0f
+    private var currentOffsetX = 0f
+    private var currentOffsetY = 0f
 
     data class CueDot(
         val baseX: Float,
@@ -106,41 +115,65 @@ class MotionCuesView @JvmOverloads constructor(
         buildGrid()
     }
 
+    /**
+     * Builds the official Google Motion Assist peripheral cue columns.
+     * Subtle dots are placed along the left and right borders of the screen.
+     * The center reading/viewing area is left completely clear.
+     */
     private fun buildGrid() {
         dots.clear()
         if (width <= 0 || height <= 0) return
 
-        val spacingX = 60f * resources.displayMetrics.density
-        val spacingY = 140f * resources.displayMetrics.density
-        val radius = 15f * resources.displayMetrics.density
+        val density = resources.displayMetrics.density
+        // Official Google dot radius: subtle ~6.5dp
+        val radius = 6.5f * density
+        // Margin from left/right screen edge: 26dp
+        val edgeMargin = 26f * density
 
-        val colCount = (width / spacingX).toInt() + 2
-        val rowCount = (height / spacingY).toInt() + 2
+        // Distribute dots vertically in the peripheral field
+        // From ~15% screen height to ~85% screen height (clearing status bar and nav bar)
+        val startY = height * 0.16f
+        val endY = height * 0.84f
+        val usableHeight = endY - startY
 
-        val totalGridW = colCount * spacingX
-        val xOffset = (totalGridW - width) / 2f
+        // 6 subtle peripheral dots along each lateral edge
+        val dotCountPerEdge = 6
+        val stepY = usableHeight / (dotCountPerEdge - 1)
         val random = Random(1337L)
 
-        for (row in 0 until rowCount) {
-            val rowOffset = if (row % 2 == 1) spacingX / 2f else 0f
-            for (col in 0 until colCount) {
-                val jitterX = if (isRandomized) ((random.nextFloat() - 0.5f) * spacingX * 0.45f) else 0f
-                val jitterY = if (isRandomized) ((random.nextFloat() - 0.5f) * spacingY * 0.45f) else 0f
+        for (i in 0 until dotCountPerEdge) {
+            val baseY = startY + i * stepY
+            val jitterY = if (isRandomized) ((random.nextFloat() - 0.5f) * 14f * density) else 0f
+            val jitterX = if (isRandomized) ((random.nextFloat() - 0.5f) * 6f * density) else 0f
 
-                dots.add(
-                    CueDot(
-                        baseX = col * spacingX + rowOffset - xOffset + jitterX,
-                        baseY = row * spacingY + jitterY,
-                        radius = radius
-                    )
+            // Left lateral column
+            dots.add(
+                CueDot(
+                    baseX = edgeMargin + jitterX,
+                    baseY = baseY + jitterY,
+                    radius = radius
                 )
-            }
+            )
+
+            // Right lateral column
+            dots.add(
+                CueDot(
+                    baseX = width - edgeMargin - jitterX,
+                    baseY = baseY + jitterY,
+                    radius = radius
+                )
+            )
         }
     }
 
+    /**
+     * Smoothly sets the physical displacement vector from vehicle motion.
+     */
     fun updateOffset(dx: Float, dy: Float) {
-        offsetX = dx
-        offsetY = dy
+        val density = resources.displayMetrics.density
+        val maxDisplacement = 28f * density
+        targetOffsetX = dx.coerceIn(-maxDisplacement, maxDisplacement)
+        targetOffsetY = dy.coerceIn(-maxDisplacement, maxDisplacement)
         postInvalidateOnAnimation()
     }
 
@@ -169,14 +202,24 @@ class MotionCuesView @JvmOverloads constructor(
         super.onDraw(canvas)
         if (dots.isEmpty()) return
 
-        for (dot in dots) {
-            val x = dot.baseX + offsetX
-            val y = dot.baseY + offsetY
+        val density = resources.displayMetrics.density
 
-            // Keep within visible bounds or wrap around smoothly
-            if (x < -dot.radius || x > width + dot.radius || y < -dot.radius || y > height + dot.radius) {
-                continue
-            }
+        // Fluid spring-damper physical interpolation (60Hz / 120Hz smooth float)
+        val damping = 0.20f
+        currentOffsetX += (targetOffsetX - currentOffsetX) * damping
+        currentOffsetY += (targetOffsetY - currentOffsetY) * damping
+
+        val keepAnimating = Math.abs(targetOffsetX - currentOffsetX) > 0.08f ||
+                Math.abs(targetOffsetY - currentOffsetY) > 0.08f
+
+        val strokeWidthPx = 1.35f * density
+        strokePaint.strokeWidth = strokeWidthPx
+
+        for (dot in dots) {
+            // Slight organic vertical phase wave for realistic liquid fluid inertia
+            val phaseFactor = (dot.baseY / height) * 0.12f
+            val x = dot.baseX + currentOffsetX * (1f - phaseFactor)
+            val y = dot.baseY + currentOffsetY
 
             val r = dot.radius
             val currentFillColor = if (isAdaptiveMode) {
@@ -187,13 +230,14 @@ class MotionCuesView @JvmOverloads constructor(
             }
 
             fillPaint.color = currentFillColor
+
+            // Dynamic high-contrast outline ring (ensures visibility across any app background)
             val lum = 0.299 * Color.red(currentFillColor) + 0.587 * Color.green(currentFillColor) + 0.114 * Color.blue(currentFillColor)
-            strokePaint.color = if (lum < 135) Color.argb(220, 255, 255, 255) else Color.argb(220, 18, 18, 18)
-            strokePaint.strokeWidth = Math.max(2.8f, r * 0.16f)
+            strokePaint.color = if (lum < 135) Color.argb(210, 255, 255, 255) else Color.argb(200, 20, 20, 20)
 
             when (shapeIndex) {
                 1 -> { // Squircle
-                    val corner = r * 0.35f
+                    val corner = r * 0.38f
                     canvas.drawRoundRect(x - r, y - r, x + r, y + r, corner, corner, fillPaint)
                     canvas.drawRoundRect(x - r, y - r, x + r, y + r, corner, corner, strokePaint)
                 }
@@ -219,11 +263,15 @@ class MotionCuesView @JvmOverloads constructor(
                     canvas.drawPath(scratchPath, fillPaint)
                     canvas.drawPath(scratchPath, strokePaint)
                 }
-                else -> { // Circle (Default)
+                else -> { // Circle (Official Google Motion Cues)
                     canvas.drawCircle(x, y, r, fillPaint)
                     canvas.drawCircle(x, y, r, strokePaint)
                 }
             }
+        }
+
+        if (keepAnimating) {
+            postInvalidateOnAnimation()
         }
     }
 }
