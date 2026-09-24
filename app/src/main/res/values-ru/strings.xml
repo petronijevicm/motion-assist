@@ -45,4 +45,5 @@
     <string name="notification_channel_name">Служба Motion Assist</string>
     <string name="notification_title">Помощь при движении активна</string>
     <string name="notification_text">Отображение маркеров движения в реальном времени</string>
+    <string name="motion_assist_open_app_info">App Info (Unlock)</string>
 </resources>

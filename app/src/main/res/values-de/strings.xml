@@ -45,4 +45,5 @@
     <string name="notification_channel_name">Bewegungsassistent-Dienst</string>
     <string name="notification_title">Bewegungsassistent ist aktiv</string>
     <string name="notification_text">Fahrzeug-Bewegungshinweise werden angezeigt</string>
+    <string name="motion_assist_open_app_info">App Info (Unlock)</string>
 </resources>

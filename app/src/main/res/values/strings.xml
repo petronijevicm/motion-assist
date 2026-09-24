@@ -43,8 +43,9 @@
     <string name="motion_assist_smooth_animation_summary">Run physics rendering at full display refresh rate with battery saver throttle</string>
 
     <string name="motion_assist_overlay_permission_title">Overlay Permission Needed</string>
-    <string name="motion_assist_overlay_permission_desc">To display visual motion cues over apps, Motion Assist requires "Display over other apps" permission.</string>
+    <string name="motion_assist_overlay_permission_desc">To display visual motion cues over other apps, Motion Assist requires \"Display over other apps\" permission.\n\n⚠️ If the option appears greyed out or disabled (Android 13+ Restricted Settings):\nTap \"App Info\", tap the 3-dot menu (⋮) in the top-right corner, and select \"Allow restricted settings\".</string>
     <string name="motion_assist_grant_permission">Grant Permission</string>
+    <string name="motion_assist_open_app_info">App Info (Unlock)</string>
     <string name="motion_assist_preview_card_title">Real-time Preview</string>
     <string name="motion_assist_preview_card_desc">Demonstrates how kinetic motion cues respond to vehicle movements and acceleration in real time</string>
 

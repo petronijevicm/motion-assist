@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
     private lateinit var motionEstimator: MotionEstimator
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        com.google.android.material.color.DynamicColors.applyToActivityIfAvailable(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -203,11 +204,27 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
                 .setTitle(R.string.motion_assist_overlay_permission_title)
                 .setMessage(R.string.motion_assist_overlay_permission_desc)
                 .setPositiveButton(R.string.motion_assist_grant_permission) { _, _ ->
-                    val intent = Intent(
-                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:$packageName")
-                    )
-                    startActivity(intent)
+                    try {
+                        val intent = Intent(
+                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            Uri.parse("package:$packageName")
+                        )
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        val fallback = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                        startActivity(fallback)
+                    }
+                }
+                .setNeutralButton(R.string.motion_assist_open_app_info) { _, _ ->
+                    try {
+                        val appInfoIntent = Intent(
+                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.parse("package:$packageName")
+                        )
+                        startActivity(appInfoIntent)
+                    } catch (e: Exception) {
+                        Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
+                    }
                 }
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()

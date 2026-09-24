@@ -43,8 +43,9 @@
     <string name="motion_assist_smooth_animation_summary">Renderizado físico a la tasa de refresco máxima con optimización en ahorro de batería</string>
 
     <string name="motion_assist_overlay_permission_title">Permiso de superposición necesario</string>
-    <string name="motion_assist_overlay_permission_desc">Para mostrar las señales visuales sobre otras aplicaciones, Motion Assist necesita el permiso de \'Mostrar sobre otras apps\'.</string>
+    <string name="motion_assist_overlay_permission_desc">Para mostrar las señales visuales sobre otras aplicaciones, Motion Assist necesita el permiso de \'Mostrar sobre otras apps\'.\n\n⚠️ Si la opción aparece inhabilitada o gris (Ajustes restringidos en Android 13+):\nToca \'Info de la app\', pulsa el menú de 3 puntos (⋮) arriba a la derecha y selecciona \'Permitir ajustes restringidos\'.</string>
     <string name="motion_assist_grant_permission">Conceder permiso</string>
+    <string name="motion_assist_open_app_info">Info de la app (Desbloquear)</string>
     <string name="motion_assist_preview_card_title">Vista previa en tiempo real</string>
     <string name="motion_assist_preview_card_desc">Muestra cómo responden las señales visuales cinéticas ante los movimientos y la aceleración del vehículo</string>
 

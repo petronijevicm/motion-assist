@@ -3,6 +3,7 @@
     <style name="Theme.MotionAssist" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowBackground">?attr/colorSurface</item>
+        <item name="android:colorBackground">?attr/colorSurface</item>
     </style>
 </resources>

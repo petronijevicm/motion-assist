@@ -45,4 +45,5 @@
     <string name="notification_channel_name">モーションアシストサービス</string>
     <string name="notification_title">モーションアシスト実行中</string>
     <string name="notification_text">車両移動合図をリアルタイムに表示中</string>
+    <string name="motion_assist_open_app_info">App Info (Unlock)</string>
 </resources>
