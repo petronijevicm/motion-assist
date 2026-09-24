@@ -46,4 +46,6 @@
     <string name="notification_title">移动辅助正在运行</string>
     <string name="notification_text">正在实时显示物理运动视觉提示点</string>
     <string name="motion_assist_open_app_info">App Info (Unlock)</string>
+    <string name="motion_assist_preview_tab_tutorial">教程动画</string>
+    <string name="motion_assist_preview_tab_interactive">实时物理</string>
 </resources>

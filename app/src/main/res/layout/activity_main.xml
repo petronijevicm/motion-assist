@@ -54,6 +54,7 @@
                     android:orientation="vertical">
 
                     <FrameLayout
+                        android:id="@+id/previewContainer"
                         android:layout_width="match_parent"
                         android:layout_height="220dp"
                         android:background="?attr/colorSurfaceContainerHigh">
@@ -68,6 +69,38 @@
                             app:lottie_autoPlay="true"
                             app:lottie_loop="true" />
 
+                        <!-- Interactive Live Cues Simulation Layer with Rotating Steering Wheel -->
+                        <FrameLayout
+                            android:id="@+id/interactivePreviewContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="gone">
+
+                            <com.rhythmcreative.motionassist.engine.MotionCuesView
+                                android:id="@+id/previewCuesView"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+
+                            <!-- Center steering wheel badge -->
+                            <FrameLayout
+                                android:id="@+id/steeringWheelBadge"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_car_badge">
+
+                                <ImageView
+                                    android:id="@+id/imgCenterSteering"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_steering_wheel"
+                                    app:tint="?attr/colorOnPrimaryContainer" />
+
+                            </FrameLayout>
+
+                        </FrameLayout>
+
                     </FrameLayout>
 
                     <LinearLayout
@@ -76,21 +109,66 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/motion_assist_preview_card_title"
-                            android:textAppearance="?attr/textAppearanceTitleMedium"
-                            android:textStyle="bold" />
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/motion_assist_preview_card_desc"
-                            android:textAppearance="?attr/textAppearanceBodySmall"
-                            android:textColor="?attr/colorOnSurfaceVariant"
-                            android:lineSpacingMultiplier="1.2" />
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:paddingEnd="8dp">
+
+                                <TextView
+                                    android:id="@+id/previewCardTitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/motion_assist_preview_card_title"
+                                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/previewCardDesc"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:text="@string/motion_assist_preview_card_desc"
+                                    android:textAppearance="?attr/textAppearanceBodySmall"
+                                    android:textColor="?attr/colorOnSurfaceVariant"
+                                    android:lineSpacingMultiplier="1.2" />
+                            </LinearLayout>
+
+                            <com.google.android.material.button.MaterialButtonToggleGroup
+                                android:id="@+id/togglePreviewMode"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:singleSelection="true"
+                                app:selectionRequired="true">
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnModeTutorial"
+                                    style="?attr/materialButtonOutlinedStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="38dp"
+                                    android:paddingHorizontal="10dp"
+                                    android:text="@string/motion_assist_preview_tab_tutorial"
+                                    android:textSize="12sp" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnModeInteractive"
+                                    style="?attr/materialButtonOutlinedStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="38dp"
+                                    android:paddingHorizontal="10dp"
+                                    android:text="@string/motion_assist_preview_tab_interactive"
+                                    android:textSize="12sp" />
+
+                            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                        </LinearLayout>
                     </LinearLayout>
 
                 </LinearLayout>

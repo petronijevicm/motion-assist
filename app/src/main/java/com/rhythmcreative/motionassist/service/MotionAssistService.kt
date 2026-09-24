@@ -196,7 +196,7 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
         val dx = motion.x * scale
         val dy = motion.y * scale
         mainHandler.post {
-            overlayView?.updateOffset(dx, dy)
+            overlayView?.updateOffset(dx, dy, motion.rollRadians, motion.yawRateRps)
         }
     }
 

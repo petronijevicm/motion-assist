@@ -72,4 +72,55 @@ class MotionEngineTest {
         assertEquals(255, computeAlpha(100))
         assertEquals(255, computeAlpha(120))
     }
+
+    @Test
+    fun testSpringMassDamperConvergence() {
+        // Test harmonic spring-mass-damper 2nd-order ODE integration step
+        val springK = 210f
+        val dampingC = 22f
+        val mass = 1.0f
+        val dt = 0.016f // 60 FPS frame time
+
+        var currentX = 50f
+        var velocityX = 0f
+        val targetX = 0f
+
+        // Run 60 frames (~1.0 second) of physics simulation
+        for (frame in 0 until 60) {
+            val displacement = currentX - targetX
+            val force = -springK * displacement - dampingC * velocityX
+            val acceleration = force / mass
+            velocityX += acceleration * dt
+            currentX += velocityX * dt
+        }
+
+        // Particle must converge to equilibrium within tight bound (< 0.05 px)
+        assertEquals(0f, currentX, 0.05f)
+        assertEquals(0f, velocityX, 0.1f)
+    }
+
+    @Test
+    fun testCentrifugalForceYawReaction() {
+        val yawRate = 0.25f // vehicle turning right at 0.25 rad/s
+        val density = 2.0f
+
+        val leftColumnForce = yawRate * 5f * density
+        val rightColumnForce = -yawRate * 5f * density
+
+        assertEquals(2.5f, leftColumnForce, 0.001f)
+        assertEquals(-2.5f, rightColumnForce, 0.001f)
+    }
+
+    @Test
+    fun testFluidPhaseLagFactor() {
+        val phaseLagTop = 0.0f
+        val phaseLagBottom = 1.0f
+        val targetX = 20.0f
+
+        val effectiveTop = targetX * (1f - phaseLagTop * 0.22f)
+        val effectiveBottom = targetX * (1f - phaseLagBottom * 0.22f)
+
+        assertEquals(20.0f, effectiveTop, 0.001f)
+        assertEquals(15.6f, effectiveBottom, 0.001f)
+    }
 }

@@ -38,6 +38,8 @@
     <string name="motion_assist_grant_permission">Berechtigung erteilen</string>
     <string name="motion_assist_preview_card_title">Interaktive Live-Vorschau</string>
     <string name="motion_assist_preview_card_desc">Kippen Sie das Gerät oder wischen Sie über diese Karte, um die Physik zu testen</string>
+    <string name="motion_assist_preview_tab_tutorial">Tutorial</string>
+    <string name="motion_assist_preview_tab_interactive">Live-Physik</string>
     <string name="quick_settings_motion_assist_label">Bewegungsassist.</string>
     <string name="quick_settings_motion_assist_secondary_label_on">Aktiv</string>
     <string name="quick_settings_motion_assist_secondary_label_off">Aus</string>

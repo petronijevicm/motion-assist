@@ -48,6 +48,8 @@
     <string name="motion_assist_open_app_info">App Info (Unlock)</string>
     <string name="motion_assist_preview_card_title">Real-time Preview</string>
     <string name="motion_assist_preview_card_desc">Demonstrates how kinetic motion cues respond to vehicle movements and acceleration in real time</string>
+    <string name="motion_assist_preview_tab_tutorial">Tutorial</string>
+    <string name="motion_assist_preview_tab_interactive">Live Physics</string>
 
     <string name="quick_settings_motion_assist_label">Motion assist</string>
     <string name="quick_settings_motion_assist_secondary_label_on">Active</string>

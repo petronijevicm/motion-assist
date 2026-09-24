@@ -46,4 +46,6 @@
     <string name="notification_title">Assistance de mouvement active</string>
     <string name="notification_text">Affichage des repères visuels du véhicule</string>
     <string name="motion_assist_open_app_info">App Info (Unlock)</string>
+    <string name="motion_assist_preview_tab_tutorial">Tutoriel</string>
+    <string name="motion_assist_preview_tab_interactive">Physique en direct</string>
 </resources>

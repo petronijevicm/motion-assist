@@ -46,4 +46,6 @@
     <string name="notification_title">Помощь при движении активна</string>
     <string name="notification_text">Отображение маркеров движения в реальном времени</string>
     <string name="motion_assist_open_app_info">App Info (Unlock)</string>
+    <string name="motion_assist_preview_tab_tutorial">Обучение</string>
+    <string name="motion_assist_preview_tab_interactive">Живая физика</string>
 </resources>

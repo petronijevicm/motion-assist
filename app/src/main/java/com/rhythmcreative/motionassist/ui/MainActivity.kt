@@ -18,13 +18,20 @@ package com.rhythmcreative.motionassist.ui
 
 import android.content.ComponentName
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.MotionEvent
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.airbnb.lottie.LottieProperty
+import com.airbnb.lottie.model.KeyPath
+import com.google.android.material.color.DynamicColors
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rhythmcreative.motionassist.R
 import com.rhythmcreative.motionassist.databinding.ActivityMainBinding
@@ -40,7 +47,7 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
     private lateinit var motionEstimator: MotionEstimator
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        com.google.android.material.color.DynamicColors.applyToActivityIfAvailable(this)
+        DynamicColors.applyToActivityIfAvailable(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -51,6 +58,7 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
 
         setupUI()
         setupListeners()
+        setupPreview()
     }
 
     private fun setupUI() {
@@ -80,11 +88,131 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
         }
     }
 
+    private fun setupPreview() {
+        // Configure interactive live cues view
+        binding.previewCuesView.isTouchInteractive = true
+        binding.previewCuesView.onDragListener = { dx, _ ->
+            val rot = (-dx * 0.42f).coerceIn(-40f, 40f)
+            binding.imgCenterSteering.rotation = rot
+        }
+
+        // Preview mode switcher: default to Tutorial
+        binding.togglePreviewMode.check(R.id.btnModeTutorial)
+        binding.togglePreviewMode.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) {
+                when (checkedId) {
+                    R.id.btnModeTutorial -> {
+                        binding.interactivePreviewContainer.visibility = View.GONE
+                        binding.lottieTutorialView.visibility = View.VISIBLE
+                        binding.lottieTutorialView.playAnimation()
+                        binding.previewCardTitle.setText(R.string.motion_assist_preview_card_title)
+                        binding.previewCardDesc.setText(R.string.motion_assist_preview_card_desc)
+                    }
+                    R.id.btnModeInteractive -> {
+                        binding.lottieTutorialView.pauseAnimation()
+                        binding.lottieTutorialView.visibility = View.GONE
+                        binding.interactivePreviewContainer.visibility = View.VISIBLE
+                        binding.previewCuesView.resetPhysics()
+                        binding.previewCardTitle.setText(R.string.motion_assist_preview_tab_interactive)
+                        binding.previewCardDesc.setText(R.string.motion_assist_preview_card_desc)
+                    }
+                }
+            }
+        }
+
+        // Ensure Lottie animation gets dynamically themed with Material You 3 as soon as loaded
+        binding.lottieTutorialView.addLottieOnCompositionLoadedListener {
+            applyMaterialYouToLottie(binding.previewCuesView.getResolvedColor())
+        }
+
+        updatePreviewView()
+    }
+
     private fun updatePreviewView() {
-        // Preferences updated for live overlay service
+        // 1. Update preview cues view properties
+        binding.previewCuesView.shapeIndex = prefs.shapeIndex
+        binding.previewCuesView.colorIndex = prefs.colorIndex
+        binding.previewCuesView.cueOpacity = prefs.opacity
+        binding.previewCuesView.isRandomized = prefs.isRandomize
+        binding.previewCuesView.isAdaptiveMode = (prefs.colorIndex == 5)
+
+        // 2. Synchronize Material You 3 colors into the official Lottie tutorial animation
+        applyMaterialYouToLottie(binding.previewCuesView.getResolvedColor())
+
+        // 3. Notify background overlay service if active
         if (prefs.isEnabled) {
             MotionAssistService.start(this)
         }
+    }
+
+    /**
+     * Dynamically themes the official Google Motion Sickness tutorial Lottie animation
+     * using Material You 3 dynamic color tokens extracted at runtime.
+     */
+    private fun applyMaterialYouToLottie(activeCueColor: Int) {
+        val colorSurfaceContainer = MaterialColors.getColor(
+            binding.root,
+            com.google.android.material.R.attr.colorSurfaceContainer,
+            Color.rgb(0x21, 0x1F, 0x26)
+        )
+        val colorSurfaceContainerHighest = MaterialColors.getColor(
+            binding.root,
+            com.google.android.material.R.attr.colorSurfaceContainerHighest,
+            Color.rgb(0x36, 0x34, 0x3B)
+        )
+        val colorOutline = MaterialColors.getColor(
+            binding.root,
+            com.google.android.material.R.attr.colorOutline,
+            Color.rgb(0x93, 0x8F, 0x99)
+        )
+        val colorOutlineVariant = MaterialColors.getColor(
+            binding.root,
+            com.google.android.material.R.attr.colorOutlineVariant,
+            Color.rgb(0x49, 0x45, 0x4F)
+        )
+
+        // Tint Motion Cue Dots (.primary and .Primary) with the active cue color
+        val cueFilter = PorterDuffColorFilter(activeCueColor, PorterDuff.Mode.SRC_ATOP)
+        binding.lottieTutorialView.addValueCallback(
+            KeyPath("**", ".primary", "**"),
+            LottieProperty.COLOR_FILTER
+        ) { cueFilter }
+        binding.lottieTutorialView.addValueCallback(
+            KeyPath("**", ".Primary", "**"),
+            LottieProperty.COLOR_FILTER
+        ) { cueFilter }
+
+        // Tint phone outline to Material You Outline token
+        val outlineFilter = PorterDuffColorFilter(colorOutline, PorterDuff.Mode.SRC_ATOP)
+        binding.lottieTutorialView.addValueCallback(
+            KeyPath("**", ".outline", "**"),
+            LottieProperty.COLOR_FILTER
+        ) { outlineFilter }
+        binding.lottieTutorialView.addValueCallback(
+            KeyPath("**", ".Outline", "**"),
+            LottieProperty.COLOR_FILTER
+        ) { outlineFilter }
+
+        // Tint car steering wheel and interior dashboard to OutlineVariant
+        val variantFilter = PorterDuffColorFilter(colorOutlineVariant, PorterDuff.Mode.SRC_ATOP)
+        binding.lottieTutorialView.addValueCallback(
+            KeyPath("**", ".outlineVariant", "**"),
+            LottieProperty.COLOR_FILTER
+        ) { variantFilter }
+
+        // Tint clouds and dashboard body to SurfaceContainerHighest
+        val containerHighestFilter = PorterDuffColorFilter(colorSurfaceContainerHighest, PorterDuff.Mode.SRC_ATOP)
+        binding.lottieTutorialView.addValueCallback(
+            KeyPath("**", ".sContainerHighest", "**"),
+            LottieProperty.COLOR_FILTER
+        ) { containerHighestFilter }
+
+        // Tint background layer to SurfaceContainer
+        val surfaceContainerFilter = PorterDuffColorFilter(colorSurfaceContainer, PorterDuff.Mode.SRC_ATOP)
+        binding.lottieTutorialView.addValueCallback(
+            KeyPath("**", ".surfaceContainer", "**"),
+            LottieProperty.COLOR_FILTER
+        ) { surfaceContainerFilter }
     }
 
     private fun setupListeners() {
@@ -234,14 +362,25 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
     override fun onResume() {
         super.onResume()
         binding.lottieTutorialView.resumeAnimation()
+        motionEstimator.start()
+        updatePreviewView()
     }
 
     override fun onPause() {
         super.onPause()
         binding.lottieTutorialView.pauseAnimation()
+        motionEstimator.stop()
     }
 
     override fun onMotionUpdated(motion: MotionVector) {
-        // Sensor telemetry processed in background service
+        val density = resources.displayMetrics.density
+        val dx = motion.x * 18f * density
+        val dy = motion.y * 18f * density
+        val rollDeg = Math.toDegrees(motion.rollRadians.toDouble()).toFloat()
+        val rotationDeg = (-motion.x * 20f + rollDeg).coerceIn(-45f, 45f)
+        runOnUiThread {
+            binding.previewCuesView.updateOffset(dx, dy, motion.rollRadians, motion.yawRateRps)
+            binding.imgCenterSteering.rotation = rotationDeg
+        }
     }
 }

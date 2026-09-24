@@ -48,6 +48,8 @@
     <string name="motion_assist_open_app_info">Info de la app (Desbloquear)</string>
     <string name="motion_assist_preview_card_title">Vista previa en tiempo real</string>
     <string name="motion_assist_preview_card_desc">Muestra cómo responden las señales visuales cinéticas ante los movimientos y la aceleración del vehículo</string>
+    <string name="motion_assist_preview_tab_tutorial">Tutorial</string>
+    <string name="motion_assist_preview_tab_interactive">Física en vivo</string>
 
     <string name="quick_settings_motion_assist_label">Motion Assist</string>
     <string name="quick_settings_motion_assist_secondary_label_on">Activada</string>

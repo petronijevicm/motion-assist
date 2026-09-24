@@ -46,4 +46,6 @@
     <string name="notification_title">Assistenza movimento attiva</string>
     <string name="notification_text">Visualizzazione indicatori cinetici in tempo reale</string>
     <string name="motion_assist_open_app_info">App Info (Unlock)</string>
+    <string name="motion_assist_preview_tab_tutorial">Tutorial</string>
+    <string name="motion_assist_preview_tab_interactive">Fisica dal vivo</string>
 </resources>

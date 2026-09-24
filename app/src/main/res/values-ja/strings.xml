@@ -46,4 +46,6 @@
     <string name="notification_title">モーションアシスト実行中</string>
     <string name="notification_text">車両移動合図をリアルタイムに表示中</string>
     <string name="motion_assist_open_app_info">App Info (Unlock)</string>
+    <string name="motion_assist_preview_tab_tutorial">チュートリアル</string>
+    <string name="motion_assist_preview_tab_interactive">ライブ物理</string>
 </resources>
