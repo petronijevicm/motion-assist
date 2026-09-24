@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 petronijevicm -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:settings="http://schemas.android.com/apk/res-auto"
+    android:key="motion_assist_customize_screen"
+    android:title="@string/motion_assist_customize_title">
+
+    <com.android.settingslib.widget.TopIntroPreference
+        android:key="motion_assist_customize_intro"
+        android:title="@string/motion_assist_customize_intro"
+        settings:searchable="false" />
+
+    <Preference
+        android:key="motion_assist_color"
+        android:title="@string/motion_assist_color_title"
+        settings:controller="com.android.settings.accessibility.motionassist.MotionAssistChoicePreferenceController" />
+
+    <Preference
+        android:key="motion_assist_shape"
+        android:title="@string/motion_assist_shape_title"
+        settings:controller="com.android.settings.accessibility.motionassist.MotionAssistChoicePreferenceController" />
+
+    <com.android.settingslib.widget.SliderPreference
+        android:key="motion_assist_opacity"
+        android:persistent="false"
+        android:title="@string/motion_assist_opacity_title"
+        settings:controller="com.android.settings.accessibility.motionassist.MotionAssistSliderPreferenceController" />
+
+    <com.android.settingslib.widget.SliderPreference
+        android:key="motion_assist_size"
+        android:persistent="false"
+        android:title="@string/motion_assist_size_title"
+        settings:controller="com.android.settings.accessibility.motionassist.MotionAssistSliderPreferenceController" />
+
+    <com.android.settingslib.widget.SliderPreference
+        android:key="motion_assist_movement"
+        android:persistent="false"
+        android:title="@string/motion_assist_movement_title"
+        android:summary="@string/motion_assist_movement_summary"
+        settings:controller="com.android.settings.accessibility.motionassist.MotionAssistSliderPreferenceController" />
+
+    <com.android.settingslib.widget.SliderPreference
+        android:key="motion_assist_responsiveness"
+        android:persistent="false"
+        android:title="@string/motion_assist_responsiveness_title"
+        android:summary="@string/motion_assist_responsiveness_summary"
+        settings:controller="com.android.settings.accessibility.motionassist.MotionAssistSliderPreferenceController" />
+
+    <ListPreference
+        android:key="motion_assist_display_area"
+        android:persistent="false"
+        android:title="@string/motion_assist_area_title"
+        android:entries="@array/motion_assist_area_entries"
+        android:entryValues="@array/motion_assist_area_values"
+        settings:controller="com.android.settings.accessibility.motionassist.MotionAssistDisplayAreaPreferenceController" />
+
+    <SwitchPreferenceCompat
+        android:key="motion_assist_shuffle"
+        android:title="@string/motion_assist_shuffle_title"
+        android:summary="@string/motion_assist_shuffle_summary"
+        settings:controller="com.android.settings.accessibility.motionassist.MotionAssistTogglePreferenceController" />
+
+    <SwitchPreferenceCompat
+        android:key="motion_assist_smooth"
+        android:title="@string/motion_assist_smooth_title"
+        android:summary="@string/motion_assist_smooth_summary"
+        settings:controller="com.android.settings.accessibility.motionassist.MotionAssistTogglePreferenceController" />
+</PreferenceScreen>

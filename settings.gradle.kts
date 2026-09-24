@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 petronijevicm
+// SPDX-License-Identifier: Apache-2.0
+
 pluginManagement {
     repositories {
         google()
@@ -5,6 +8,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {

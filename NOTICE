@@ -1,0 +1,13 @@
+Motion Assist
+Copyright 2026 petronijevicm
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The patches in aosp-patches/ change files that belong to the Android Open
+Source Project (Copyright The Android Open Source Project) and to LineageOS
+(Copyright The LineageOS Project), both licensed under the Apache License,
+Version 2.0. The unchanged context lines in those patches remain the work of
+their respective authors.
+
+The Gradle wrapper (gradlew, gradlew.bat and gradle/wrapper/) is part of
+Gradle and is licensed under the Apache License, Version 2.0.

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 petronijevicm -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#FFFFFFFF" android:fillType="evenOdd" android:pathData="M48,30 H60 A6,6 0 0 1 66,36 V72 A6,6 0 0 1 60,78 H48 A6,6 0 0 1 42,72 V36 A6,6 0 0 1 48,30 Z M49.0,35 H59.0 A2.5,2.5 0 0 1 61.5,37.5 V70.5 A2.5,2.5 0 0 1 59.0,73 H49.0 A2.5,2.5 0 0 1 46.5,70.5 V37.5 A2.5,2.5 0 0 1 49.0,35 Z M28.6,42 a3.4,3.4 0 1,0 6.8,0 a3.4,3.4 0 1,0 -6.8,0 Z M28.6,54 a3.4,3.4 0 1,0 6.8,0 a3.4,3.4 0 1,0 -6.8,0 Z M28.6,66 a3.4,3.4 0 1,0 6.8,0 a3.4,3.4 0 1,0 -6.8,0 Z M72.6,42 a3.4,3.4 0 1,0 6.8,0 a3.4,3.4 0 1,0 -6.8,0 Z M72.6,54 a3.4,3.4 0 1,0 6.8,0 a3.4,3.4 0 1,0 -6.8,0 Z M72.6,66 a3.4,3.4 0 1,0 6.8,0 a3.4,3.4 0 1,0 -6.8,0 Z" />
+</vector>

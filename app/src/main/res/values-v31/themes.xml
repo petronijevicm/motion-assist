@@ -1,11 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 petronijevicm -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 <resources>
     <style name="Theme.MotionAssist" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">?attr/colorSurface</item>
-        <item name="android:colorBackground">?attr/colorSurface</item>
         <item name="android:windowSplashScreenBackground">?attr/colorSurface</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_steering_wheel</item>
-        <item name="android:windowSplashScreenIconBackgroundColor">?attr/colorSurfaceContainer</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">?attr/colorSurfaceContainerHigh</item>
     </style>
 </resources>

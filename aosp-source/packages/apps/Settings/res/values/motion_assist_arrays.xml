@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 petronijevicm -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<resources>
+    <string-array name="motion_assist_area_entries">
+        <item>@string/motion_assist_area_sides</item>
+        <item>@string/motion_assist_area_full</item>
+    </string-array>
+    <string-array name="motion_assist_area_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+</resources>
