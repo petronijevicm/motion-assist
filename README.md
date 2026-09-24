@@ -1,8 +1,8 @@
-<h1 align="center">Motion Assist 🚗💨</h1>
+<h1 align="center">Motion Assist</h1>
 
 <div align="center">
 
-<p><i> Vehicle Motion Cues for Android &amp; AOSP / LineageOS </i></p>
+<p><i> Vehicle Motion Cues for Android</i></p>
 
 [![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://www.android.com/)
 [![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org/)
