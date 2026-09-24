@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
 
         setupUI()
         setupListeners()
-        setupPreviewTouch()
     }
 
     private fun setupUI() {
@@ -78,16 +77,13 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
             5 -> binding.chipColorAdaptive.isChecked = true
             else -> binding.chipColorSystem.isChecked = true
         }
-
-        updatePreviewView()
     }
 
     private fun updatePreviewView() {
-        binding.previewCuesView.shapeIndex = prefs.shapeIndex
-        binding.previewCuesView.colorIndex = prefs.colorIndex
-        binding.previewCuesView.cueOpacity = prefs.opacity
-        binding.previewCuesView.isRandomized = prefs.isRandomize
-        binding.previewCuesView.isAdaptiveMode = (prefs.colorIndex == 5)
+        // Preferences updated for live overlay service
+        if (prefs.isEnabled) {
+            MotionAssistService.start(this)
+        }
     }
 
     private fun setupListeners() {
@@ -166,34 +162,6 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
         }
     }
 
-    private fun setupPreviewTouch() {
-        var startX = 0f
-        var startY = 0f
-
-        binding.previewCuesView.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    startX = event.x
-                    startY = event.y
-                    true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    val dx = (event.x - startX) * 0.75f
-                    val dy = (event.y - startY) * 0.75f
-                    binding.previewCuesView.updateOffset(dx, dy)
-                    binding.imgCenterSteering.rotation = (-dx * 0.4f).coerceIn(-40f, 40f)
-                    true
-                }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    binding.previewCuesView.updateOffset(0f, 0f)
-                    binding.imgCenterSteering.animate().rotation(0f).setDuration(250).start()
-                    true
-                }
-                else -> false
-            }
-        }
-    }
-
     private fun showQuickSettingsDialog() {
         if (Build.VERSION.SDK_INT >= 33) {
             try {
@@ -248,22 +216,15 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
 
     override fun onResume() {
         super.onResume()
-        motionEstimator.start()
+        binding.lottieTutorialView.resumeAnimation()
     }
 
     override fun onPause() {
         super.onPause()
-        motionEstimator.stop()
+        binding.lottieTutorialView.pauseAnimation()
     }
 
-override fun onMotionUpdated(motion: MotionVector) {
-        val dx = motion.x * 20f
-        val dy = motion.y * 20f
-        val rollDeg = Math.toDegrees(motion.rollRadians.toDouble()).toFloat()
-        val rotationDeg = (-dx * 1.5f + rollDeg).coerceIn(-45f, 45f)
-        runOnUiThread {
-            binding.previewCuesView.updateOffset(dx, dy)
-            binding.imgCenterSteering.rotation = rotationDeg
-        }
+    override fun onMotionUpdated(motion: MotionVector) {
+        // Sensor telemetry processed in background service
     }
 }

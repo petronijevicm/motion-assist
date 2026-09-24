@@ -38,7 +38,10 @@ dependencies {
     implementation("androidx.core:core-ktx:1.18.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("com.google.android.material:material:1.13.0")
-    implementation("androidx.activity:activity-ktx:1.13.0")
+    implementation("com.airbnb.android:lottie:6.6.2") {
+        exclude(group = "com.squareup.okio")
+    }
+    implementation("com.squareup.okio:okio-jvm:3.9.1")
 
     testImplementation("junit:junit:4.13.2")
 }

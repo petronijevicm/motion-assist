@@ -45,8 +45,8 @@
     <string name="motion_assist_overlay_permission_title">Overlay Permission Needed</string>
     <string name="motion_assist_overlay_permission_desc">To display visual motion cues over apps, Motion Assist requires "Display over other apps" permission.</string>
     <string name="motion_assist_grant_permission">Grant Permission</string>
-    <string name="motion_assist_preview_card_title">Live Interactive Preview</string>
-    <string name="motion_assist_preview_card_desc">Tilt your phone or drag this card to preview real-time vehicle cue movement</string>
+    <string name="motion_assist_preview_card_title">Real-time Preview</string>
+    <string name="motion_assist_preview_card_desc">Demonstrates how kinetic motion cues respond to vehicle movements and acceleration in real time</string>
 
     <string name="quick_settings_motion_assist_label">Motion assist</string>
     <string name="quick_settings_motion_assist_secondary_label_on">Active</string>

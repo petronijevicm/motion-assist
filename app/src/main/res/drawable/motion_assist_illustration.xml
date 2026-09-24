@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2026 The Android Open Source Project
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+          http://www.apache.org/licenses/LICENSE-2.0
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
+    android:width="412dp"
+    android:height="240dp"
+    android:viewportWidth="412"
+    android:viewportHeight="240">
+
+    <!-- Card Background (Standard Material 3 Surface Container) -->
+    <path
+        android:pathData="M28,0 L384,0 A28,28 0 0,1 412,28 L412,212 A28,28 0 0,1 384,240 L28,240 A28,28 0 0,1 0,212 L0,28 A28,28 0 0,1 28,0 Z"
+        android:fillColor="@androidprv:color/materialColorSurfaceContainer" />
+
+    <!-- Ambient Inertial Motion Streams (Vehicle Velocity / Sensation) -->
+    <path
+        android:pathData="M30,195 C90,165 130,175 180,185 C220,195 280,215 382,170"
+        android:strokeColor="@androidprv:color/materialColorPrimaryContainer"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.6" />
+
+    <path
+        android:pathData="M45,65 C110,40 150,55 200,60 C250,65 310,45 370,75"
+        android:strokeColor="@androidprv:color/materialColorPrimaryContainer"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.4" />
+
+    <!-- Ambient Decorative Particle Sparkles in Vehicle Space -->
+    <path
+        android:pathData="M78,110 A4,4 0 1,1 70,110 A4,4 0 1,1 78,110 Z"
+        android:fillColor="@androidprv:color/materialColorPrimary"
+        android:fillAlpha="0.35" />
+    <path
+        android:pathData="M346,130 A5,5 0 1,1 336,130 A5,5 0 1,1 346,130 Z"
+        android:fillColor="@androidprv:color/materialColorPrimary"
+        android:fillAlpha="0.35" />
+
+    <!-- Pixel Smartphone Outer Bezel -->
+    <path
+        android:pathData="M162,24 H250 A24,24 0 0,1 274,48 V192 A24,24 0 0,1 250,216 H162 A24,24 0 0,1 138,192 V48 A24,24 0 0,1 162,24 Z"
+        android:fillColor="@androidprv:color/materialColorSurfaceContainerHighest" />
+
+    <!-- Pixel Smartphone Outer Rim Stroke -->
+    <path
+        android:pathData="M162,24 H250 A24,24 0 0,1 274,48 V192 A24,24 0 0,1 250,216 H162 A24,24 0 0,1 138,192 V48 A24,24 0 0,1 162,24 Z"
+        android:strokeColor="@androidprv:color/materialColorOutlineVariant"
+        android:strokeWidth="1.5" />
+
+    <!-- Pixel Phone Screen Glass -->
+    <path
+        android:pathData="M164,30 H248 A18,18 0 0,1 266,48 V192 A18,18 0 0,1 248,210 H164 A18,18 0 0,1 146,192 V48 A18,18 0 0,1 164,30 Z"
+        android:fillColor="@androidprv:color/materialColorSurface" />
+
+    <!-- Camera Punch Hole -->
+    <path
+        android:pathData="M208.5,39 A2.5,2.5 0 1,1 203.5,39 A2.5,2.5 0 1,1 208.5,39 Z"
+        android:fillColor="@androidprv:color/materialColorSurfaceContainerHighest" />
+
+    <!-- Simulated Content in Center Reading Area (Articles / UI) -->
+    <path
+        android:pathData="M174,58 H238 V64 H174 Z"
+        android:fillColor="@androidprv:color/materialColorSurfaceVariant"
+        android:fillAlpha="0.7" />
+    <path
+        android:pathData="M174,72 H226 V76 H174 Z"
+        android:fillColor="@androidprv:color/materialColorSurfaceVariant"
+        android:fillAlpha="0.5" />
+    <path
+        android:pathData="M174,84 H234 V88 H174 Z"
+        android:fillColor="@androidprv:color/materialColorSurfaceVariant"
+        android:fillAlpha="0.5" />
+    <path
+        android:pathData="M174,96 H218 V100 H174 Z"
+        android:fillColor="@androidprv:color/materialColorSurfaceVariant"
+        android:fillAlpha="0.5" />
+
+    <!-- Simulated Card Container on Screen -->
+    <path
+        android:pathData="M170,116 H242 A8,8 0 0,1 250,124 V160 A8,8 0 0,1 242,168 H170 A8,8 0 0,1 162,160 V124 A8,8 0 0,1 170,116 Z"
+        android:fillColor="@androidprv:color/materialColorSurfaceContainerHigh"
+        android:fillAlpha="0.6" />
+
+    <!-- Navigation Bar Pill -->
+    <path
+        android:pathData="M192,201 H220 A2,2 0 0,1 222,203 A2,2 0 0,1 220,205 H192 A2,2 0 0,1 190,203 A2,2 0 0,1 192,201 Z"
+        android:fillColor="@androidprv:color/materialColorOutline"
+        android:fillAlpha="0.4" />
+
+    <!-- MOTION ASSIST CUE DOTS: Peripheral Visual Field -->
+    <!-- Left Column Cues with Dynamic Contrast Ring -->
+    <!-- Dot 1 -->
+    <path
+        android:pathData="M157,60 A5.5,5.5 0 1,1 146,60 A5.5,5.5 0 1,1 157,60 Z"
+        android:fillColor="@androidprv:color/materialColorPrimary" />
+    <path
+        android:pathData="M157,60 A5.5,5.5 0 1,1 146,60 A5.5,5.5 0 1,1 157,60 Z"
+        android:strokeColor="@androidprv:color/materialColorSurface"
+        android:strokeWidth="1.2" />
+
+    <!-- Dot 2 -->
+    <path
+        android:pathData="M157,96 A5.5,5.5 0 1,1 146,96 A5.5,5.5 0 1,1 157,96 Z"
+        android:fillColor="@androidprv:color/materialColorPrimary" />
+    <path
+        android:pathData="M157,96 A5.5,5.5 0 1,1 146,96 A5.5,5.5 0 1,1 157,96 Z"
+        android:strokeColor="@androidprv:color/materialColorSurface"
+        android:strokeWidth="1.2" />
+
+    <!-- Dot 3 -->
+    <path
+        android:pathData="M157,132 A5.5,5.5 0 1,1 146,132 A5.5,5.5 0 1,1 157,132 Z"
+        android:fillColor="@androidprv:color/materialColorPrimary" />
+    <path
+        android:pathData="M157,132 A5.5,5.5 0 1,1 146,132 A5.5,5.5 0 1,1 157,132 Z"
+        android:strokeColor="@androidprv:color/materialColorSurface"
+        android:strokeWidth="1.2" />
+
+    <!-- Dot 4 -->
+    <path
+        android:pathData="M157,168 A5.5,5.5 0 1,1 146,168 A5.5,5.5 0 1,1 157,168 Z"
+        android:fillColor="@androidprv:color/materialColorPrimary" />
+    <path
+        android:pathData="M157,168 A5.5,5.5 0 1,1 146,168 A5.5,5.5 0 1,1 157,168 Z"
+        android:strokeColor="@androidprv:color/materialColorSurface"
+        android:strokeWidth="1.2" />
+
+    <!-- Right Column Cues with Dynamic Contrast Ring -->
+    <!-- Dot 1 -->
+    <path
+        android:pathData="M266,60 A5.5,5.5 0 1,1 255,60 A5.5,5.5 0 1,1 266,60 Z"
+        android:fillColor="@androidprv:color/materialColorPrimary" />
+    <path
+        android:pathData="M266,60 A5.5,5.5 0 1,1 255,60 A5.5,5.5 0 1,1 266,60 Z"
+        android:strokeColor="@androidprv:color/materialColorSurface"
+        android:strokeWidth="1.2" />
+
+    <!-- Dot 2 -->
+    <path
+        android:pathData="M266,96 A5.5,5.5 0 1,1 255,96 A5.5,5.5 0 1,1 266,96 Z"
+        android:fillColor="@androidprv:color/materialColorPrimary" />
+    <path
+        android:pathData="M266,96 A5.5,5.5 0 1,1 255,96 A5.5,5.5 0 1,1 266,96 Z"
+        android:strokeColor="@androidprv:color/materialColorSurface"
+        android:strokeWidth="1.2" />
+
+    <!-- Dot 3 -->
+    <path
+        android:pathData="M266,132 A5.5,5.5 0 1,1 255,132 A5.5,5.5 0 1,1 266,132 Z"
+        android:fillColor="@androidprv:color/materialColorPrimary" />
+    <path
+        android:pathData="M266,132 A5.5,5.5 0 1,1 255,132 A5.5,5.5 0 1,1 266,132 Z"
+        android:strokeColor="@androidprv:color/materialColorSurface"
+        android:strokeWidth="1.2" />
+
+    <!-- Dot 4 -->
+    <path
+        android:pathData="M266,168 A5.5,5.5 0 1,1 255,168 A5.5,5.5 0 1,1 266,168 Z"
+        android:fillColor="@androidprv:color/materialColorPrimary" />
+    <path
+        android:pathData="M266,168 A5.5,5.5 0 1,1 255,168 A5.5,5.5 0 1,1 266,168 Z"
+        android:strokeColor="@androidprv:color/materialColorSurface"
+        android:strokeWidth="1.2" />
+
+</vector>

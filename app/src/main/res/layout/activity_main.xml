@@ -57,27 +57,15 @@
                         android:layout_height="220dp"
                         android:background="?attr/colorSurfaceContainerHigh">
 
-                        <com.rhythmcreative.motionassist.engine.MotionCuesView
-                            android:id="@+id/previewCuesView"
+                        <!-- Official Google Motion Sickness Feature Tutorial Lottie Animation -->
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/lottieTutorialView"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-
-                        <!-- Center steering wheel badge -->
-                        <FrameLayout
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:layout_gravity="center"
-                            android:background="@drawable/bg_car_badge">
-
-                            <ImageView
-                                android:id="@+id/imgCenterSteering"
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_steering_wheel"
-                                app:tint="?attr/colorOnPrimaryContainer" />
-
-                        </FrameLayout>
+                            android:layout_height="match_parent"
+                            android:scaleType="fitCenter"
+                            app:lottie_rawRes="@raw/motion_sickness_feature_tutorial"
+                            app:lottie_autoPlay="true"
+                            app:lottie_loop="true" />
 
                     </FrameLayout>
 
