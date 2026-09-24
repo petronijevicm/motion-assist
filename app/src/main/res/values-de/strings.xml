@@ -48,4 +48,6 @@
     <string name="notification_title">Bewegungsassistent ist aktiv</string>
     <string name="notification_text">Fahrzeug-Bewegungshinweise werden angezeigt</string>
     <string name="motion_assist_open_app_info">App Info (Unlock)</string>
+    <string name="motion_assist_sensitivity_title">Cue-Bewegung</string>
+    <string name="motion_assist_sensitivity_summary">Wie weit sich die Cues beim Beschleunigen, Bremsen oder Abbiegen bewegen</string>
 </resources>

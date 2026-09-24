@@ -23,9 +23,11 @@ ______________________________________________________________________
 
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=23&pause=1000&color=F7F7F7&vCenter=true&width=435&height=30&lines=FEATURES)](https://git.io/typing-svg)
 
-- **6-DOF Sensor Fusion Engine**: Fuses Linear Acceleration, Rotation Vector, and Gyroscope sensor streams into true world-space physical inertia vectors.
+- **Gravity-Referenced Sensor Fusion**: Fuses Gravity, Linear Acceleration, and Gyroscope streams into screen-space vehicle acceleration and turn rate. Cues shift opposite to the vehicle's acceleration (like loose objects in the car) and spring back when it stops; turns scroll the cue field sideways.
+- **Hand-Motion Rejection**: Tilting the phone (looking up/down) or re-orienting it in the hand is detected via the gyroscope and ignored, so cues only react to the vehicle. Hand tremor and road vibration are filtered out.
+- **Adjustable Cue Movement**: Scale how far cues travel (25-200%).
 - **Quick Settings Tile**: Toggle Motion Assist instantly from anywhere with one tap (`ic_qs_motion_assist`). Long-press to open settings or customization.
-- **Vehicle Auto-Detection**: Intelligently monitors sustained vehicle movement patterns and activates visual cues only when moving, turning off automatically when stationary.
+- **Vehicle Auto-Detection (heuristic)**: Shows cues after a few seconds of vehicle-like acceleration (walking is ignored) and hides them after ~3 minutes without any.
 - **Customizable Shapes**: Support for **Circle**, **Squircle**, **Pentagon**, and **Diamond** shapes.
 - **Material You Dynamic Colors & Adaptive Contrast**:
   - Dynamically extracts primary accent colors from your active wallpaper.
@@ -33,7 +35,7 @@ ______________________________________________________________________
   - **Adaptive Mode**: Automatically calculates background luminance and applies high-contrast dual strokes to guarantee clear visibility over light or dark apps.
 - **Smooth 120 Hz Animation**: Uncapped high-refresh rate rendering with intelligent power-saving throttling when Battery Saver is engaged.
 - **Shape & Color Randomization**: Option to cycle visual styles periodically for dynamic stimulus.
-- **Interactive Live Preview**: Test cue dynamics by tilting the device or dragging directly on the preview card.
+- **Interactive Live Preview**: Test cue dynamics by moving the device (push it forward/sideways, rotate it flat on a table) or dragging directly on the preview card.
 
 ______________________________________________________________________
 

@@ -17,18 +17,20 @@
 package com.rhythmcreative.motionassist.engine
 
 /**
- * 6-DOF Motion Vector describing horizontal acceleration, out-of-plane acceleration,
- * screen roll angle, and world angular rates (yaw and pitch).
+ * Motion sample in screen space, produced by [MotionFilter].
+ *
+ * @property lateral horizontal acceleration towards the screen's right edge, m/s^2
+ * @property longitudinal horizontal acceleration away from the viewer (vehicle forward), m/s^2
+ * @property yawRateRps rotation about world vertical, positive = turning left, rad/s
+ * @property isHandling true while the phone itself is being re-oriented in the hand
  */
 data class MotionVector(
-    val x: Float,
-    val y: Float,
-    val outOfPlane: Float,
-    val rollRadians: Float,
+    val lateral: Float,
+    val longitudinal: Float,
     val yawRateRps: Float,
-    val pitchRateRps: Float
+    val isHandling: Boolean = false
 ) {
     companion object {
-        val ZERO = MotionVector(0f, 0f, 0f, 0f, 0f, 0f)
+        val ZERO = MotionVector(0f, 0f, 0f)
     }
 }

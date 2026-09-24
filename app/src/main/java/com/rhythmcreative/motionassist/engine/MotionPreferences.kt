@@ -51,6 +51,11 @@ class MotionPreferences(context: Context) {
         get() = prefs.getBoolean(KEY_SMOOTH_ANIMATION, true)
         set(value) = prefs.edit().putBoolean(KEY_SMOOTH_ANIMATION, value).apply()
 
+    /** Cue travel distance in percent (25..200, default 100). */
+    var sensitivity: Int
+        get() = prefs.getInt(KEY_SENSITIVITY, 100)
+        set(value) = prefs.edit().putInt(KEY_SENSITIVITY, value).apply()
+
     fun registerListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
         prefs.registerOnSharedPreferenceChangeListener(listener)
     }
@@ -68,5 +73,6 @@ class MotionPreferences(context: Context) {
         const val KEY_OPACITY = "motion_assist_opacity"
         const val KEY_RANDOMIZE = "motion_assist_randomize"
         const val KEY_SMOOTH_ANIMATION = "motion_assist_smooth_animation"
+        const val KEY_SENSITIVITY = "motion_assist_sensitivity"
     }
 }

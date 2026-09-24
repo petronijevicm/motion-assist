@@ -37,10 +37,9 @@ import com.rhythmcreative.motionassist.R
 import com.rhythmcreative.motionassist.databinding.ActivityMainBinding
 import com.rhythmcreative.motionassist.engine.MotionEstimator
 import com.rhythmcreative.motionassist.engine.MotionPreferences
-import com.rhythmcreative.motionassist.engine.MotionVector
 import com.rhythmcreative.motionassist.service.MotionAssistService
 
-class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var prefs: MotionPreferences
@@ -54,7 +53,6 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
 
         prefs = MotionPreferences(this)
         motionEstimator = MotionEstimator(this)
-        motionEstimator.setCallback(this)
 
         setupUI()
         setupListeners()
@@ -68,6 +66,8 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
         binding.switchSmoothAnimation.isChecked = prefs.isSmoothAnimation
         binding.sliderOpacity.value = prefs.opacity.toFloat()
         binding.textOpacityValue.text = "${getString(R.string.motion_assist_opacity_title)}: ${prefs.opacity}%"
+        binding.sliderSensitivity.value = prefs.sensitivity.coerceIn(25, 200).toFloat()
+        binding.textSensitivityValue.text = "${getString(R.string.motion_assist_sensitivity_title)}: ${prefs.sensitivity}%"
 
         // Select shape chip
         when (prefs.shapeIndex) {
@@ -91,9 +91,12 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
     private fun setupPreview() {
         // Configure interactive live cues view
         binding.previewCuesView.isTouchInteractive = true
-        binding.previewCuesView.onDragListener = { dx, _ ->
-            val rot = (-dx * 0.42f).coerceIn(-40f, 40f)
-            binding.imgCenterSteering.rotation = rot
+        binding.previewCuesView.motionSource = { motionEstimator.latest }
+        binding.previewCuesView.onFrameListener = { motion ->
+            // Steering wheel follows the turn rate (left turn = counter-clockwise)
+            val target = (-motion.yawRateRps * 60f + motion.lateral * 4f).coerceIn(-45f, 45f)
+            val wheel = binding.imgCenterSteering
+            wheel.rotation += (target - wheel.rotation) * 0.15f
         }
 
         // Preview mode switcher: default to Tutorial
@@ -135,6 +138,7 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
         binding.previewCuesView.cueOpacity = prefs.opacity
         binding.previewCuesView.isRandomized = prefs.isRandomize
         binding.previewCuesView.isAdaptiveMode = (prefs.colorIndex == 5)
+        binding.previewCuesView.sensitivity = prefs.sensitivity / 100f
 
         // 2. Synchronize Material You 3 colors into the official Lottie tutorial animation
         applyMaterialYouToLottie(binding.previewCuesView.getResolvedColor())
@@ -273,6 +277,13 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
             updatePreviewView()
         }
 
+        binding.sliderSensitivity.addOnChangeListener { _, value, _ ->
+            val sensitivityVal = value.toInt()
+            prefs.sensitivity = sensitivityVal
+            binding.textSensitivityValue.text = "${getString(R.string.motion_assist_sensitivity_title)}: $sensitivityVal%"
+            binding.previewCuesView.sensitivity = sensitivityVal / 100f
+        }
+
         binding.switchRandomize.setOnCheckedChangeListener { _, isChecked ->
             prefs.isRandomize = isChecked
             updatePreviewView()
@@ -370,17 +381,5 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
         super.onPause()
         binding.lottieTutorialView.pauseAnimation()
         motionEstimator.stop()
-    }
-
-    override fun onMotionUpdated(motion: MotionVector) {
-        val density = resources.displayMetrics.density
-        val dx = -motion.x * 2.0f * density
-        val dy = motion.y * 2.0f * density
-        val rollDeg = Math.toDegrees(motion.rollRadians.toDouble()).toFloat()
-        val rotationDeg = (-motion.x * 20f + rollDeg).coerceIn(-45f, 45f)
-        runOnUiThread {
-            binding.previewCuesView.updateBubblePos(dx, dy)
-            binding.imgCenterSteering.rotation = rotationDeg
-        }
     }
 }

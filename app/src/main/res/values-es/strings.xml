@@ -59,4 +59,6 @@
     <string name="notification_channel_name">Servicio de Asistencia de movimiento</string>
     <string name="notification_title">Asistencia de movimiento activada</string>
     <string name="notification_text">Mostrando señales cinéticas del vehículo en tiempo real</string>
+    <string name="motion_assist_sensitivity_title">Movimiento de las señales</string>
+    <string name="motion_assist_sensitivity_summary">Cuánto se desplazan las señales cuando el vehículo acelera, frena o gira</string>
 </resources>

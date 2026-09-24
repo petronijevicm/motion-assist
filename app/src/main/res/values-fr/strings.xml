@@ -48,4 +48,6 @@
     <string name="motion_assist_open_app_info">App Info (Unlock)</string>
     <string name="motion_assist_preview_tab_tutorial">Tutoriel</string>
     <string name="motion_assist_preview_tab_interactive">Physique en direct</string>
+    <string name="motion_assist_sensitivity_title">Mouvement des repères</string>
+    <string name="motion_assist_sensitivity_summary">Amplitude du déplacement des repères lorsque le véhicule accélère, freine ou tourne</string>
 </resources>

@@ -36,6 +36,8 @@
     <string name="motion_assist_shape_diamond">Diamond</string>
 
     <string name="motion_assist_opacity_title">Cue Opacity</string>
+    <string name="motion_assist_sensitivity_title">Cue Movement</string>
+    <string name="motion_assist_sensitivity_summary">How far cues travel when the vehicle accelerates, brakes, or turns</string>
     <string name="motion_assist_randomization_title">Shape &amp; Color Randomization</string>
     <string name="motion_assist_randomization_summary">Automatically change shape and color periodically</string>
 

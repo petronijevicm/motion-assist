@@ -16,61 +16,193 @@
 
 package com.rhythmcreative.motionassist
 
+import com.rhythmcreative.motionassist.engine.MotionFilter
 import com.rhythmcreative.motionassist.engine.MotionVector
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 class MotionEngineTest {
 
-    @Test
-    fun testMotionVectorZero() {
-        val zero = MotionVector.ZERO
-        assertEquals(0f, zero.x, 0.0001f)
-        assertEquals(0f, zero.y, 0.0001f)
-        assertEquals(0f, zero.outOfPlane, 0.0001f)
-        assertEquals(0f, zero.rollRadians, 0.0001f)
-        assertEquals(0f, zero.yawRateRps, 0.0001f)
-        assertEquals(0f, zero.pitchRateRps, 0.0001f)
-    }
+    private val g = 9.81f
+    private val stepNs = 10_000_000L // 100 Hz
 
-    @Test
-    fun testMotionVectorCreation() {
-        val vector = MotionVector(1.5f, -2.3f, 0.1f, 0.785f, 0.05f, -0.02f)
-        assertEquals(1.5f, vector.x, 0.0001f)
-        assertEquals(-2.3f, vector.y, 0.0001f)
-        assertEquals(0.1f, vector.outOfPlane, 0.0001f)
-        assertEquals(0.785f, vector.rollRadians, 0.0001f)
-        assertEquals(0.05f, vector.yawRateRps, 0.0001f)
-        assertEquals(-0.02f, vector.pitchRateRps, 0.0001f)
-    }
+    /** Simple simulator: feeds gravity, linear acceleration and gyro at 100 Hz. */
+    private class Sim(val filter: MotionFilter = MotionFilter()) {
+        var ts = 1_000_000_000L
+        var maxAbsLateral = 0f
+        var maxAbsLongitudinal = 0f
+        var maxAbsYaw = 0f
 
-    @Test
-    fun testDeadbandFormula() {
-        fun deadband(v: Float, threshold: Float): Float {
-            return when {
-                v > threshold -> v - threshold
-                v < -threshold -> v + threshold
-                else -> 0f
+        fun run(
+            seconds: Float,
+            gravity: (Float) -> FloatArray,
+            linear: (Float) -> FloatArray = { floatArrayOf(0f, 0f, 0f) },
+            gyro: (Float) -> FloatArray = { floatArrayOf(0f, 0f, 0f) }
+        ): MotionVector {
+            val steps = (seconds * 100).toInt()
+            for (i in 0 until steps) {
+                val t = i / 100f
+                ts += 10_000_000L
+                val gr = gravity(t)
+                filter.onGravity(gr[0], gr[1], gr[2])
+                val w = gyro(t)
+                filter.onGyroscope(w[0], w[1], w[2], ts)
+                val a = linear(t)
+                filter.onLinearAcceleration(a[0], a[1], a[2], ts)
+                val o = filter.output
+                maxAbsLateral = maxOf(maxAbsLateral, abs(o.lateral))
+                maxAbsLongitudinal = maxOf(maxAbsLongitudinal, abs(o.longitudinal))
+                maxAbsYaw = maxOf(maxAbsYaw, abs(o.yawRateRps))
             }
+            return filter.output
         }
 
-        assertEquals(0f, deadband(0.005f, 0.01f), 0.0001f)
-        assertEquals(0f, deadband(-0.005f, 0.01f), 0.0001f)
-        assertEquals(0.02f, deadband(0.03f, 0.01f), 0.0001f)
-        assertEquals(-0.02f, deadband(-0.03f, 0.01f), 0.0001f)
+        fun resetPeaks() {
+            maxAbsLateral = 0f
+            maxAbsLongitudinal = 0f
+            maxAbsYaw = 0f
+        }
+    }
+
+    private val upright = { _: Float -> floatArrayOf(0f, 9.81f, 0f) }
+    private val flat = { _: Float -> floatArrayOf(0f, 0f, 9.81f) }
+
+    @Test
+    fun stillPhoneProducesNoMotion() {
+        val sim = Sim()
+        val out = sim.run(5f, upright)
+        assertEquals(0f, out.lateral, 0.001f)
+        assertEquals(0f, out.longitudinal, 0.001f)
+        assertEquals(0f, out.yawRateRps, 0.001f)
     }
 
     @Test
-    fun testColorAlphaFormula() {
-        fun computeAlpha(opacity: Int): Int {
-            return (opacity * 2.55f).toInt().coerceIn(25, 255)
-        }
+    fun brakingWhileHoldingPhoneUprightIsNegativeLongitudinal() {
+        val sim = Sim()
+        sim.run(1f, upright)
+        // Braking at 3 m/s^2: acceleration points backwards, i.e. towards the viewer (+z)
+        val out = sim.run(2f, upright, linear = { floatArrayOf(0f, 0f, 3f) })
+        assertTrue("longitudinal=${out.longitudinal}", out.longitudinal < -2.5f)
+        assertEquals(0f, out.lateral, 0.05f)
+    }
 
-        assertEquals(25, computeAlpha(5))
-        assertEquals(153, computeAlpha(60))
-        assertEquals(255, computeAlpha(100))
-        assertEquals(255, computeAlpha(120))
+    @Test
+    fun acceleratingWithPhoneFlatIsPositiveLongitudinal() {
+        val sim = Sim()
+        sim.run(1f, flat)
+        // Flat phone, top edge facing forward: forward = device +y
+        val out = sim.run(2f, flat, linear = { floatArrayOf(0f, 2f, 0f) })
+        assertTrue("longitudinal=${out.longitudinal}", out.longitudinal > 1.6f)
+    }
+
+    @Test
+    fun leftTurnGivesNegativeLateralAndPositiveYaw() {
+        val sim = Sim()
+        sim.run(1f, flat)
+        // Centripetal acceleration to the left, rotating counter-clockwise about up
+        val out = sim.run(
+            3f, flat,
+            linear = { floatArrayOf(-2f, 0f, 0f) },
+            gyro = { floatArrayOf(0f, 0f, 0.3f) }
+        )
+        assertTrue("lateral=${out.lateral}", out.lateral < -1.6f)
+        assertTrue("yaw=${out.yawRateRps}", out.yawRateRps > 0.2f)
+    }
+
+    @Test
+    fun yawRateIgnoresPhoneOrientation() {
+        // Same vehicle turn, phone held upright: rotation is now about device y
+        val sim = Sim()
+        sim.run(1f, upright)
+        val out = sim.run(2f, upright, gyro = { floatArrayOf(0f, 0.3f, 0f) })
+        assertTrue("yaw=${out.yawRateRps}", out.yawRateRps > 0.2f)
+    }
+
+    /**
+     * Regression: tilting the phone up to look at it (upright -> flat in 0.5 s) used to send
+     * the cues flying because a gravity-tilt term was integrated as displacement.
+     */
+    @Test
+    fun lookingUpDoesNotMoveCues() {
+        val sim = Sim()
+        sim.run(1f, upright)
+        sim.resetPeaks()
+        val duration = 0.5f
+        val rate = (Math.PI / 2 / duration).toFloat()
+        sim.run(
+            duration,
+            gravity = { t ->
+                val angle = (t / duration) * (Math.PI / 2)
+                floatArrayOf(0f, (g * cos(angle)).toFloat(), (g * sin(angle)).toFloat())
+            },
+            // Fused linear acceleration glitches during fast rotations
+            linear = { t -> floatArrayOf(0f, 2.5f * sin(t * 12f), -2.5f * cos(t * 9f)) },
+            gyro = { floatArrayOf(rate, 0f, 0f) }
+        )
+        sim.run(1f, flat)
+        assertTrue("lateral peak=${sim.maxAbsLateral}", sim.maxAbsLateral < 0.3f)
+        assertTrue("longitudinal peak=${sim.maxAbsLongitudinal}", sim.maxAbsLongitudinal < 0.3f)
+        assertTrue("yaw peak=${sim.maxAbsYaw}", sim.maxAbsYaw < 0.05f)
+    }
+
+    @Test
+    fun handJitterIsSmoothedOut() {
+        val sim = Sim()
+        sim.run(1f, upright)
+        sim.resetPeaks()
+        // 8 Hz tremor / road vibration, 1.5 m/s^2 amplitude
+        sim.run(3f, upright, linear = { t -> floatArrayOf(1.5f * sin(t * 50f), 0f, 1.5f * cos(t * 50f)) })
+        assertTrue("lateral peak=${sim.maxAbsLateral}", sim.maxAbsLateral < 0.2f)
+        assertTrue("longitudinal peak=${sim.maxAbsLongitudinal}", sim.maxAbsLongitudinal < 0.2f)
+    }
+
+    @Test
+    fun constantSensorOffsetIsRemovedOverTime() {
+        val sim = Sim()
+        val out = sim.run(120f, flat, linear = { floatArrayOf(0.4f, 0f, 0f) })
+        assertEquals(0f, out.lateral, 0.02f)
+    }
+
+    @Test
+    fun landscapeRotationMapsDeviceYToScreenRight() {
+        val filter = MotionFilter()
+        filter.setDisplayRotation(1) // ROTATION_90
+        val sim = Sim(filter)
+        sim.run(1f, flat)
+        val out = sim.run(2f, flat, linear = { floatArrayOf(0f, 2f, 0f) })
+        assertTrue("lateral=${out.lateral}", out.lateral > 1.6f)
+        assertEquals(0f, out.longitudinal, 0.05f)
+    }
+
+    @Test
+    fun vehicleDetectionTurnsOnWithSustainedAcceleration() {
+        val sim = Sim()
+        sim.run(2f, upright)
+        assertFalse(sim.filter.isVehicleMoving)
+        // Stop-and-go traffic: alternating acceleration and braking
+        sim.run(12f, upright, linear = { t -> floatArrayOf(0f, 0f, if ((t / 3f).toInt() % 2 == 0) -1.5f else 1.5f) })
+        assertTrue(sim.filter.isVehicleMoving)
+    }
+
+    @Test
+    fun vehicleDetectionIgnoresWalking() {
+        val sim = Sim()
+        // Walking: strong 2 Hz vertical bounce with some horizontal sway
+        sim.run(20f, upright, linear = { t -> floatArrayOf(0.8f * sin(t * 6.3f), 3f * sin(t * 12.6f), 0.6f) })
+        assertFalse(sim.filter.isVehicleMoving)
+    }
+
+    @Test
+    fun softDeadband() {
+        assertEquals(0f, MotionFilter.softDeadband(0.005f, 0.01f), 0.0001f)
+        assertEquals(0f, MotionFilter.softDeadband(-0.005f, 0.01f), 0.0001f)
+        assertEquals(0.02f, MotionFilter.softDeadband(0.03f, 0.01f), 0.0001f)
+        assertEquals(-0.02f, MotionFilter.softDeadband(-0.03f, 0.01f), 0.0001f)
     }
 
     @Test
@@ -78,53 +210,14 @@ class MotionEngineTest {
         val gridWidth = 400f
 
         fun wrap(coord: Float, limit: Float): Float {
-            var v = (coord + limit) % limit
+            var v = coord % limit
             if (v < 0) v += limit
             return v
         }
 
-        // Test normal in-bounds
         assertEquals(150f, wrap(150f, gridWidth), 0.001f)
-        // Test right-side wrap
         assertEquals(20f, wrap(420f, gridWidth), 0.001f)
-        // Test left-side wrap
         assertEquals(380f, wrap(-20f, gridWidth), 0.001f)
-    }
-
-    @Test
-    fun testGoogleEdgeShrinkThreshold() {
-        val baseRadius = 15f
-        val edgeShrinkThreshold = 50f
-
-        fun computeRadius(distanceFromEdge: Float): Float {
-            return if (distanceFromEdge < edgeShrinkThreshold) {
-                baseRadius * (distanceFromEdge / edgeShrinkThreshold)
-            } else {
-                baseRadius
-            }
-        }
-
-        assertEquals(15f, computeRadius(60f), 0.001f) // Outside threshold, full size
-        assertEquals(7.5f, computeRadius(25f), 0.001f) // Halfway, half size
-        assertEquals(0f, computeRadius(0f), 0.001f) // At border, fully shrunk
-    }
-
-    @Test
-    fun testGoogleMarginPeripheralExclusion() {
-        val screenWidth = 1080f
-        val marginPercent = 0.20f
-        val marginLeft = screenWidth * marginPercent // 216px
-        val marginRight = screenWidth - marginLeft // 864px
-
-        fun isVisibleInMargin(x: Float): Boolean {
-            return !(x > marginLeft && x < marginRight)
-        }
-
-        // Left peripheral margin is visible
-        assertEquals(true, isVisibleInMargin(100f))
-        // Center reading zone is completely clear/hidden
-        assertEquals(false, isVisibleInMargin(540f))
-        // Right peripheral margin is visible
-        assertEquals(true, isVisibleInMargin(950f))
+        assertEquals(380f, wrap(-820f, gridWidth), 0.001f)
     }
 }

@@ -21,90 +21,69 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import kotlin.math.atan2
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.sqrt
+import android.hardware.display.DisplayManager
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.Looper
+import android.view.Display
 
 /**
- * Fuses linear-acceleration, rotation-vector, and gyroscope data into world-space
- * motion vectors so the cue field moves like a fixed world coordinate frame you move through.
+ * Android glue around [MotionFilter]: registers sensors on a background thread, tracks the
+ * display rotation, and exposes the latest [MotionVector] for the render loop to sample.
+ *
+ * Sensor events are never forwarded one-by-one to the UI thread; the cue view pulls
+ * [latest] once per display frame instead.
  */
 class MotionEstimator(context: Context) {
 
     interface Callback {
-        fun onMotionUpdated(motion: MotionVector)
         fun onVehicleStateChanged(isMoving: Boolean) {}
     }
 
-    private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
+    private val appContext = context.applicationContext
+    private val sensorManager = appContext.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
+    private val displayManager = appContext.getSystemService(Context.DISPLAY_SERVICE) as? DisplayManager
     private val linearAccel = sensorManager?.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
-    private val rotationVector = sensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
     private val gravitySensor = sensorManager?.getDefaultSensor(Sensor.TYPE_GRAVITY)
     private val accelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     private val gyroscope = sensorManager?.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
 
+    private val filter = MotionFilter()
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private var sensorThread: HandlerThread? = null
+    private var sensorHandler: Handler? = null
     private var callback: Callback? = null
-    private val rotationMatrix = FloatArray(9)
-    private var hasRotation = false
 
-    private var filteredX = 0f
-    private var filteredY = 0f
-    private var filteredZ = 0f
-    private var lastRollRadians = 0f
-    private var filteredYawRate = 0f
-    private var filteredPitchRate = 0f
-    private var lastAccelTsNs = 0L
-    private var lastGyroTsNs = 0L
+    // Fallback gravity estimate when TYPE_GRAVITY / TYPE_LINEAR_ACCELERATION are missing
+    private val lpGravity = FloatArray(3)
+    private var lpGravityInit = false
+    private var lastRawAccelTsNs = 0L
 
-    private var gxBias = 0f
-    private var gyBias = 0f
-    private var gzBias = 0f
-    private var stillAccumSec = 0f
-    private var lastAccelMagSq = 0f
+    @Volatile
+    var latest: MotionVector = MotionVector.ZERO
+        private set
 
-    private var vehicleMovingAccumSec = 0f
-    private var vehicleStillAccumSec = 0f
+    @Volatile
     var isVehicleMoving = false
         private set
 
+    val isRunning: Boolean
+        get() = sensorThread != null
+
+    /** True when the device has the sensors needed for useful cues. */
+    val isSupported: Boolean
+        get() = accelerometer != null || linearAccel != null
+
     private val sensorListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
+            val v = event.values
             when (event.sensor.type) {
-                Sensor.TYPE_ROTATION_VECTOR -> {
-                    SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
-                    hasRotation = true
-                }
-                Sensor.TYPE_GRAVITY -> {
-                    if (!hasRotation) {
-                        val norm = sqrt((event.values[0] * event.values[0] + event.values[1] * event.values[1] + event.values[2] * event.values[2]).toDouble()).toFloat()
-                        if (norm > 0.01f) {
-                            rotationMatrix[6] = event.values[0] / norm
-                            rotationMatrix[7] = event.values[1] / norm
-                            rotationMatrix[8] = event.values[2] / norm
-                            hasRotation = true
-                        }
-                    }
-                }
-                Sensor.TYPE_ACCELEROMETER -> {
-                    if (!hasRotation) {
-                        val norm = sqrt((event.values[0] * event.values[0] + event.values[1] * event.values[1] + event.values[2] * event.values[2]).toDouble()).toFloat()
-                        if (norm > 0.01f) {
-                            rotationMatrix[6] = event.values[0] / norm
-                            rotationMatrix[7] = event.values[1] / norm
-                            rotationMatrix[8] = event.values[2] / norm
-                            hasRotation = true
-                        }
-                    }
-                    if (linearAccel == null) {
-                        updateAccel(event.values[0], event.values[1], event.values[2], event.timestamp)
-                    }
-                }
-                Sensor.TYPE_LINEAR_ACCELERATION -> {
-                    updateAccel(event.values[0], event.values[1], event.values[2], event.timestamp)
-                }
+                Sensor.TYPE_GRAVITY -> filter.onGravity(v[0], v[1], v[2])
+                Sensor.TYPE_LINEAR_ACCELERATION -> feedLinear(v[0], v[1], v[2], event.timestamp)
+                Sensor.TYPE_ACCELEROMETER -> onRawAccel(v[0], v[1], v[2], event.timestamp)
                 Sensor.TYPE_GYROSCOPE -> {
-                    updateGyro(event.values[0], event.values[1], event.values[2], event.timestamp)
+                    filter.onGyroscope(v[0], v[1], v[2], event.timestamp)
+                    latest = filter.output
                 }
             }
         }
@@ -112,168 +91,88 @@ class MotionEstimator(context: Context) {
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
     }
 
-    fun setCallback(cb: Callback) {
+    private val displayListener = object : DisplayManager.DisplayListener {
+        override fun onDisplayAdded(displayId: Int) {}
+        override fun onDisplayRemoved(displayId: Int) {}
+        override fun onDisplayChanged(displayId: Int) {
+            if (displayId == Display.DEFAULT_DISPLAY) syncDisplayRotation()
+        }
+    }
+
+    fun setCallback(cb: Callback?) {
         callback = cb
     }
 
-    private fun updateAccel(ax: Float, ay: Float, az: Float, tsNs: Long) {
-        val ux = if (hasRotation) rotationMatrix[6] else 0f
-        val uy = if (hasRotation) rotationMatrix[7] else 0f
-        val uz = if (hasRotation) rotationMatrix[8] else 1f
-
-        val dot = ax * ux + ay * uy + az * uz
-        val hx = ax - dot * ux
-        val hy = ay - dot * uy
-        val hz = az - dot * uz
-
-        // Blend linear acceleration and responsive tilt component
-        // Inertia pushes opposite to vehicle acceleration / in tilt direction
-        val totalX = -hx + ux * 4.2f
-        val totalY = hy + uy * 4.2f
-
-        val dt = if (lastAccelTsNs == 0L) 0.02f else max(0.001f, min(0.2f, (tsNs - lastAccelTsNs) / 1e9f))
-        lastAccelTsNs = tsNs
-        val alpha = dt / (ACCEL_TIME_CONSTANT_SEC + dt)
-        filteredX += alpha * (totalX - filteredX)
-        filteredY += alpha * (totalY - filteredY)
-        filteredZ += alpha * (hz - filteredZ)
-
-        lastAccelMagSq = hx * hx + hy * hy + hz * hz
-
-        val projLenSq = ux * ux + uy * uy
-        if (projLenSq > FLAT_ROLL_GUARD_SQ) {
-            lastRollRadians = atan2(ux, uy)
-        }
-
-        publish()
-    }
-
-    private fun updateGyro(gx: Float, gy: Float, gz: Float, tsNs: Long) {
-        val dt = if (lastGyroTsNs == 0L) 0.01f else max(0.001f, min(0.2f, (tsNs - lastGyroTsNs) / 1e9f))
-        lastGyroTsNs = tsNs
-
-        val rawGyroMagSq = gx * gx + gy * gy + gz * gz
-        val isStill = lastAccelMagSq < STILL_ACCEL_MAG_SQ && rawGyroMagSq < STILL_GYRO_MAG_SQ
-        if (isStill) {
-            stillAccumSec += dt
-            if (stillAccumSec > STILL_SETTLE_SEC) {
-                val biasAlpha = dt / (BIAS_TRACK_SEC + dt)
-                gxBias += biasAlpha * (gx - gxBias)
-                gyBias += biasAlpha * (gy - gyBias)
-                gzBias += biasAlpha * (gz - gzBias)
-            }
+    private fun onRawAccel(x: Float, y: Float, z: Float, tsNs: Long) {
+        if (gravitySensor != null && linearAccel != null) return
+        // Only used on devices without fused virtual sensors
+        val dt = if (lastRawAccelTsNs == 0L) 0.02f else ((tsNs - lastRawAccelTsNs) / 1e9f).coerceIn(0.001f, 0.1f)
+        lastRawAccelTsNs = tsNs
+        if (!lpGravityInit) {
+            lpGravity[0] = x; lpGravity[1] = y; lpGravity[2] = z
+            lpGravityInit = true
         } else {
-            stillAccumSec = 0f
+            val a = dt / (FALLBACK_GRAVITY_SEC + dt)
+            lpGravity[0] += a * (x - lpGravity[0])
+            lpGravity[1] += a * (y - lpGravity[1])
+            lpGravity[2] += a * (z - lpGravity[2])
         }
-
-        // Vehicle detection logic: sustained movement vs sustained standstill
-        val movingCandidate = lastAccelMagSq > VEHICLE_MOTION_THRESHOLD_SQ || rawGyroMagSq > 0.04f
-        if (movingCandidate) {
-            vehicleMovingAccumSec += dt
-            vehicleStillAccumSec = 0f
-            if (!isVehicleMoving && vehicleMovingAccumSec >= VEHICLE_START_TIME_SEC) {
-                isVehicleMoving = true
-                callback?.onVehicleStateChanged(true)
-            }
-        } else if (isStill) {
-            vehicleStillAccumSec += dt
-            vehicleMovingAccumSec = 0f
-            if (isVehicleMoving && vehicleStillAccumSec >= VEHICLE_STOP_TIME_SEC) {
-                isVehicleMoving = false
-                callback?.onVehicleStateChanged(false)
-            }
-        }
-
-        val gxd = gx - gxBias
-        val gyd = gy - gyBias
-        val gzd = gz - gzBias
-
-        val owx = rotationMatrix[0] * gxd + rotationMatrix[1] * gyd + rotationMatrix[2] * gzd
-        val owy = rotationMatrix[3] * gxd + rotationMatrix[4] * gyd + rotationMatrix[5] * gzd
-        val owz = rotationMatrix[6] * gxd + rotationMatrix[7] * gyd + rotationMatrix[8] * gzd
-
-        val yawRate = owz
-        val fx = -rotationMatrix[2]
-        val fy = -rotationMatrix[5]
-        val fLenSq = fx * fx + fy * fy
-        val pitchRate = if (fLenSq > FLAT_PITCH_GUARD_SQ) {
-            val invLen = 1f / sqrt(fLenSq)
-            val sideX = -fy * invLen
-            val sideY = fx * invLen
-            owx * sideX + owy * sideY
-        } else {
-            0f
-        }
-
-        val alpha = dt / (GYRO_TIME_CONSTANT_SEC + dt)
-        filteredYawRate += alpha * (yawRate - filteredYawRate)
-        filteredPitchRate += alpha * (pitchRate - filteredPitchRate)
-
-        publish()
-    }
-
-    private fun deadband(v: Float, threshold: Float): Float {
-        return when {
-            v > threshold -> v - threshold
-            v < -threshold -> v + threshold
-            else -> 0f
+        if (gravitySensor == null) filter.onGravity(lpGravity[0], lpGravity[1], lpGravity[2])
+        if (linearAccel == null) {
+            feedLinear(x - lpGravity[0], y - lpGravity[1], z - lpGravity[2], tsNs)
         }
     }
 
-    private fun publish() {
-        val vector = MotionVector(
-            filteredX,
-            filteredY,
-            filteredZ,
-            lastRollRadians,
-            deadband(filteredYawRate, GYRO_DEADBAND_RPS),
-            deadband(filteredPitchRate, GYRO_DEADBAND_RPS)
-        )
-        callback?.onMotionUpdated(vector)
+    private fun feedLinear(x: Float, y: Float, z: Float, tsNs: Long) {
+        val changed = filter.onLinearAcceleration(x, y, z, tsNs)
+        latest = filter.output
+        if (changed) {
+            val moving = filter.isVehicleMoving
+            isVehicleMoving = moving
+            mainHandler.post { callback?.onVehicleStateChanged(moving) }
+        }
+    }
+
+    private fun syncDisplayRotation() {
+        val rotation = displayManager?.getDisplay(Display.DEFAULT_DISPLAY)?.rotation ?: 0
+        val handler = sensorHandler
+        if (handler != null) handler.post { filter.setDisplayRotation(rotation) } else filter.setDisplayRotation(rotation)
     }
 
     fun start() {
-        sensorManager?.let { sm ->
-            linearAccel?.let { sm.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_GAME) }
-            rotationVector?.let { sm.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_GAME) }
-            gravitySensor?.let { sm.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_GAME) }
-            accelerometer?.let { sm.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_GAME) }
-            gyroscope?.let { sm.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_GAME) }
+        val sm = sensorManager ?: return
+        if (sensorThread != null) return
+        val thread = HandlerThread("MotionAssistSensors").apply { start() }
+        val handler = Handler(thread.looper)
+        sensorThread = thread
+        sensorHandler = handler
+
+        handler.post { filter.reset() }
+        syncDisplayRotation()
+        displayManager?.registerDisplayListener(displayListener, mainHandler)
+
+        val rate = SensorManager.SENSOR_DELAY_GAME
+        gravitySensor?.let { sm.registerListener(sensorListener, it, rate, handler) }
+        linearAccel?.let { sm.registerListener(sensorListener, it, rate, handler) }
+        if (gravitySensor == null || linearAccel == null) {
+            accelerometer?.let { sm.registerListener(sensorListener, it, rate, handler) }
         }
+        gyroscope?.let { sm.registerListener(sensorListener, it, rate, handler) }
     }
 
     fun stop() {
         sensorManager?.unregisterListener(sensorListener)
-        hasRotation = false
-        lastAccelTsNs = 0L
-        lastGyroTsNs = 0L
-        filteredX = 0f
-        filteredY = 0f
-        filteredZ = 0f
-        lastRollRadians = 0f
-        filteredYawRate = 0f
-        filteredPitchRate = 0f
-        stillAccumSec = 0f
-        lastAccelMagSq = 0f
-        vehicleMovingAccumSec = 0f
-        vehicleStillAccumSec = 0f
+        displayManager?.unregisterDisplayListener(displayListener)
+        sensorThread?.quitSafely()
+        sensorThread = null
+        sensorHandler = null
+        lpGravityInit = false
+        lastRawAccelTsNs = 0L
+        latest = MotionVector.ZERO
         isVehicleMoving = false
-        callback?.onMotionUpdated(MotionVector.ZERO)
     }
 
     companion object {
-        private const val ACCEL_TIME_CONSTANT_SEC = 0.08f
-        private const val GYRO_TIME_CONSTANT_SEC = 0.03f
-        private const val FLAT_ROLL_GUARD_SQ = 0.04f
-        private const val FLAT_PITCH_GUARD_SQ = 0.04f
-        private const val STILL_ACCEL_MAG_SQ = 0.09f
-        private const val STILL_GYRO_MAG_SQ = 0.0025f
-        private const val STILL_SETTLE_SEC = 0.8f
-        private const val BIAS_TRACK_SEC = 1.5f
-        private const val GYRO_DEADBAND_RPS = 0.01f
-
-        private const val VEHICLE_MOTION_THRESHOLD_SQ = 0.08f
-        private const val VEHICLE_START_TIME_SEC = 2.0f
-        private const val VEHICLE_STOP_TIME_SEC = 6.0f
+        private const val FALLBACK_GRAVITY_SEC = 0.5f
     }
 }

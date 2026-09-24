@@ -48,4 +48,6 @@
     <string name="motion_assist_open_app_info">App Info (Unlock)</string>
     <string name="motion_assist_preview_tab_tutorial">Обучение</string>
     <string name="motion_assist_preview_tab_interactive">Живая физика</string>
+    <string name="motion_assist_sensitivity_title">Движение подсказок</string>
+    <string name="motion_assist_sensitivity_summary">Насколько смещаются подсказки при разгоне, торможении или повороте</string>
 </resources>

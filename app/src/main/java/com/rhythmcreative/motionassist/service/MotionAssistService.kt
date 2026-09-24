@@ -21,8 +21,10 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.graphics.PixelFormat
 import android.os.Build
@@ -34,11 +36,11 @@ import android.provider.Settings
 import android.view.Gravity
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.rhythmcreative.motionassist.R
 import com.rhythmcreative.motionassist.engine.MotionCuesView
 import com.rhythmcreative.motionassist.engine.MotionEstimator
 import com.rhythmcreative.motionassist.engine.MotionPreferences
-import com.rhythmcreative.motionassist.engine.MotionVector
 import com.rhythmcreative.motionassist.ui.MainActivity
 import java.util.Random
 
@@ -82,7 +84,12 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
                 }
             }
             MotionPreferences.KEY_SMOOTH_ANIMATION -> updateFrameRate()
+            MotionPreferences.KEY_SENSITIVITY -> overlayView?.sensitivity = prefs.sensitivity / 100f
         }
+    }
+
+    private val powerSaveReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) = updateFrameRate()
     }
 
     override fun onCreate() {
@@ -95,8 +102,17 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
 
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, createNotification())
+        ContextCompat.registerReceiver(
+            this,
+            powerSaveReceiver,
+            IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         updateState()
+        return START_STICKY
     }
 
     private fun updateState() {
@@ -132,6 +148,8 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
             cueOpacity = prefs.opacity
             isRandomized = prefs.isRandomize
             isAdaptiveMode = (prefs.colorIndex == 5)
+            sensitivity = prefs.sensitivity / 100f
+            motionSource = { motionEstimator.latest }
         }
 
         val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -173,6 +191,7 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
         if (!isOverlayAttached) return
         mainHandler.removeCallbacks(randomizeRunnable)
         overlayView?.let {
+            it.motionSource = null
             try {
                 windowManager.removeView(it)
             } catch (e: Exception) {}
@@ -186,30 +205,22 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
         val isPowerSave = pm?.isPowerSaveMode == true
         val smooth = prefs.isSmoothAnimation && !isPowerSave
 
-        // Target smooth 120Hz display refresh rate when available
-        // overlay view invalidation happens via postInvalidateOnAnimation()
-    }
-
-    override fun onMotionUpdated(motion: MotionVector) {
-        val density = resources.displayMetrics.density
-        val scale = 2.0f * density
-        val dx = -motion.x * scale
-        val dy = motion.y * scale
-        mainHandler.post {
-            overlayView?.updateBubblePos(dx, dy)
-        }
+        // Smooth: follow the display refresh rate (up to 120 Hz). Otherwise cap at 30 fps.
+        overlayView?.maxFrameRate = if (smooth) 0 else REDUCED_FRAME_RATE
     }
 
     override fun onVehicleStateChanged(isMoving: Boolean) {
-        mainHandler.post {
-            if (prefs.isVehicleAuto) {
-                updateState()
-            }
+        // Already delivered on the main thread
+        if (prefs.isVehicleAuto) {
+            updateState()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        try {
+            unregisterReceiver(powerSaveReceiver)
+        } catch (e: IllegalArgumentException) {}
         prefs.unregisterListener(prefChangeListener)
         motionEstimator.stop()
         detachOverlay()
@@ -253,6 +264,7 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
     companion object {
         private const val CHANNEL_ID = "motion_assist_channel"
         private const val NOTIFICATION_ID = 1001
+        private const val REDUCED_FRAME_RATE = 30
 
         fun start(context: Context) {
             val intent = Intent(context, MotionAssistService::class.java)

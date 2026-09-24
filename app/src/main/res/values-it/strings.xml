@@ -48,4 +48,6 @@
     <string name="motion_assist_open_app_info">App Info (Unlock)</string>
     <string name="motion_assist_preview_tab_tutorial">Tutorial</string>
     <string name="motion_assist_preview_tab_interactive">Fisica dal vivo</string>
+    <string name="motion_assist_sensitivity_title">Movimento dei segnali</string>
+    <string name="motion_assist_sensitivity_summary">Quanto si spostano i segnali quando il veicolo accelera, frena o svolta</string>
 </resources>

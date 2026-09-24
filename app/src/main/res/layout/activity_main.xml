@@ -541,6 +541,30 @@
                         android:stepSize="5"
                         android:layout_marginTop="8dp" />
 
+                    <TextView
+                        android:id="@+id/textSensitivityValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/motion_assist_sensitivity_title"
+                        android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/motion_assist_sensitivity_summary"
+                        android:textAppearance="?attr/textAppearanceBodySmall" />
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/sliderSensitivity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:valueFrom="25"
+                        android:valueTo="200"
+                        android:stepSize="25"
+                        android:value="100"
+                        android:layout_marginTop="8dp" />
+
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

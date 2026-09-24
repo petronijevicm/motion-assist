@@ -48,4 +48,6 @@
     <string name="motion_assist_open_app_info">App Info (Unlock)</string>
     <string name="motion_assist_preview_tab_tutorial">教程动画</string>
     <string name="motion_assist_preview_tab_interactive">实时物理</string>
+    <string name="motion_assist_sensitivity_title">提示移动幅度</string>
+    <string name="motion_assist_sensitivity_summary">车辆加速、刹车或转弯时提示点移动的距离</string>
 </resources>

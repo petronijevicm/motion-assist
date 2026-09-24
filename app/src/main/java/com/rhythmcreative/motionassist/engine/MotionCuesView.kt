@@ -23,6 +23,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
+import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.View
 import com.google.android.material.color.MaterialColors
@@ -31,12 +32,19 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  * Official Google Motion Assist / Vehicle Motion Cues drawing and physics engine.
  *
  * Implements Google's exact AOSP toroidal wrapping grid with edge margin filtering,
- * edge shrinking threshold (50dp), and continuous kinematic displacement flow.
+ * edge shrinking threshold, and a per-frame physics step:
+ *  - acceleration displaces the whole field opposite to the vehicle's acceleration, like loose
+ *    objects inside the car, and a critically damped spring brings it back when it stops;
+ *  - turning (yaw rate) scrolls the field sideways, like scenery through a side window.
+ *
+ * Motion is pulled from [motionSource] once per display frame, so the sensor rate never
+ * floods the UI thread and the animation stays smooth at any refresh rate.
  */
 class MotionCuesView @JvmOverloads constructor(
     context: Context,
@@ -94,9 +102,48 @@ class MotionCuesView @JvmOverloads constructor(
     var isTouchInteractive: Boolean = false
     var onDragListener: ((Float, Float) -> Unit)? = null
 
+    /** Sampled once per frame. When null the render loop is idle. */
+    var motionSource: (() -> MotionVector)? = null
+        set(value) {
+            field = value
+            updateFrameLoop()
+        }
+
+    /** Invoked every rendered frame with the sample used, for companion UI (preview wheel). */
+    var onFrameListener: ((MotionVector) -> Unit)? = null
+
+    /** Multiplier for how far the cues travel (1.0 = default). */
+    var sensitivity: Float = 1f
+
+    /** 0 = follow the display refresh rate, otherwise cap the frame rate (power saving). */
+    var maxFrameRate: Int = 0
+
     // Touch interaction tracking
     private var lastTouchX = 0f
     private var lastTouchY = 0f
+    private var isDragging = false
+
+    // Physics state (pixels)
+    private var springX = 0f
+    private var springY = 0f
+    private var springVx = 0f
+    private var springVy = 0f
+    private var flowX = 0f
+    private var dragX = 0f
+    private var dragY = 0f
+    private var drawOffsetX = 0f
+    private var drawOffsetY = 0f
+    private var lastFrameNs = 0L
+    private var lastDrawnFrameNs = 0L
+    private var frameLoopRunning = false
+
+    private val frameCallback = object : Choreographer.FrameCallback {
+        override fun doFrame(frameTimeNanos: Long) {
+            if (!frameLoopRunning) return
+            stepPhysics(frameTimeNanos)
+            Choreographer.getInstance().postFrameCallback(this)
+        }
+    }
 
     /**
      * Represents a single motion cue bubble in Google's coordinate space.
@@ -173,27 +220,117 @@ class MotionCuesView @JvmOverloads constructor(
     }
 
     /**
-     * Updates the position of all motion cues by displacement delta (Google official method).
+     * Shifts the whole field by a displacement delta (manual / legacy use).
      */
     fun updateBubblePos(dx: Float, dy: Float) {
-        if (motionCues.isEmpty()) return
-        for (cue in motionCues) {
-            cue.x += dx
-            cue.y += dy
-        }
-        postInvalidateOnAnimation()
-    }
-
-    /**
-     * Compatibility alias for updateBubblePos.
-     */
-    fun updateOffset(dx: Float, dy: Float, rollRad: Float = 0f, yawRate: Float = 0f) {
-        updateBubblePos(dx, dy)
+        dragX += dx
+        dragY += dy
+        refreshOffset()
     }
 
     fun resetPhysics() {
+        springX = 0f
+        springY = 0f
+        springVx = 0f
+        springVy = 0f
+        flowX = 0f
+        dragX = 0f
+        dragY = 0f
+        lastFrameNs = 0L
+        drawOffsetX = 0f
+        drawOffsetY = 0f
         buildGrid()
-        postInvalidateOnAnimation()
+        invalidate()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        updateFrameLoop()
+    }
+
+    override fun onDetachedFromWindow() {
+        stopFrameLoop()
+        super.onDetachedFromWindow()
+    }
+
+    override fun onVisibilityAggregated(isVisible: Boolean) {
+        super.onVisibilityAggregated(isVisible)
+        updateFrameLoop()
+    }
+
+    private fun updateFrameLoop() {
+        val shouldRun = motionSource != null && isAttachedToWindow && isShown
+        if (shouldRun && !frameLoopRunning) {
+            frameLoopRunning = true
+            lastFrameNs = 0L
+            Choreographer.getInstance().postFrameCallback(frameCallback)
+        } else if (!shouldRun) {
+            stopFrameLoop()
+        }
+    }
+
+    private fun stopFrameLoop() {
+        if (!frameLoopRunning) return
+        frameLoopRunning = false
+        Choreographer.getInstance().removeFrameCallback(frameCallback)
+    }
+
+    private fun stepPhysics(frameTimeNanos: Long) {
+        val motion = motionSource?.invoke() ?: MotionVector.ZERO
+        val dt = if (lastFrameNs == 0L) 1f / 60f else ((frameTimeNanos - lastFrameNs) / 1e9f).coerceIn(0.001f, 0.05f)
+        lastFrameNs = frameTimeNanos
+
+        val density = resources.displayMetrics.density
+        val gain = ACCEL_GAIN_DP * density * sensitivity
+        val maxOffset = MAX_ACCEL_OFFSET_DP * density * sensitivity.coerceAtLeast(0.5f)
+
+        // Cues react like free objects in the vehicle: opposite to its acceleration.
+        // Speeding up pushes them back (down), braking pushes them forward (up),
+        // a left turn pushes them right.
+        var targetX = -motion.lateral * gain
+        var targetY = motion.longitudinal * gain
+        val targetLen = sqrt(targetX * targetX + targetY * targetY)
+        if (targetLen > maxOffset) {
+            val k = maxOffset / targetLen
+            targetX *= k
+            targetY *= k
+        }
+
+        // Critically damped spring towards the target (semi-implicit Euler)
+        val w = SPRING_OMEGA
+        springVx += (w * w * (targetX - springX) - 2f * w * springVx) * dt
+        springVy += (w * w * (targetY - springY) - 2f * w * springVy) * dt
+        springX += springVx * dt
+        springY += springVy * dt
+
+        // Turning scrolls the field sideways (left turn -> scenery moves right)
+        flowX += motion.yawRateRps * YAW_FLOW_DP_PER_RAD * density * sensitivity * dt
+        if (bubbleGridWidth > 0f) flowX %= bubbleGridWidth
+
+        // Manual drag offset springs back once released
+        if (!isDragging) {
+            val decay = dt / (DRAG_RETURN_SEC + dt)
+            dragX -= dragX * decay
+            dragY -= dragY * decay
+        }
+
+        onFrameListener?.invoke(motion)
+
+        if (maxFrameRate > 0 && lastDrawnFrameNs != 0L &&
+            frameTimeNanos - lastDrawnFrameNs < 1_000_000_000L / maxFrameRate - 2_000_000L) {
+            return
+        }
+        refreshOffset(frameTimeNanos)
+    }
+
+    private fun refreshOffset(frameTimeNanos: Long = 0L) {
+        val newX = springX + flowX + dragX
+        val newY = springY + dragY
+        if (abs(newX - drawOffsetX) < 0.05f && abs(newY - drawOffsetY) < 0.05f) return
+        drawOffsetX = newX
+        drawOffsetY = newY
+        if (frameTimeNanos != 0L) lastDrawnFrameNs = frameTimeNanos
+        invalidate()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -201,6 +338,7 @@ class MotionCuesView @JvmOverloads constructor(
 
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                isDragging = true
                 lastTouchX = event.x
                 lastTouchY = event.y
                 parent?.requestDisallowInterceptTouchEvent(true)
@@ -216,6 +354,7 @@ class MotionCuesView @JvmOverloads constructor(
                 return true
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                isDragging = false
                 parent?.requestDisallowInterceptTouchEvent(false)
                 onDragListener?.invoke(0f, 0f)
                 return true
@@ -275,8 +414,8 @@ class MotionCuesView @JvmOverloads constructor(
 
         for (motionCue in motionCues) {
             // Google Toroidal Wrap: wrap around screen dimensions seamlessly
-            var x = (motionCue.x + bubbleGridWidth) % bubbleGridWidth
-            var y = (motionCue.y + bubbleGridHeight) % bubbleGridHeight
+            var x = (motionCue.x + drawOffsetX) % bubbleGridWidth
+            var y = (motionCue.y + drawOffsetY) % bubbleGridHeight
 
             if (x < 0) x += bubbleGridWidth
             if (y < 0) y += bubbleGridHeight
@@ -337,5 +476,17 @@ class MotionCuesView @JvmOverloads constructor(
                 }
             }
         }
+    }
+
+    companion object {
+        /** Cue displacement per m/s^2 of vehicle acceleration. */
+        const val ACCEL_GAIN_DP = 16f
+        /** Largest displacement caused by acceleration (hard braking ~ 5 m/s^2). */
+        const val MAX_ACCEL_OFFSET_DP = 72f
+        /** Sideways scroll per radian of turn. */
+        const val YAW_FLOW_DP_PER_RAD = 260f
+        /** Spring natural frequency (rad/s); critically damped, settles in ~0.5 s. */
+        const val SPRING_OMEGA = 9f
+        private const val DRAG_RETURN_SEC = 0.35f
     }
 }
