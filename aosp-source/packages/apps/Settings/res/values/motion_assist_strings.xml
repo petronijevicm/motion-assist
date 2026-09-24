@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 petronijevicm -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<resources>
+    <string name="motion_assist_title">Motion cues</string>
+    <string name="motion_assist_intro">Moving dots at the edges of the screen follow the vehicle\'s motion. This can ease motion sickness while you read or watch in a car, bus or train.</string>
+    <string name="motion_assist_main_switch">Use motion cues</string>
+    <string name="motion_assist_auto_start_title">Start in a moving vehicle</string>
+    <string name="motion_assist_auto_start_summary">Show cues only while vehicle motion is detected</string>
+    <string name="motion_assist_options">Options</string>
+    <string name="motion_assist_tile_title">Add tile to Quick Settings</string>
+    <string name="motion_assist_tile_summary">Turn cues on or off from any screen</string>
+    <string name="motion_assist_customize_title">Customize</string>
+    <string name="motion_assist_customize_summary">Color, shape, size and movement</string>
+    <string name="motion_assist_disclaimer">Motion cues may reduce motion sickness, but they don\'t prevent it for everyone.</string>
+    <string name="motion_assist_customize_intro">Changes show right away while cues are on.</string>
+    <string name="motion_assist_color_title">Color</string>
+    <string name="motion_assist_color_system">Wallpaper</string>
+    <string name="motion_assist_color_salmon">Salmon</string>
+    <string name="motion_assist_color_amber">Amber</string>
+    <string name="motion_assist_color_mint">Mint</string>
+    <string name="motion_assist_color_sky">Sky</string>
+    <string name="motion_assist_color_contrast">High contrast</string>
+    <string name="motion_assist_shape_title">Shape</string>
+    <string name="motion_assist_shape_circle">Circle</string>
+    <string name="motion_assist_shape_squircle">Squircle</string>
+    <string name="motion_assist_shape_pentagon">Pentagon</string>
+    <string name="motion_assist_shape_diamond">Diamond</string>
+    <string name="motion_assist_opacity_title">Opacity</string>
+    <string name="motion_assist_size_title">Size</string>
+    <string name="motion_assist_movement_title">Movement</string>
+    <string name="motion_assist_movement_summary">How far the cues travel when the vehicle speeds up, brakes or turns</string>
+    <string name="motion_assist_responsiveness_title">Responsiveness</string>
+    <string name="motion_assist_responsiveness_summary">Lower is calmer and smoother, higher reacts sooner</string>
+    <string name="motion_assist_area_title">Display area</string>
+    <string name="motion_assist_area_sides">Side bands (recommended)</string>
+    <string name="motion_assist_area_full">Full screen</string>
+    <string name="motion_assist_shuffle_title">Shuffle</string>
+    <string name="motion_assist_shuffle_summary">Scatter the dots and change shape and color every few seconds</string>
+    <string name="motion_assist_smooth_title">Smooth animation</string>
+    <string name="motion_assist_smooth_summary">Draw at the full refresh rate of your display. Limited in Battery Saver</string>
+    <string name="motion_assist_save">Save</string>
+    <string name="motion_assist_got_it">Got it</string>
+    <string name="motion_assist_tile_dialog_title">Tile added</string>
+    <string name="motion_assist_tile_dialog_use">Swipe down to open Quick Settings and tap Motion cues to turn them on or off. Long-press the tile to open these settings.</string>
+    <string name="motion_assist_tile_dialog_edit" formatted="false">To move the tile, tap %s and drag it where you want.</string>
+    <string name="motion_assist_state_on">On</string>
+    <string name="motion_assist_state_off">Off</string>
+    <string name="motion_assist_state_auto">On in moving vehicles</string>
+    <string name="motion_assist_keywords">motion sickness, car sickness, travel sickness, vehicle, cues, nausea</string>
+</resources>

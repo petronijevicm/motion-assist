@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 petronijevicm -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<resources>
+    <string name="motion_assist_title">Señales de movimiento</string>
+    <string name="motion_assist_intro">Los puntos que se mueven en los bordes de la pantalla siguen el movimiento del vehículo. Esto puede aliviar el mareo mientras lees o ves vídeos en un coche, autobús o tren.</string>
+    <string name="motion_assist_main_switch">Usar señales de movimiento</string>
+    <string name="motion_assist_auto_start_title">Iniciar en un vehículo en movimiento</string>
+    <string name="motion_assist_auto_start_summary">Mostrar las señales solo cuando se detecte el movimiento del vehículo</string>
+    <string name="motion_assist_options">Opciones</string>
+    <string name="motion_assist_tile_title">Añadir botón a Ajustes rápidos</string>
+    <string name="motion_assist_tile_summary">Activa o desactiva las señales desde cualquier pantalla</string>
+    <string name="motion_assist_customize_title">Personalizar</string>
+    <string name="motion_assist_customize_summary">Color, forma, tamaño y movimiento</string>
+    <string name="motion_assist_disclaimer">Las señales de movimiento pueden reducir el mareo, pero no lo evitan en todas las personas.</string>
+    <string name="motion_assist_customize_intro">Los cambios se ven al instante mientras las señales están activas.</string>
+    <string name="motion_assist_color_title">Color</string>
+    <string name="motion_assist_color_system">Fondo de pantalla</string>
+    <string name="motion_assist_color_salmon">Salmón</string>
+    <string name="motion_assist_color_amber">Ámbar</string>
+    <string name="motion_assist_color_mint">Menta</string>
+    <string name="motion_assist_color_sky">Cielo</string>
+    <string name="motion_assist_color_contrast">Alto contraste</string>
+    <string name="motion_assist_shape_title">Forma</string>
+    <string name="motion_assist_shape_circle">Círculo</string>
+    <string name="motion_assist_shape_squircle">Squircle</string>
+    <string name="motion_assist_shape_pentagon">Pentágono</string>
+    <string name="motion_assist_shape_diamond">Rombo</string>
+    <string name="motion_assist_opacity_title">Opacidad</string>
+    <string name="motion_assist_size_title">Tamaño</string>
+    <string name="motion_assist_movement_title">Movimiento</string>
+    <string name="motion_assist_movement_summary">Cuánto se desplazan las señales cuando el vehículo acelera, frena o gira</string>
+    <string name="motion_assist_responsiveness_title">Capacidad de respuesta</string>
+    <string name="motion_assist_responsiveness_summary">Más bajo es más suave y tranquilo, más alto reacciona antes</string>
+    <string name="motion_assist_area_title">Zona de visualización</string>
+    <string name="motion_assist_area_sides">Franjas laterales (recomendado)</string>
+    <string name="motion_assist_area_full">Pantalla completa</string>
+    <string name="motion_assist_shuffle_title">Mezclar</string>
+    <string name="motion_assist_shuffle_summary">Dispersa los puntos y cambia la forma y el color cada pocos segundos</string>
+    <string name="motion_assist_smooth_title">Animación fluida</string>
+    <string name="motion_assist_smooth_summary">Dibuja a la frecuencia de actualización máxima de la pantalla. Limitada con Ahorro de batería</string>
+    <string name="motion_assist_save">Guardar</string>
+    <string name="motion_assist_got_it">Entendido</string>
+    <string name="motion_assist_tile_dialog_title">Botón añadido</string>
+    <string name="motion_assist_tile_dialog_use">Desliza hacia abajo para abrir Ajustes rápidos y toca Señales de movimiento para activarlas o desactivarlas. Mantén pulsado el botón para abrir estos ajustes.</string>
+    <string name="motion_assist_tile_dialog_edit" formatted="false">Para mover el botón, toca %s y arrástralo adonde quieras.</string>
+    <string name="motion_assist_state_on">Activadas</string>
+    <string name="motion_assist_state_off">Desactivadas</string>
+    <string name="motion_assist_state_auto">Activadas en vehículos en movimiento</string>
+    <string name="motion_assist_keywords">mareo, mareo en coche, vehículo, señales, náuseas</string>
+</resources>

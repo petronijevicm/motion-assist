@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 petronijevicm -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:settings="http://schemas.android.com/apk/res-auto"
+    android:key="motion_assist_screen"
+    android:title="@string/motion_assist_title"
+    settings:keywords="@string/motion_assist_keywords">
+
+    <com.android.settingslib.widget.TopIntroPreference
+        android:key="motion_assist_intro"
+        android:title="@string/motion_assist_intro"
+        settings:searchable="false" />
+
+    <com.android.settingslib.widget.IllustrationPreference
+        android:key="motion_assist_illustration"
+        android:selectable="false"
+        settings:searchable="false"
+        settings:lottie_rawRes="@drawable/motion_assist_tutorial" />
+
+    <com.android.settingslib.widget.MainSwitchPreference
+        android:key="motion_assist_main_switch"
+        android:title="@string/motion_assist_main_switch"
+        settings:controller="com.android.settings.accessibility.motionassist.MotionAssistTogglePreferenceController" />
+
+    <SwitchPreferenceCompat
+        android:key="motion_assist_auto_start"
+        android:title="@string/motion_assist_auto_start_title"
+        android:summary="@string/motion_assist_auto_start_summary"
+        settings:controller="com.android.settings.accessibility.motionassist.MotionAssistTogglePreferenceController" />
+
+    <PreferenceCategory
+        android:key="motion_assist_options"
+        android:title="@string/motion_assist_options">
+
+        <Preference
+            android:key="motion_assist_add_tile"
+            android:title="@string/motion_assist_tile_title"
+            android:summary="@string/motion_assist_tile_summary"
+            settings:controller="com.android.settings.accessibility.motionassist.MotionAssistTilePreferenceController" />
+
+        <Preference
+            android:key="motion_assist_customize"
+            android:title="@string/motion_assist_customize_title"
+            android:summary="@string/motion_assist_customize_summary"
+            android:fragment="com.android.settings.accessibility.motionassist.MotionAssistCustomizeSettings" />
+    </PreferenceCategory>
+
+    <com.android.settingslib.widget.FooterPreference
+        android:key="motion_assist_footer"
+        android:title="@string/motion_assist_disclaimer"
+        settings:searchable="false" />
+</PreferenceScreen>

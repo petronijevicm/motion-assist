@@ -22,17 +22,12 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
-import kotlin.math.sqrt
 import kotlin.math.tan
 
 /**
  * Draws the motion cue field and animates it from a [MotionVector] source once per frame.
- *
- * - Acceleration pushes the field the opposite way (like loose objects in the vehicle) and a
- *   critically damped spring brings it back once the acceleration ends.
- * - Turning scrolls the field sideways, like scenery through a side window.
- * - Bumps briefly grow or shrink the cues.
- * - An optional horizon line stays level with the ground.
+ * How the field moves is decided by [CueMotion]; this view adds drawing, touch dragging and
+ * the optional horizon line that stays level with the ground.
  */
 class CueFieldView @JvmOverloads constructor(
     context: Context,
@@ -94,7 +89,11 @@ class CueFieldView @JvmOverloads constructor(
     // ---- Motion -----------------------------------------------------------------------------
 
     /** How far cues travel, 1 = default. */
-    var movementScale: Float = 1f
+    var movementScale: Float
+        get() = motion.movementScale
+        set(value) {
+            motion.movementScale = value
+        }
 
     /** Sampled once per frame; the frame loop only runs while this is set and the view is shown. */
     var motionSource: (() -> MotionVector)? = null
@@ -130,15 +129,9 @@ class CueFieldView @JvmOverloads constructor(
     }
     private val path = Path()
 
-    // Spring (pixels)
-    private var springX = 0f
-    private var springY = 0f
-    private var velocityX = 0f
-    private var velocityY = 0f
-    private var scrollX = 0f
+    private val motion = CueMotion(density)
     private var dragX = 0f
     private var dragY = 0f
-    private var bump = 1f
 
     // What was last drawn
     private var shownX = 0f
@@ -174,10 +167,8 @@ class CueFieldView @JvmOverloads constructor(
 
     /** Puts the field back at rest in its home position. */
     fun resetMotion() {
-        springX = 0f; springY = 0f
-        velocityX = 0f; velocityY = 0f
-        scrollX = 0f; dragX = 0f; dragY = 0f
-        bump = 1f
+        motion.reset()
+        dragX = 0f; dragY = 0f
         shownX = 0f; shownY = 0f; shownBump = 1f
         horizonPrimed = false
         lastFrameNanos = 0L
@@ -257,33 +248,11 @@ class CueFieldView @JvmOverloads constructor(
     }
 
     private fun step(now: Long) {
-        val motion = motionSource?.invoke() ?: MotionVector.ZERO
+        val sample = motionSource?.invoke() ?: MotionVector.ZERO
         val dt = if (lastFrameNanos == 0L) 1f / 60f else ((now - lastFrameNanos) / 1e9f).coerceIn(0.001f, 0.05f)
         lastFrameNanos = now
 
-        // Target displacement: opposite to the vehicle's acceleration.
-        // Forward acceleration moves cues down (towards the viewer), braking moves them up,
-        // a left turn moves them right.
-        val gain = PX_PER_MPS2_DP * density * movementScale
-        var tx = -motion.lateral * gain
-        var ty = motion.longitudinal * gain
-        val limit = MAX_SHIFT_DP * density * max(movementScale, 0.5f)
-        val length = sqrt(tx * tx + ty * ty)
-        if (length > limit) {
-            tx *= limit / length
-            ty *= limit / length
-        }
-
-        // Critically damped spring, semi-implicit Euler
-        val w = SPRING_RATE
-        velocityX += (w * w * (tx - springX) - 2f * w * velocityX) * dt
-        velocityY += (w * w * (ty - springY) - 2f * w * velocityY) * dt
-        springX += velocityX * dt
-        springY += velocityY * dt
-
-        // Turning: left turn (positive yaw) scrolls scenery to the right
-        scrollX += motion.yawRateRps * SCROLL_DP_PER_RAD * density * movementScale * dt
-        if (lattice.periodX > 0f) scrollX %= lattice.periodX
+        motion.step(sample, dt, lattice.periodX)
 
         if (!dragging) {
             val k = dt / (DRAG_SETTLE_SEC + dt)
@@ -291,26 +260,23 @@ class CueFieldView @JvmOverloads constructor(
             dragY -= dragY * k
         }
 
-        val bumpTarget = 1f + (motion.vertical * BUMP_PER_MPS2 * movementScale).coerceIn(-BUMP_SHRINK, BUMP_GROW)
-        bump += (bumpTarget - bump) * (dt / (BUMP_SMOOTH_SEC + dt))
+        val horizonMoved = showHorizon && stepHorizon(sample, dt)
 
-        val horizonMoved = showHorizon && stepHorizon(motion, dt)
-
-        onFrame?.invoke(motion)
+        onFrame?.invoke(sample)
 
         if (frameRateCap > 0 && lastDrawNanos != 0L &&
             now - lastDrawNanos < 1_000_000_000L / frameRateCap - FRAME_SLACK_NANOS
         ) {
             return
         }
-        val x = springX + scrollX + dragX
-        val y = springY + dragY
+        val x = motion.offsetX + dragX
+        val y = motion.offsetY + dragY
         if (horizonMoved || abs(x - shownX) >= REDRAW_PX || abs(y - shownY) >= REDRAW_PX ||
-            abs(bump - shownBump) >= REDRAW_SCALE
+            abs(motion.scale - shownBump) >= REDRAW_SCALE
         ) {
             shownX = x
             shownY = y
-            shownBump = bump
+            shownBump = motion.scale
             lastDrawNanos = now
             invalidate()
         }
@@ -377,8 +343,8 @@ class CueFieldView @JvmOverloads constructor(
     override fun performClick(): Boolean = super.performClick()
 
     private fun invalidateShift() {
-        shownX = springX + scrollX + dragX
-        shownY = springY + dragY
+        shownX = motion.offsetX + dragX
+        shownY = motion.offsetY + dragY
         invalidate()
     }
 
@@ -477,20 +443,8 @@ class CueFieldView @JvmOverloads constructor(
         private const val MIN_ALPHA = 26
         private const val MIN_VISIBLE_PX = 0.8f
 
-        // Motion
-        /** Displacement per m/s^2 of vehicle acceleration. */
-        const val PX_PER_MPS2_DP = 16f
-        /** Largest displacement from acceleration (hard braking is about 5 m/s^2). */
-        const val MAX_SHIFT_DP = 72f
-        /** Sideways scroll per radian turned. */
-        const val SCROLL_DP_PER_RAD = 260f
-        /** Spring natural frequency in rad/s; settles in about half a second. */
-        const val SPRING_RATE = 9f
+        // Touch
         private const val DRAG_SETTLE_SEC = 0.35f
-        private const val BUMP_PER_MPS2 = 0.07f
-        private const val BUMP_GROW = 0.4f
-        private const val BUMP_SHRINK = 0.3f
-        private const val BUMP_SMOOTH_SEC = 0.06f
 
         // Redraw thresholds
         private const val REDRAW_PX = 0.05f
