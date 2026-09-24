@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">Motion Assist</string>
+    <string name="motion_assist_title">Motion Assist</string>
+    <string name="motion_assist_description">Vehicle motion cues (Motion Assist) can help prevent motion sickness while you use your device in moving vehicles by projecting dynamic visual anchors aligned to physical vehicle inertia.</string>
+    <string name="motion_assist_turn_on">Enable Motion Assist</string>
+    <string name="motion_assist_turn_on_summary">Show dynamic visual cues synced to vehicle movement</string>
+
+    <string name="motion_assist_auto_vehicle">Vehicle Auto-Detection</string>
+    <string name="motion_assist_auto_vehicle_summary">Automatically show motion cues only when vehicle acceleration is detected</string>
+
+    <string name="motion_assist_options_category">Customization &amp; Style</string>
+    <string name="motion_assist_customize_title">Customize Cues</string>
+    <string name="motion_assist_customize_summary">Change shape, color palette, opacity, and responsiveness</string>
+
+    <string name="motion_assist_qs_tile_title">Quick Settings Tile</string>
+    <string name="motion_assist_qs_tile_summary">Toggle motion assist from anywhere with one tap</string>
+    <string name="motion_assist_qs_tile_action">Add tile to Quick Settings</string>
+
+    <string name="motion_assist_shortcut_dialog_title">Quick Settings tile ready</string>
+    <string name="motion_assist_shortcut_dialog_info_part1">Swipe down twice from top of your screen to open Quick Settings, tap the pencil (edit) icon, and drag "Motion assist" into your active tiles.</string>
+    <string name="motion_assist_shortcut_dialog_info">Tap the tile to turn cues on or off. Long press to open Motion Assist settings.</string>
+    <string name="motion_assist_shortcut_dialog_pos_button_text">Got it</string>
+
+    <string name="motion_assist_color_title">Color Palette</string>
+    <string name="motion_assist_color_system">Material You (Dynamic System Accent)</string>
+    <string name="motion_assist_color_pink">Salmon Pink</string>
+    <string name="motion_assist_color_yellow">Amber Yellow</string>
+    <string name="motion_assist_color_green">Mint Green</string>
+    <string name="motion_assist_color_blue">Soft Blue</string>
+    <string name="motion_assist_color_adaptive">Adaptive (High Contrast Auto-Invert)</string>
+
+    <string name="motion_assist_shape_title">Cue Shape</string>
+    <string name="motion_assist_shape_circle">Circle</string>
+    <string name="motion_assist_shape_squircle">Squircle</string>
+    <string name="motion_assist_shape_pentagon">Pentagon</string>
+    <string name="motion_assist_shape_diamond">Diamond</string>
+
+    <string name="motion_assist_opacity_title">Cue Opacity</string>
+    <string name="motion_assist_randomization_title">Shape &amp; Color Randomization</string>
+    <string name="motion_assist_randomization_summary">Automatically change shape and color periodically</string>
+
+    <string name="motion_assist_smooth_animation_title">Smooth 120Hz Animation</string>
+    <string name="motion_assist_smooth_animation_summary">Run physics rendering at full display refresh rate with battery saver throttle</string>
+
+    <string name="motion_assist_overlay_permission_title">Overlay Permission Needed</string>
+    <string name="motion_assist_overlay_permission_desc">To display visual motion cues over apps, Motion Assist requires "Display over other apps" permission.</string>
+    <string name="motion_assist_grant_permission">Grant Permission</string>
+    <string name="motion_assist_preview_card_title">Live Interactive Preview</string>
+    <string name="motion_assist_preview_card_desc">Tilt your phone or drag this card to preview real-time vehicle cue movement</string>
+
+    <string name="quick_settings_motion_assist_label">Motion assist</string>
+    <string name="quick_settings_motion_assist_secondary_label_on">Active</string>
+    <string name="quick_settings_motion_assist_secondary_label_off">Off</string>
+    <string name="quick_settings_motion_assist_secondary_label_auto">Auto (Vehicle)</string>
+
+    <string name="notification_channel_name">Motion Assist Service</string>
+    <string name="notification_title">Motion Assist is active</string>
+    <string name="notification_text">Displaying vehicle motion cues in real time</string>
+</resources>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (C) 2026 The Android Open Source Project
+    Licensed under the Apache License, Version 2.0
+-->
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:settings="http://schemas.android.com/apk/res-auto"
+    android:key="motion_assist_customize_screen"
+    android:title="@string/motion_assist_customize_page_title">
+
+    <PreferenceCategory
+        android:key="motion_assist_style_category"
+        android:title="@string/motion_assist_customize_subtitle">
+
+        <Preference
+            android:key="motion_assist_color"
+            android:title="@string/motion_assist_color_title"
+            android:summary="@string/motion_assist_color_system"
+            settings:controller="com.android.settings.accessibility.motionassist.MotionAssistColorPreferenceController" />
+
+        <Preference
+            android:key="motion_assist_shape"
+            android:title="@string/motion_assist_shape_title"
+            android:summary="@string/motion_assist_shape_circle"
+            settings:controller="com.android.settings.accessibility.motionassist.MotionAssistShapePreferenceController" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="motion_assist_behavior_category">
+
+        <com.android.settings.widget.SeekBarPreference
+            android:key="motion_assist_opacity"
+            android:title="@string/motion_assist_opacity_title"
+            android:max="100"
+            settings:min="10"
+            settings:controller="com.android.settings.accessibility.motionassist.MotionAssistOpacityPreferenceController" />
+
+        <SwitchPreferenceCompat
+            android:key="motion_assist_randomize"
+            android:title="@string/motion_assist_randomization_title"
+            android:summary="@string/motion_assist_randomization_summary"
+            settings:controller="com.android.settings.accessibility.motionassist.MotionAssistRandomizePreferenceController" />
+
+    </PreferenceCategory>
+
+    <com.android.settingslib.widget.FooterPreference
+        android:key="motion_assist_customize_footer"
+        android:title="@string/motion_assist_preview_disclaimer"
+        settings:searchable="false" />
+
+</PreferenceScreen>

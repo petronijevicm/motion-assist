@@ -1,0 +1,1341 @@
+diff --git a/packages/SystemUI/res/drawable/ic_qs_motion_assist.xml b/packages/SystemUI/res/drawable/ic_qs_motion_assist.xml
+new file mode 100644
+index 000000000000..f9a6447eb4e2
+--- /dev/null
++++ b/packages/SystemUI/res/drawable/ic_qs_motion_assist.xml
+@@ -0,0 +1,9 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="960"
++    android:viewportHeight="960">
++    <path
++        android:fillColor="#FFFFFFFF"
++        android:pathData="M300,280q-33,0-56.5-23.5T220,200t23.5-56.5T300,120t56.5,23.5T380,200t-23.5,56.5T300,280ZM740,920L624,720H346q-29,0-50.5-17.5T268,656L225,441q-9-48 21.5-84.5T325,320q24,0 46.5,9.5T409,358l92,113l90-60l-11-5q-8-4-10.5-11t1.5-15l50-109q4-8 11.5-11t15.5,1l54,25q8,4 11,11.5T712,313l-37,79l28,41L501,567l-37-25l14,58H602q21,0 39,11t29,29L810,880l-70,40ZM520,840H262q-33,0-60.5-23.5T167,760L80,320h82l88,440H520v80Z" />
++</vector>
+diff --git a/packages/SystemUI/res/drawable/ic_qs_motion_assist_off.xml b/packages/SystemUI/res/drawable/ic_qs_motion_assist_off.xml
+new file mode 100644
+index 000000000000..f9a6447eb4e2
+--- /dev/null
++++ b/packages/SystemUI/res/drawable/ic_qs_motion_assist_off.xml
+@@ -0,0 +1,9 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="960"
++    android:viewportHeight="960">
++    <path
++        android:fillColor="#FFFFFFFF"
++        android:pathData="M300,280q-33,0-56.5-23.5T220,200t23.5-56.5T300,120t56.5,23.5T380,200t-23.5,56.5T300,280ZM740,920L624,720H346q-29,0-50.5-17.5T268,656L225,441q-9-48 21.5-84.5T325,320q24,0 46.5,9.5T409,358l92,113l90-60l-11-5q-8-4-10.5-11t1.5-15l50-109q4-8 11.5-11t15.5,1l54,25q8,4 11,11.5T712,313l-37,79l28,41L501,567l-37-25l14,58H602q21,0 39,11t29,29L810,880l-70,40ZM520,840H262q-33,0-60.5-23.5T167,760L80,320h82l88,440H520v80Z" />
++</vector>
+diff --git a/packages/SystemUI/res/drawable/ic_qs_motion_assist_on.xml b/packages/SystemUI/res/drawable/ic_qs_motion_assist_on.xml
+new file mode 100644
+index 000000000000..f9a6447eb4e2
+--- /dev/null
++++ b/packages/SystemUI/res/drawable/ic_qs_motion_assist_on.xml
+@@ -0,0 +1,9 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="960"
++    android:viewportHeight="960">
++    <path
++        android:fillColor="#FFFFFFFF"
++        android:pathData="M300,280q-33,0-56.5-23.5T220,200t23.5-56.5T300,120t56.5,23.5T380,200t-23.5,56.5T300,280ZM740,920L624,720H346q-29,0-50.5-17.5T268,656L225,441q-9-48 21.5-84.5T325,320q24,0 46.5,9.5T409,358l92,113l90-60l-11-5q-8-4-10.5-11t1.5-15l50-109q4-8 11.5-11t15.5,1l54,25q8,4 11,11.5T712,313l-37,79l28,41L501,567l-37-25l14,58H602q21,0 39,11t29,29L810,880l-70,40ZM520,840H262q-33,0-60.5-23.5T167,760L80,320h82l88,440H520v80Z" />
++</vector>
+diff --git a/packages/SystemUI/res/drawable/motion_assist_shape_circle.xml b/packages/SystemUI/res/drawable/motion_assist_shape_circle.xml
+new file mode 100644
+index 000000000000..12f0deb98dcd
+--- /dev/null
++++ b/packages/SystemUI/res/drawable/motion_assist_shape_circle.xml
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!--
++  Copyright (C) 2026 The Android Open Source Project
++  Licensed under the Apache License, Version 2.0
++-->
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24">
++    <path
++        android:fillColor="#ffffff"
++        android:pathData="M12,2A10,10 0 1,1 12,22A10,10 0 1,1 12,2Z"/>
++</vector>
+diff --git a/packages/SystemUI/res/drawable/motion_assist_shape_diamond.xml b/packages/SystemUI/res/drawable/motion_assist_shape_diamond.xml
+new file mode 100644
+index 000000000000..644bb369e8bb
+--- /dev/null
++++ b/packages/SystemUI/res/drawable/motion_assist_shape_diamond.xml
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!--
++  Copyright (C) 2026 The Android Open Source Project
++  Licensed under the Apache License, Version 2.0
++-->
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24">
++    <path
++        android:fillColor="#ffffff"
++        android:pathData="M12,2 L22,12 L12,22 L2,12 Z"/>
++</vector>
+diff --git a/packages/SystemUI/res/drawable/motion_assist_shape_pentagon.xml b/packages/SystemUI/res/drawable/motion_assist_shape_pentagon.xml
+new file mode 100644
+index 000000000000..65669ddca17a
+--- /dev/null
++++ b/packages/SystemUI/res/drawable/motion_assist_shape_pentagon.xml
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!--
++  Copyright (C) 2026 The Android Open Source Project
++  Licensed under the Apache License, Version 2.0
++-->
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24">
++    <path
++        android:fillColor="#ffffff"
++        android:pathData="M12,2 L21.5,8.9 L17.9,20 L6.1,20 L2.5,8.9 Z"/>
++</vector>
+diff --git a/packages/SystemUI/res/drawable/motion_assist_shape_squircle.xml b/packages/SystemUI/res/drawable/motion_assist_shape_squircle.xml
+new file mode 100644
+index 000000000000..7f3a7c4748ff
+--- /dev/null
++++ b/packages/SystemUI/res/drawable/motion_assist_shape_squircle.xml
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!--
++  Copyright (C) 2026 The Android Open Source Project
++  Licensed under the Apache License, Version 2.0
++-->
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24">
++    <path
++        android:fillColor="#ffffff"
++        android:pathData="M 8,3 L 16,3 C 19,3 21,5 21,8 L 21,16 C 21,19 19,21 16,21 L 8,21 C 5,21 3,19 3,16 L 3,8 C 3,5 5,3 8,3 Z"/>
++</vector>
+diff --git a/packages/SystemUI/res/values-es/strings.xml b/packages/SystemUI/res/values-es/strings.xml
+index 874d842d7549..65aec1e11979 100644
+--- a/packages/SystemUI/res/values-es/strings.xml
++++ b/packages/SystemUI/res/values-es/strings.xml
+@@ -1893,4 +1893,11 @@
+     <string name="ace_attribution_settings_button_accessibility_description" msgid="8426163772933746374">"Botón Ajustes"</string>
+     <string name="ace_attribution_thumbs_up_button_accessibility_description" msgid="3561722934830934360">"Botón Me gusta"</string>
+     <string name="ace_attribution_thumbs_down_button_accessibility_description" msgid="5471283747650437662">"Botón No me gusta"</string>
++    <!-- Motion Assist (Vehicle Motion Cues) Quick Settings Tile -->
++    <string name="quick_settings_motion_assist_label">Asistencia de movimiento</string>
++    <string name="quick_settings_motion_assist_secondary_label_on">Activada</string>
++    <string name="quick_settings_motion_assist_secondary_label_off">Desactivada</string>
++    <string name="quick_settings_motion_assist_secondary_label_auto">Automática (Vehículo)</string>
++    <string name="accessibility_quick_settings_motion_assist_on">Asistencia de movimiento activada.</string>
++    <string name="accessibility_quick_settings_motion_assist_off">Asistencia de movimiento desactivada.</string>
+ </resources>
+diff --git a/packages/SystemUI/res/values/config.xml b/packages/SystemUI/res/values/config.xml
+index 140bb805af52..fda55439f852 100644
+--- a/packages/SystemUI/res/values/config.xml
++++ b/packages/SystemUI/res/values/config.xml
+@@ -80,12 +80,12 @@
+ 
+     <!-- The default tiles to display in QuickSettings-->
+     <string name="quick_settings_tiles_default" translatable="false">
+-        internet,bt,dnd,cast,flashlight,airplane,rotation,wallet,alarm,controls,screenrecord,battery
++        internet,bt,dnd,cast,flashlight,airplane,rotation,wallet,motion_assist,alarm,controls,screenrecord,battery
+     </string>
+ 
+     <!-- The default tiles to display in QuickSettings after the internet tile split-->
+     <string name="quick_settings_tiles_default_split" translatable="false">
+-        wifi,bt,cell,cast,dnd,wallet,airplane,rotation,flashlight,battery,alarm,controls,screenrecord
++        wifi,bt,cell,cast,dnd,wallet,airplane,rotation,motion_assist,flashlight,battery,alarm,controls,screenrecord
+     </string>
+ 
+     <!-- The default large tiles in Quick Settings after the internet tile split -->
+@@ -107,7 +107,7 @@
+ 
+     <!-- Tiles native to System UI. Order should match "quick_settings_tiles_default" -->
+     <string name="quick_settings_tiles_stock" translatable="false">
+-        internet,wifi,bt,flashlight,dnd,modes_dnd,alarm,airplane,nfc,controls,wallet,rotation,battery,cast,screenrecord,mictoggle,cameratoggle,location,hotspot,inversion,saver,dark,work,night,reverse,reduce_brightness,qr_code_scanner,onehanded,color_correction,font_scaling,record_issue,hearing_devices,notes,desktopeffects,cell,ambient_display,aod,caffeine,heads_up,powershare,profiles,reading_mode,sync,usb_tether,vpn
++        internet,wifi,bt,flashlight,dnd,modes_dnd,alarm,airplane,nfc,controls,wallet,rotation,battery,cast,screenrecord,mictoggle,cameratoggle,location,hotspot,inversion,saver,dark,work,night,reverse,reduce_brightness,qr_code_scanner,onehanded,color_correction,font_scaling,record_issue,hearing_devices,notes,desktopeffects,cell,ambient_display,aod,caffeine,heads_up,powershare,profiles,reading_mode,sync,usb_tether,vpn,motion_assist
+     </string>
+ 
+     <!-- The tiles to display in QuickSettings -->
+@@ -127,6 +127,7 @@
+     <string-array name="config_quickSettingsAutoAdd" translatable="false">
+         <item>accessibility_font_scaling_has_been_changed:font_scaling</item>
+         <item>accessibility_force_invert_color_enabled:dark</item>
++        <item>motion_assist_add_qs_tile:motion_assist</item>
+     </string-array>
+ 
+     <!-- Use collapsed layout for media player in landscape QQS -->
+diff --git a/packages/SystemUI/res/values/strings.xml b/packages/SystemUI/res/values/strings.xml
+index d025a3ff3a9d..7756f659cb81 100644
+--- a/packages/SystemUI/res/values/strings.xml
++++ b/packages/SystemUI/res/values/strings.xml
+@@ -5062,4 +5062,11 @@
+     <!-- Accessibility label for the thumbs down button on attribution dialog. [CHAR_LIMIT=NONE] -->
+     <string name="ace_attribution_thumbs_down_button_accessibility_description">Thumbs down feedback button</string>
+ 
++    <!-- Motion Assist (Vehicle Motion Cues) Quick Settings Tile -->
++    <string name="quick_settings_motion_assist_label">Motion assist</string>
++    <string name="quick_settings_motion_assist_secondary_label_on">On</string>
++    <string name="quick_settings_motion_assist_secondary_label_off">Off</string>
++    <string name="quick_settings_motion_assist_secondary_label_auto">Auto (Vehicle)</string>
++    <string name="accessibility_quick_settings_motion_assist_on">Motion assist on.</string>
++    <string name="accessibility_quick_settings_motion_assist_off">Motion assist off.</string>
+ </resources>
+diff --git a/packages/SystemUI/src/com/android/systemui/lineage/LineageModule.kt b/packages/SystemUI/src/com/android/systemui/lineage/LineageModule.kt
+index 5a0cb1013d88..479a61026c7d 100644
+--- a/packages/SystemUI/src/com/android/systemui/lineage/LineageModule.kt
++++ b/packages/SystemUI/src/com/android/systemui/lineage/LineageModule.kt
+@@ -24,6 +24,7 @@ import com.android.systemui.qs.tiles.AmbientDisplayTile
+ import com.android.systemui.qs.tiles.AODTile
+ import com.android.systemui.qs.tiles.CaffeineTile
+ import com.android.systemui.qs.tiles.HeadsUpTile
++import com.android.systemui.qs.tiles.MotionAssistTile
+ import com.android.systemui.qs.tiles.PowerShareTile
+ import com.android.systemui.qs.tiles.ProfilesTile
+ import com.android.systemui.qs.tiles.ReadingModeTile
+@@ -102,6 +103,12 @@ interface LineageModule {
+     @StringKey(VpnTile.TILE_SPEC)
+     fun bindVpnTile(vpnTile: VpnTile): QSTileImpl<*>
+ 
++    /** Inject MotionAssistTile into tileMap in QSModule */
++    @Binds
++    @IntoMap
++    @StringKey(MotionAssistTile.TILE_SPEC)
++    fun bindMotionAssistTile(motionAssistTile: MotionAssistTile): QSTileImpl<*>
++
+     companion object {
+         const val AMBIENT_DISPLAY_TILE_SPEC = "ambient_display"
+         const val AOD_TILE_SPEC = "aod"
+@@ -113,6 +120,7 @@ interface LineageModule {
+         const val SYNC_TILE_SPEC = "sync"
+         const val USB_TETHER_TILE_SPEC = "usb_tether"
+         const val VPN_TILE_SPEC = "vpn"
++        const val MOTION_ASSIST_TILE_SPEC = "motion_assist"
+ 
+         @Provides
+         @IntoMap
+@@ -263,5 +271,20 @@ interface LineageModule {
+                 instanceId = uiEventLogger.getNewInstanceId(),
+                 category = TileCategory.CONNECTIVITY,
+             )
++
++        @Provides
++        @IntoMap
++        @StringKey(MOTION_ASSIST_TILE_SPEC)
++        fun provideMotionAssistTileConfig(uiEventLogger: QsEventLogger): QSTileConfig =
++            QSTileConfig(
++                tileSpec = TileSpec.create(MOTION_ASSIST_TILE_SPEC),
++                uiConfig =
++                    QSTileUIConfig.Resource(
++                        iconRes = R.drawable.ic_qs_motion_assist,
++                        labelRes = R.string.quick_settings_motion_assist_label
++                    ),
++                instanceId = uiEventLogger.getNewInstanceId(),
++                category = TileCategory.ACCESSIBILITY,
++            )
+     }
+ }
+diff --git a/packages/SystemUI/src/com/android/systemui/motionassist/MotionAssistController.java b/packages/SystemUI/src/com/android/systemui/motionassist/MotionAssistController.java
+new file mode 100644
+index 000000000000..0fab8ef7d199
+--- /dev/null
++++ b/packages/SystemUI/src/com/android/systemui/motionassist/MotionAssistController.java
+@@ -0,0 +1,340 @@
++/*
++ * Copyright (C) 2026 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package com.android.systemui.motionassist;
++
++import android.app.WallpaperColors;
++import android.app.WallpaperManager;
++import android.app.motioncues.MotionCuesSettings;
++import android.app.motioncues.MotionCuesVisualStyle;
++import android.content.BroadcastReceiver;
++import android.content.ContentResolver;
++import android.content.Context;
++import android.content.Intent;
++import android.content.IntentFilter;
++import android.content.res.Configuration;
++import android.database.ContentObserver;
++import android.graphics.Color;
++import android.graphics.Rect;
++import android.net.Uri;
++import android.os.Handler;
++import android.os.PowerManager;
++import android.os.UserHandle;
++import android.provider.Settings;
++import android.util.Log;
++
++import com.android.systemui.CoreStartable;
++import com.android.systemui.dagger.SysUISingleton;
++import com.android.systemui.dagger.qualifiers.Main;
++import com.android.systemui.motioncues.MotionCuesUi;
++import com.android.systemui.plugins.DarkIconDispatcher;
++import com.android.systemui.res.R;
++
++import java.util.ArrayList;
++
++import javax.inject.Inject;
++
++/**
++ * SystemUI Controller for Motion Assist.
++ * Connects the physical 6-DOF motion estimator directly into Google's official
++ * MotionCuesUi rendering and animation engine.
++ */
++@SysUISingleton
++public class MotionAssistController implements CoreStartable, DarkIconDispatcher.DarkReceiver {
++
++    private static final String TAG = "MotionAssistController";
++    private static final long RANDOMIZE_INTERVAL_MS = 3500L;
++
++    private static final int[] PALETTE = {
++            0,                           // 0: System dynamic Material Expressive (resolved at runtime)
++            Color.rgb(0xFF, 0xAB, 0x91), // 1: Salmon pink
++            Color.rgb(0xFF, 0xC1, 0x07), // 2: Amber yellow
++            Color.rgb(0x81, 0xC7, 0x84), // 3: Mint green
++            Color.rgb(0x90, 0xCA, 0xF9)  // 4: Soft blue
++    };
++
++    private final Context mContext;
++    private final Handler mMainHandler;
++    private final MotionCuesUi mMotionCuesUi;
++    private final DarkIconDispatcher mDarkIconDispatcher;
++    private final MotionEstimator mMotionEstimator;
++
++    private boolean mIsActive = false;
++    private boolean mIsRandomizing = false;
++    private int mAdaptiveColor = Color.WHITE;
++    private final ContentObserver mSettingsObserver;
++
++    private final Runnable mRandomizeRunnable = new Runnable() {
++        @Override
++        public void run() {
++            if (mIsActive && mIsRandomizing) {
++                applyRandomStyle();
++                mMainHandler.postDelayed(this, RANDOMIZE_INTERVAL_MS);
++            }
++        }
++    };
++
++    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
++        @Override
++        public void onReceive(Context context, Intent intent) {
++            final String action = intent != null ? intent.getAction() : null;
++            if (Intent.ACTION_SCREEN_OFF.equals(action)) {
++                mMainHandler.removeCallbacks(mRandomizeRunnable);
++                if (mIsActive) {
++                    mMotionCuesUi.stop();
++                    mIsActive = false;
++                }
++                mMotionEstimator.stop();
++            } else if (Intent.ACTION_SCREEN_ON.equals(action)
++                    || Intent.ACTION_USER_PRESENT.equals(action)
++                    || PowerManager.ACTION_POWER_SAVE_MODE_CHANGED.equals(action)
++                    || Intent.ACTION_WALLPAPER_CHANGED.equals(action)
++                    || Intent.ACTION_CONFIGURATION_CHANGED.equals(action)) {
++                updateState();
++            }
++        }
++    };
++
++    @Inject
++    public MotionAssistController(
++            Context context,
++            @Main Handler mainHandler,
++            MotionCuesUi motionCuesUi,
++            DarkIconDispatcher darkIconDispatcher) {
++        mContext = context;
++        mMainHandler = mainHandler;
++        mMotionCuesUi = motionCuesUi;
++        mDarkIconDispatcher = darkIconDispatcher;
++        mMotionEstimator = new MotionEstimator(context);
++
++        mMotionEstimator.setCallback(new MotionEstimator.Callback() {
++            @Override
++            public void onMotionUpdated(MotionVector motion) {
++                if (mIsActive && mMotionCuesUi.isStarted()) {
++                    // Scale physical acceleration vectors to pixel displacement for MotionCuesUi
++                    float dx = motion.x * 20.0f;
++                    float dy = motion.y * 20.0f;
++                    mMainHandler.post(() -> mMotionCuesUi.updateBubblePos(dx, dy));
++                }
++            }
++
++            @Override
++            public void onVehicleStateChanged(boolean isMoving) {
++                mMainHandler.post(MotionAssistController.this::updateStateInternal);
++            }
++        });
++
++        mSettingsObserver = new ContentObserver(mMainHandler) {
++            @Override
++            public void onChange(boolean selfChange, Uri uri) {
++                updateState();
++            }
++        };
++    }
++
++    @Override
++    public void start() {
++        IntentFilter filter = new IntentFilter();
++        filter.addAction(Intent.ACTION_SCREEN_OFF);
++        filter.addAction(Intent.ACTION_SCREEN_ON);
++        filter.addAction(Intent.ACTION_USER_PRESENT);
++        filter.addAction(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED);
++        filter.addAction(Intent.ACTION_WALLPAPER_CHANGED);
++        filter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
++        mContext.registerReceiver(mReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
++
++        try {
++            WallpaperManager wm = mContext.getSystemService(WallpaperManager.class);
++            if (wm != null) {
++                wm.addOnColorsChangedListener((colors, which) -> {
++                    if ((which & WallpaperManager.FLAG_SYSTEM) != 0) {
++                        updateState();
++                    }
++                }, mMainHandler);
++            }
++        } catch (Throwable t) {
++            Log.w(TAG, "Failed to register OnColorsChangedListener", t);
++        }
++
++        ContentResolver cr = mContext.getContentResolver();
++        cr.registerContentObserver(Settings.Secure.getUriFor("motion_assist_enabled"), false, mSettingsObserver, UserHandle.USER_ALL);
++        cr.registerContentObserver(Settings.Secure.getUriFor("motion_assist_vehicle_auto"), false, mSettingsObserver, UserHandle.USER_ALL);
++        cr.registerContentObserver(Settings.Secure.getUriFor("motion_assist_color"), false, mSettingsObserver, UserHandle.USER_ALL);
++        cr.registerContentObserver(Settings.Secure.getUriFor("motion_assist_shape"), false, mSettingsObserver, UserHandle.USER_ALL);
++        cr.registerContentObserver(Settings.Secure.getUriFor("motion_assist_opacity"), false, mSettingsObserver, UserHandle.USER_ALL);
++        cr.registerContentObserver(Settings.Secure.getUriFor("motion_assist_randomize"), false, mSettingsObserver, UserHandle.USER_ALL);
++        cr.registerContentObserver(Settings.Secure.getUriFor("motion_assist_smooth_animation"), false, mSettingsObserver, UserHandle.USER_ALL);
++        cr.registerContentObserver(Settings.Secure.getUriFor("motion_assist_mode"), false, mSettingsObserver, UserHandle.USER_ALL);
++        cr.registerContentObserver(Settings.Secure.getUriFor("theme_customization_overlay_packages"), false, mSettingsObserver, UserHandle.USER_ALL);
++
++        mDarkIconDispatcher.addDarkReceiver(this);
++
++        updateState();
++    }
++
++    private void updateState() {
++        mMainHandler.post(this::updateStateInternal);
++    }
++
++    private synchronized void updateStateInternal() {
++        ContentResolver cr = mContext.getContentResolver();
++        boolean enabled = Settings.Secure.getIntForUser(cr, "motion_assist_enabled", 0, UserHandle.USER_CURRENT) == 1;
++
++        boolean shouldMonitor = enabled;
++        boolean shouldShowCues = enabled;
++
++        int colorIdx = Settings.Secure.getIntForUser(cr, "motion_assist_color", 0, UserHandle.USER_CURRENT);
++        int shapeIdx = Settings.Secure.getIntForUser(cr, "motion_assist_shape", 0, UserHandle.USER_CURRENT);
++        int opacity = Settings.Secure.getIntForUser(cr, "motion_assist_opacity", 60, UserHandle.USER_CURRENT);
++        boolean randomize = Settings.Secure.getIntForUser(cr, "motion_assist_randomize", 0, UserHandle.USER_CURRENT) == 1;
++        boolean smoothSetting = Settings.Secure.getIntForUser(cr, "motion_assist_smooth_animation", 1, UserHandle.USER_CURRENT) == 1;
++
++        PowerManager pm = mContext.getSystemService(PowerManager.class);
++        boolean isPowerSave = pm != null && pm.isPowerSaveMode();
++        boolean smoothActive = smoothSetting && !isPowerSave;
++
++        if (shouldMonitor) {
++            mMotionEstimator.start();
++        } else {
++            mMotionEstimator.stop();
++        }
++
++        if (shouldShowCues) {
++            mMotionCuesUi.setSmoothAnimation(smoothActive);
++            mMotionCuesUi.setRandomized(randomize);
++
++            if (!mIsActive) {
++                MotionCuesSettings settings = new MotionCuesSettings.Builder()
++                        .setHorizontalSpacingDp(60)
++                        .setVerticalSpacingDp(140)
++                        .setMarginSizeDp(20)
++                        .setRadiusDp(15)
++                        .build();
++                mMotionCuesUi.start(settings, UserHandle.myUserId(), "com.android.systemui");
++                mIsActive = true;
++            }
++
++            mIsRandomizing = randomize;
++            if (randomize) {
++                mMainHandler.removeCallbacks(mRandomizeRunnable);
++                mMainHandler.post(mRandomizeRunnable);
++            } else {
++                mMainHandler.removeCallbacks(mRandomizeRunnable);
++                applyStyle(colorIdx, shapeIdx, opacity);
++            }
++        } else {
++            mIsRandomizing = false;
++            mMainHandler.removeCallbacks(mRandomizeRunnable);
++            if (mIsActive) {
++                mMotionCuesUi.stop();
++                mIsActive = false;
++            }
++        }
++    }
++
++    private void applyStyle(int colorIdx, int shapeIdx, int opacity) {
++        boolean adaptive = (colorIdx == 5);
++        mMotionCuesUi.setAdaptiveMode(adaptive);
++
++        int baseColor;
++        if (adaptive) {
++            // Adaptive mode: Dynamically adapts to the wallpaper colors and system theme
++            baseColor = getAdaptiveColor();
++        } else if (colorIdx == 0) {
++            // System default: Material You primary accent extracted from wallpaper
++            baseColor = getSystemAccentColor();
++        } else if (colorIdx > 0 && colorIdx < PALETTE.length) {
++            baseColor = PALETTE[colorIdx];
++        } else {
++            baseColor = getSystemAccentColor();
++        }
++        int alpha = Math.max(25, Math.min(255, (int) (opacity * 2.55f)));
++        int colorWithAlpha = (alpha << 24) | (baseColor & 0x00FFFFFF);
++
++        int shapeRes = getShapeDrawableRes(shapeIdx);
++        mMotionCuesUi.updateMotionCuesVisualStyle(new MotionCuesVisualStyle(colorWithAlpha, shapeRes));
++    }
++
++    @Override
++    public void onDarkChanged(ArrayList<Rect> areas, float darkIntensity, int tint) {
++        // darkIntensity > 0.5f means icons in status bar are dark (Color.BLACK)
++        // darkIntensity <= 0.5f means icons in status bar are light (Color.WHITE)
++        int newAdaptiveColor = (darkIntensity > 0.5f) ? Color.BLACK : Color.WHITE;
++        if (mAdaptiveColor != newAdaptiveColor) {
++            mAdaptiveColor = newAdaptiveColor;
++        }
++        if (mIsActive) {
++            mMotionCuesUi.setLuminanceRange(darkIntensity, darkIntensity);
++            if (isAdaptiveMode()) {
++                mMainHandler.post(this::reapplyCurrentStyle);
++            }
++        }
++    }
++
++    private boolean isAdaptiveMode() {
++        ContentResolver cr = mContext.getContentResolver();
++        return Settings.Secure.getIntForUser(cr, "motion_assist_color", 0, UserHandle.USER_CURRENT) == 5;
++    }
++
++    private void reapplyCurrentStyle() {
++        if (!mIsActive || mIsRandomizing) return;
++        ContentResolver cr = mContext.getContentResolver();
++        int colorIdx = Settings.Secure.getIntForUser(cr, "motion_assist_color", 0, UserHandle.USER_CURRENT);
++        int shapeIdx = Settings.Secure.getIntForUser(cr, "motion_assist_shape", 0, UserHandle.USER_CURRENT);
++        int opacity = Settings.Secure.getIntForUser(cr, "motion_assist_opacity", 60, UserHandle.USER_CURRENT);
++        applyStyle(colorIdx, shapeIdx, opacity);
++    }
++
++    private int getAdaptiveColor() {
++        return mAdaptiveColor;
++    }
++
++    private void applyRandomStyle() {
++        if (!mIsActive) return;
++        ContentResolver cr = mContext.getContentResolver();
++        int opacity = Settings.Secure.getIntForUser(cr, "motion_assist_opacity", 60, UserHandle.USER_CURRENT);
++        int randomShapeIdx = (int) (Math.random() * 4); // 0..3
++        int randomColorIdx = (int) (Math.random() * PALETTE.length); // 0..4
++        applyStyle(randomColorIdx, randomShapeIdx, opacity);
++    }
++
++    private int getShapeDrawableRes(int shapeIdx) {
++        switch (shapeIdx) {
++            case 1:
++                return R.drawable.motion_assist_shape_squircle;
++            case 2:
++                return R.drawable.motion_assist_shape_pentagon;
++            case 3:
++                return R.drawable.motion_assist_shape_diamond;
++            case 0:
++            default:
++                return R.drawable.motion_assist_shape_circle;
++        }
++    }
++
++    private int getSystemAccentColor() {
++        try {
++            int c = mContext.getColor(android.R.color.system_accent1_500);
++            if (c != 0) return c;
++        } catch (Throwable t) {
++            try {
++                int c = mContext.getColor(android.R.color.system_accent1_600);
++                if (c != 0) return c;
++            } catch (Throwable t2) {
++                try {
++                    return com.android.settingslib.Utils.getColorAccentDefaultColor(mContext);
++                } catch (Throwable t3) {
++                    return Color.rgb(0x1A, 0x73, 0xE8);
++                }
++            }
++        }
++        return Color.rgb(0x1A, 0x73, 0xE8);
++    }
++}
+diff --git a/packages/SystemUI/src/com/android/systemui/motionassist/MotionEstimator.java b/packages/SystemUI/src/com/android/systemui/motionassist/MotionEstimator.java
+new file mode 100644
+index 000000000000..19a1b796cbae
+--- /dev/null
++++ b/packages/SystemUI/src/com/android/systemui/motionassist/MotionEstimator.java
+@@ -0,0 +1,275 @@
++/*
++ * Copyright (C) 2026 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package com.android.systemui.motionassist;
++
++import android.content.Context;
++import android.hardware.Sensor;
++import android.hardware.SensorEvent;
++import android.hardware.SensorEventListener;
++import android.hardware.SensorManager;
++
++/**
++ * Fuses linear-acceleration, rotation-vector, and gyroscope data into world-space
++ * motion vectors so the dot field moves like a fixed world coordinate frame you move through.
++ */
++public class MotionEstimator {
++
++    public interface Callback {
++        void onMotionUpdated(MotionVector motion);
++        default void onVehicleStateChanged(boolean isMoving) {}
++    }
++
++    private static final float ACCEL_TIME_CONSTANT_SEC = 0.08f;
++    private static final float GYRO_TIME_CONSTANT_SEC = 0.03f;
++    private static final float FLAT_ROLL_GUARD_SQ = 0.04f;
++    private static final float FLAT_PITCH_GUARD_SQ = 0.04f;
++    private static final float STILL_ACCEL_MAG_SQ = 0.09f;
++    private static final float STILL_GYRO_MAG_SQ = 0.0025f;
++    private static final float STILL_SETTLE_SEC = 0.8f;
++    private static final float BIAS_TRACK_SEC = 1.5f;
++    private static final float GYRO_DEADBAND_RPS = 0.01f;
++
++    private static final float VEHICLE_MOTION_THRESHOLD_SQ = 0.08f;
++    private static final float VEHICLE_START_TIME_SEC = 2.0f;
++    private static final float VEHICLE_STOP_TIME_SEC = 6.0f;
++
++    private float mVehicleMovingAccumSec = 0f;
++    private float mVehicleStillAccumSec = 0f;
++    private boolean mIsVehicleMoving = false;
++
++    private final SensorManager mSensorManager;
++    private final Sensor mLinearAccel;
++    private final Sensor mRotationVector;
++    private final Sensor mGyroscope;
++    private Callback mCallback;
++
++    private final float[] mRotationMatrix = new float[9];
++    private boolean mHasRotation = false;
++
++    private float mFilteredX = 0f;
++    private float mFilteredY = 0f;
++    private float mFilteredZ = 0f;
++    private float mLastRollRadians = 0f;
++    private float mFilteredYawRate = 0f;
++    private float mFilteredPitchRate = 0f;
++    private long mLastAccelTsNs = 0L;
++    private long mLastGyroTsNs = 0L;
++
++    private float mGxBias = 0f;
++    private float mGyBias = 0f;
++    private float mGzBias = 0f;
++    private float mStillAccumSec = 0f;
++    private float mLastAccelMagSq = 0f;
++
++    private final SensorEventListener mListener = new SensorEventListener() {
++        @Override
++        public void onSensorChanged(SensorEvent event) {
++            switch (event.sensor.getType()) {
++                case Sensor.TYPE_ROTATION_VECTOR:
++                    SensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values);
++                    mHasRotation = true;
++                    break;
++                case Sensor.TYPE_LINEAR_ACCELERATION:
++                    if (!mHasRotation) return;
++                    updateAccel(event.values[0], event.values[1], event.values[2], event.timestamp);
++                    break;
++                case Sensor.TYPE_GYROSCOPE:
++                    if (!mHasRotation) return;
++                    updateGyro(event.values[0], event.values[1], event.values[2], event.timestamp);
++                    break;
++            }
++        }
++
++        @Override
++        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
++    };
++
++    public MotionEstimator(Context context) {
++        mSensorManager = context.getSystemService(SensorManager.class);
++        if (mSensorManager != null) {
++            mLinearAccel = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
++            mRotationVector = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
++            mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
++        } else {
++            mLinearAccel = null;
++            mRotationVector = null;
++            mGyroscope = null;
++        }
++    }
++
++    public void setCallback(Callback callback) {
++        mCallback = callback;
++    }
++
++    private void updateAccel(float ax, float ay, float az, long tsNs) {
++        float ux = mRotationMatrix[6];
++        float uy = mRotationMatrix[7];
++        float uz = mRotationMatrix[8];
++
++        float dot = ax * ux + ay * uy + az * uz;
++        float hx = ax - dot * ux;
++        float hy = ay - dot * uy;
++        float hz = az - dot * uz;
++
++        float dt = (mLastAccelTsNs == 0L) ? 0.02f : Math.max(0.001f, Math.min(0.2f, (tsNs - mLastAccelTsNs) / 1e9f));
++        mLastAccelTsNs = tsNs;
++        float alpha = dt / (ACCEL_TIME_CONSTANT_SEC + dt);
++        mFilteredX += alpha * (hx - mFilteredX);
++        mFilteredY += alpha * (hy - mFilteredY);
++        mFilteredZ += alpha * (hz - mFilteredZ);
++
++        mLastAccelMagSq = hx * hx + hy * hy + hz * hz;
++
++        float projLenSq = ux * ux + uy * uy;
++        if (projLenSq > FLAT_ROLL_GUARD_SQ) {
++            mLastRollRadians = (float) Math.atan2(ux, uy);
++        }
++
++        publish();
++    }
++
++    private void updateGyro(float gx, float gy, float gz, long tsNs) {
++        float dt = (mLastGyroTsNs == 0L) ? 0.01f : Math.max(0.001f, Math.min(0.2f, (tsNs - mLastGyroTsNs) / 1e9f));
++        mLastGyroTsNs = tsNs;
++
++        float rawGyroMagSq = gx * gx + gy * gy + gz * gz;
++        boolean isStill = mLastAccelMagSq < STILL_ACCEL_MAG_SQ && rawGyroMagSq < STILL_GYRO_MAG_SQ;
++        if (isStill) {
++            mStillAccumSec += dt;
++            if (mStillAccumSec > STILL_SETTLE_SEC) {
++                float biasAlpha = dt / (BIAS_TRACK_SEC + dt);
++                mGxBias += biasAlpha * (gx - mGxBias);
++                mGyBias += biasAlpha * (gy - mGyBias);
++                mGzBias += biasAlpha * (gz - mGzBias);
++            }
++        } else {
++            mStillAccumSec = 0f;
++        }
++
++        // Vehicle detection logic: sustained motion vs sustained standstill
++        boolean movingCandidate = mLastAccelMagSq > VEHICLE_MOTION_THRESHOLD_SQ || rawGyroMagSq > 0.04f;
++        if (movingCandidate) {
++            mVehicleMovingAccumSec += dt;
++            mVehicleStillAccumSec = 0f;
++            if (!mIsVehicleMoving && mVehicleMovingAccumSec >= VEHICLE_START_TIME_SEC) {
++                mIsVehicleMoving = true;
++                if (mCallback != null) {
++                    mCallback.onVehicleStateChanged(true);
++                }
++            }
++        } else if (isStill) {
++            mVehicleStillAccumSec += dt;
++            mVehicleMovingAccumSec = 0f;
++            if (mIsVehicleMoving && mVehicleStillAccumSec >= VEHICLE_STOP_TIME_SEC) {
++                mIsVehicleMoving = false;
++                if (mCallback != null) {
++                    mCallback.onVehicleStateChanged(false);
++                }
++            }
++        }
++
++        float gxd = gx - mGxBias;
++        float gyd = gy - mGyBias;
++        float gzd = gz - mGzBias;
++
++        float owx = mRotationMatrix[0] * gxd + mRotationMatrix[1] * gyd + mRotationMatrix[2] * gzd;
++        float owy = mRotationMatrix[3] * gxd + mRotationMatrix[4] * gyd + mRotationMatrix[5] * gzd;
++        float owz = mRotationMatrix[6] * gxd + mRotationMatrix[7] * gyd + mRotationMatrix[8] * gzd;
++
++        float yawRate = owz;
++
++        float fx = -mRotationMatrix[2];
++        float fy = -mRotationMatrix[5];
++        float fLenSq = fx * fx + fy * fy;
++        float pitchRate;
++        if (fLenSq > FLAT_PITCH_GUARD_SQ) {
++            float invLen = 1f / (float) Math.sqrt(fLenSq);
++            float sideX = -fy * invLen;
++            float sideY = fx * invLen;
++            pitchRate = owx * sideX + owy * sideY;
++        } else {
++            pitchRate = 0f;
++        }
++
++        float alpha = dt / (GYRO_TIME_CONSTANT_SEC + dt);
++        mFilteredYawRate += alpha * (yawRate - mFilteredYawRate);
++        mFilteredPitchRate += alpha * (pitchRate - mFilteredPitchRate);
++
++        publish();
++    }
++
++    private float deadband(float v, float threshold) {
++        if (v > threshold) return v - threshold;
++        if (v < -threshold) return v + threshold;
++        return 0f;
++    }
++
++    private void publish() {
++        if (mCallback != null) {
++            MotionVector vector = new MotionVector(
++                    mFilteredX,
++                    mFilteredY,
++                    mFilteredZ,
++                    mLastRollRadians,
++                    deadband(mFilteredYawRate, GYRO_DEADBAND_RPS),
++                    deadband(mFilteredPitchRate, GYRO_DEADBAND_RPS)
++            );
++            mCallback.onMotionUpdated(vector);
++        }
++    }
++
++    public void start() {
++        if (mSensorManager != null) {
++            if (mLinearAccel != null) {
++                mSensorManager.registerListener(mListener, mLinearAccel, SensorManager.SENSOR_DELAY_GAME);
++            }
++            if (mRotationVector != null) {
++                mSensorManager.registerListener(mListener, mRotationVector, SensorManager.SENSOR_DELAY_GAME);
++            }
++            if (mGyroscope != null) {
++                mSensorManager.registerListener(mListener, mGyroscope, SensorManager.SENSOR_DELAY_GAME);
++            }
++        }
++    }
++
++    public void stop() {
++        if (mSensorManager != null) {
++            mSensorManager.unregisterListener(mListener);
++        }
++        mHasRotation = false;
++        mLastAccelTsNs = 0L;
++        mLastGyroTsNs = 0L;
++        mFilteredX = 0f;
++        mFilteredY = 0f;
++        mFilteredZ = 0f;
++        mLastRollRadians = 0f;
++        mFilteredYawRate = 0f;
++        mFilteredPitchRate = 0f;
++        mStillAccumSec = 0f;
++        mLastAccelMagSq = 0f;
++        mVehicleMovingAccumSec = 0f;
++        mVehicleStillAccumSec = 0f;
++        mIsVehicleMoving = false;
++        if (mCallback != null) {
++            mCallback.onMotionUpdated(MotionVector.ZERO);
++        }
++    }
++
++    public boolean isVehicleMoving() {
++        return mIsVehicleMoving;
++    }
++}
+diff --git a/packages/SystemUI/src/com/android/systemui/motionassist/MotionVector.java b/packages/SystemUI/src/com/android/systemui/motionassist/MotionVector.java
+new file mode 100644
+index 000000000000..bcab5e35560b
+--- /dev/null
++++ b/packages/SystemUI/src/com/android/systemui/motionassist/MotionVector.java
+@@ -0,0 +1,41 @@
++/*
++ * Copyright (C) 2026 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package com.android.systemui.motionassist;
++
++/**
++ * 6-DOF Motion Vector describing world-horizontal acceleration, out-of-plane acceleration,
++ * screen roll angle, and world angular rates (yaw and pitch).
++ */
++public final class MotionVector {
++    public static final MotionVector ZERO = new MotionVector(0f, 0f, 0f, 0f, 0f, 0f);
++
++    public final float x;
++    public final float y;
++    public final float outOfPlane;
++    public final float rollRadians;
++    public final float yawRateRps;
++    public final float pitchRateRps;
++
++    public MotionVector(float x, float y, float outOfPlane, float rollRadians, float yawRateRps, float pitchRateRps) {
++        this.x = x;
++        this.y = y;
++        this.outOfPlane = outOfPlane;
++        this.rollRadians = rollRadians;
++        this.yawRateRps = yawRateRps;
++        this.pitchRateRps = pitchRateRps;
++    }
++}
+diff --git a/packages/SystemUI/src/com/android/systemui/motioncues/MotionCuesUi.kt b/packages/SystemUI/src/com/android/systemui/motioncues/MotionCuesUi.kt
+index 5426d8747ef2..a268fbd3e29d 100644
+--- a/packages/SystemUI/src/com/android/systemui/motioncues/MotionCuesUi.kt
++++ b/packages/SystemUI/src/com/android/systemui/motioncues/MotionCuesUi.kt
+@@ -67,7 +67,27 @@ class MotionCuesUi(
+ 
+     private var clientPackageName: String? = null
+     private var userId: Int = 0
+-    private val paint = Paint()
++    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
++    private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
++        style = Paint.Style.STROKE
++        strokeWidth = 2.8f
++    }
++    private val localPaint = Paint(Paint.ANTI_ALIAS_FLAG)
++    private val scratchPath = android.graphics.Path()
++
++    var isAdaptiveMode: Boolean = false
++        set(value) {
++            if (field != value) {
++                field = value
++                if (isStarted) {
++                    overlayView?.postInvalidate()
++                }
++            }
++        }
++    var topDarkIntensity: Float = 0f
++    var bottomDarkIntensity: Float = 0f
++
++    fun setLuminanceRange(topIntensity: Float, bottomIntensity: Float) {
++        topDarkIntensity = topIntensity
++        bottomDarkIntensity = bottomIntensity
++        if (isStarted) {
++            overlayView?.postInvalidate()
++        }
++    }
+     private val lock = Any()
+     private lateinit var motionCuesSettings: MotionCuesSettings
+     private var bubbleShape: Drawable? = null
+@@ -85,6 +89,44 @@ class MotionCuesUi(
+     private var marginLeft = 0
+     private var marginRight = 0
+ 
++    var isRandomized: Boolean = false
++        set(value) {
++            if (field != value) {
++                field = value
++                if (isStarted) {
++                    makeBubbles()
++                    overlayView?.postInvalidate()
++                }
++            }
++        }
++
++    var isSmoothAnimation: Boolean = false
++        set(value) {
++            if (field != value) {
++                field = value
++                updateFrameRate()
++            }
++        }
++
++    private fun updateFrameRate() {
++        val targetFps = if (isSmoothAnimation) {
++            val maxRate = context.display?.supportedModes?.maxOfOrNull { it.refreshRate } ?: 120f
++            if (maxRate > 60f) maxRate else 120f
++        } else {
++            DRAW_FPS.toFloat()
++        }
++        overlayView?.setRequestedFrameRate(targetFps)
++        val params = overlayView?.layoutParams as? WindowManager.LayoutParams
++        if (params != null) {
++            params.setFrameRatePowerSavingsBalanced(!isSmoothAnimation)
++            try {
++                windowManager.updateViewLayout(overlayView, params)
++            } catch (e: Exception) {
++                Log.w(TAG, "Failed to update overlay view layout params", e)
++            }
++        }
++    }
++
+     init {
+         reset()
+     }
+@@ -160,7 +202,7 @@ class MotionCuesUi(
+         Log.i(TAG, "Updating motion cues data")
+         synchronized(lock) {
+             paint.color = data.color
+-            bubbleShape = loadDrawableFromClient(data.shapeRes)
++            bubbleShape = loadDrawableFromClient(data.shapeRes)?.mutate()
+             bubbleShape?.let {
+                 DrawableCompat.setTint(it, data.color)
+                 bubbleShapeResId = data.shapeRes
+@@ -176,6 +218,13 @@ class MotionCuesUi(
+     }
+ 
+     private fun loadDrawableFromClient(drawableResId: Int): Drawable? {
++        if (drawableResId == 0) return null
++        try {
++            val localDrawable = context.getDrawable(drawableResId)
++            if (localDrawable != null) return localDrawable
++        } catch (e: Resources.NotFoundException) {
++            // Not a local resource, fall through to client package
++        }
+         val pkgName = clientPackageName ?: return null
+         return try {
+             val clientContext = context.createPackageContextAsUser(pkgName, 0, UserHandle.of(userId))
+@@ -243,13 +292,16 @@ class MotionCuesUi(
+             bubbleGridWidth = (colCount * bubbleSpacingX).toFloat()
+             bubbleGridHeight = (rowCount * bubbleSpacingY).toFloat()
+             val xOffset = ((bubbleGridWidth - screenDimensions.x) / 2).toInt()
++            val random = java.util.Random(1337L)
+             for (row in 0 until rowCount) {
+                 for (col in 0 until colCount) {
+                     val rowOffset = if (row % 2 == 1) bubbleSpacingX / 2 else 0
++                    val jitterX = if (isRandomized) ((random.nextFloat() - 0.5f) * bubbleSpacingX * 0.45f) else 0f
++                    val jitterY = if (isRandomized) ((random.nextFloat() - 0.5f) * bubbleSpacingY * 0.45f) else 0f
+                     motionCues.add(
+                         MotionCue(
+-                            (col * bubbleSpacingX + rowOffset - xOffset).toFloat(),
+-                            (row * bubbleSpacingY).toFloat(),
++                            (col * bubbleSpacingX + rowOffset - xOffset + jitterX).toFloat(),
++                            (row * bubbleSpacingY + jitterY).toFloat(),
+                             motionCuesSettings.radiusDp.toFloat()
+                         )
+                     )
+@@ -272,6 +324,12 @@ class MotionCuesUi(
+             return
+         }
+ 
++        val targetFps = if (isSmoothAnimation) {
++            val maxRate = context.display?.supportedModes?.maxOfOrNull { it.refreshRate } ?: 120f
++            if (maxRate > 60f) maxRate else 120f
++        } else {
++            DRAW_FPS.toFloat()
++        }
+         val params = WindowManager.LayoutParams(
+             WindowManager.LayoutParams.MATCH_PARENT,
+             WindowManager.LayoutParams.MATCH_PARENT,
+@@ -288,10 +346,10 @@ class MotionCuesUi(
+             layoutInDisplayCutoutMode =
+                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+             setFrameRateBoostOnTouchEnabled(false)
+-            setFrameRatePowerSavingsBalanced(true)
++            setFrameRatePowerSavingsBalanced(!isSmoothAnimation)
+         }
+         overlayView = OverlayView(context).also {
+-            it.setRequestedFrameRate(DRAW_FPS.toFloat())
++            it.setRequestedFrameRate(targetFps)
+             windowManager.addView(it, params)
+         }
+     }
+@@ -327,16 +385,68 @@ class MotionCuesUi(
+                     adjustedRadius *= shrinkFactor
+                 }
+ 
++                // --- Individual Per-Pelota Adaptive Contrast Calculation ---
++                val normY = (y / screenDimensions.y.toFloat()).coerceIn(0f, 1f)
++                val verticalWeight = normY * normY * (3f - 2f * normY)
++                val localDarkness = topDarkIntensity * (1f - verticalWeight) + bottomDarkIntensity * verticalWeight
++
++                val currentPaintColor = if (isAdaptiveMode) {
++                    val alpha = paint.alpha
++                    if (localDarkness > 0.45f) {
++                        Color.argb(alpha, 25, 25, 25)
++                    } else {
++                        Color.argb(alpha, 245, 245, 245)
++                    }
++                } else {
++                    paint.color
++                }
++                localPaint.color = currentPaintColor
++
++                val lum = 0.299 * Color.red(currentPaintColor) + 0.587 * Color.green(currentPaintColor) + 0.114 * Color.blue(currentPaintColor)
++                val strokeAlpha = 220
++                strokePaint.color = if (lum < 135) {
++                    Color.argb(strokeAlpha, 255, 255, 255)
++                } else {
++                    Color.argb(strokeAlpha, 18, 18, 18)
++                }
++                strokePaint.strokeWidth = Math.max(2.8f, adjustedRadius * 0.16f)
++
++                val shapeRes = bubbleShapeResId
++                if (shapeRes == com.android.systemui.res.R.drawable.motion_assist_shape_squircle) {
++                    val r = adjustedRadius
++                    val corner = r * 0.35f
++                    canvas.drawRoundRect(x - r, y - r, x + r, y + r, corner, corner, localPaint)
++                    canvas.drawRoundRect(x - r, y - r, x + r, y + r, corner, corner, strokePaint)
++                } else if (shapeRes == com.android.systemui.res.R.drawable.motion_assist_shape_diamond) {
++                    scratchPath.rewind()
++                    scratchPath.moveTo(x, y - adjustedRadius)
++                    scratchPath.lineTo(x + adjustedRadius, y)
++                    scratchPath.lineTo(x, y + adjustedRadius)
++                    scratchPath.lineTo(x - adjustedRadius, y)
++                    scratchPath.close()
++                    canvas.drawPath(scratchPath, localPaint)
++                    canvas.drawPath(scratchPath, strokePaint)
++                } else if (shapeRes == com.android.systemui.res.R.drawable.motion_assist_shape_pentagon) {
++                    scratchPath.rewind()
++                    for (i in 0 until 5) {
++                        val angle = Math.toRadians((i * 72.0) - 90.0)
++                        val px = (x + adjustedRadius * Math.cos(angle)).toFloat()
++                        val py = (y + adjustedRadius * Math.sin(angle)).toFloat()
++                        if (i == 0) scratchPath.moveTo(px, py) else scratchPath.lineTo(px, py)
++                    }
++                    scratchPath.close()
++                    canvas.drawPath(scratchPath, localPaint)
++                    canvas.drawPath(scratchPath, strokePaint)
++                } else {
++                    canvas.drawCircle(x, y, adjustedRadius, localPaint)
++                    canvas.drawCircle(x, y, adjustedRadius, strokePaint)
++                }
+-                bubbleShape?.let {
+-                    val radiusPx = adjustedRadius.toInt()
+-                    it.setBounds(
+-                        (x - radiusPx).toInt(),
+-                        (y - radiusPx).toInt(),
+-                        (x + radiusPx).toInt(),
+-                        (y + radiusPx).toInt()
+-                    )
+-                    it.draw(canvas)
+-                } ?: canvas.drawCircle(x, y, adjustedRadius, paint) // Fallback
+             }
+         }
+     }
+diff --git a/packages/SystemUI/src/com/android/systemui/motioncues/dagger/MotionCuesModule.kt b/packages/SystemUI/src/com/android/systemui/motioncues/dagger/MotionCuesModule.kt
+index fd5154615451..336f2341e6ac 100644
+--- a/packages/SystemUI/src/com/android/systemui/motioncues/dagger/MotionCuesModule.kt
++++ b/packages/SystemUI/src/com/android/systemui/motioncues/dagger/MotionCuesModule.kt
+@@ -19,6 +19,8 @@ package com.android.systemui.motioncues
+ import android.content.Context
+ import android.view.WindowManager
+ import com.android.systemui.CoreStartable
++import com.android.systemui.dagger.SysUISingleton
++import com.android.systemui.motionassist.MotionAssistController
+ import com.android.systemui.motioncues.MotionCuesCommand
+ import com.android.systemui.motioncues.MotionCuesManager
+ import com.android.systemui.motioncues.MotionCuesUi
+@@ -41,9 +43,15 @@ abstract class MotionCuesModule {
+     @ClassKey(MotionCuesCommand::class)
+     abstract fun bindMotionCuesCommand(command: MotionCuesCommand): CoreStartable
+ 
++    @Binds
++    @IntoMap
++    @ClassKey(MotionAssistController::class)
++    abstract fun bindMotionAssistController(controller: MotionAssistController): CoreStartable
++
+     companion object {
+         @JvmStatic
+         @Provides
++        @SysUISingleton
+         fun provideMotionCuesUi(
+             context: Context,
+             windowManager: WindowManager,
+diff --git a/packages/SystemUI/src/com/android/systemui/qs/tiles/MotionAssistTile.java b/packages/SystemUI/src/com/android/systemui/qs/tiles/MotionAssistTile.java
+new file mode 100644
+index 000000000000..faa016ab2f39
+--- /dev/null
++++ b/packages/SystemUI/src/com/android/systemui/qs/tiles/MotionAssistTile.java
+@@ -0,0 +1,154 @@
++/*
++ * Copyright (C) 2026 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package com.android.systemui.qs.tiles;
++
++import android.content.Intent;
++import android.os.Handler;
++import android.os.Looper;
++import android.provider.Settings;
++import android.service.quicksettings.Tile;
++import android.widget.Switch;
++
++import androidx.annotation.Nullable;
++
++import com.android.internal.logging.MetricsLogger;
++import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
++import com.android.systemui.animation.Expandable;
++import com.android.systemui.dagger.qualifiers.Background;
++import com.android.systemui.dagger.qualifiers.Main;
++import com.android.systemui.plugins.ActivityStarter;
++import com.android.systemui.plugins.FalsingManager;
++import com.android.systemui.plugins.qs.QSTile;
++import com.android.systemui.plugins.qs.QSTile.BooleanState;
++import com.android.systemui.plugins.statusbar.StatusBarStateController;
++import com.android.systemui.qs.QSHost;
++import com.android.systemui.qs.QsEventLogger;
++import com.android.systemui.qs.UserSettingObserver;
++import com.android.systemui.qs.logging.QSLogger;
++import com.android.systemui.qs.tileimpl.QSTileImpl;
++import com.android.systemui.res.R;
++import com.android.systemui.settings.UserTracker;
++import com.android.systemui.util.settings.SecureSettings;
++
++import javax.inject.Inject;
++
++/**
++ * Quick Settings tile for Motion Assist (Vehicle Motion Cues).
++ */
++public class MotionAssistTile extends QSTileImpl<QSTile.BooleanState> {
++
++    public static final String TILE_SPEC = "motion_assist";
++    private static final String SETTING_ENABLED = "motion_assist_enabled";
++
++    private final UserSettingObserver mEnabledSetting;
++
++    @Inject
++    public MotionAssistTile(
++            QSHost host,
++            QsEventLogger uiEventLogger,
++            @Background Looper backgroundLooper,
++            @Main Handler mainHandler,
++            FalsingManager falsingManager,
++            MetricsLogger metricsLogger,
++            StatusBarStateController statusBarStateController,
++            ActivityStarter activityStarter,
++            QSLogger qsLogger,
++            SecureSettings secureSettings,
++            UserTracker userTracker
++    ) {
++        super(host, uiEventLogger, backgroundLooper, mainHandler, falsingManager,
++                metricsLogger, statusBarStateController, activityStarter, qsLogger);
++
++        mEnabledSetting = new UserSettingObserver(secureSettings, mHandler, SETTING_ENABLED,
++                userTracker.getUserId()) {
++            @Override
++            protected void handleValueChanged(int value, boolean observedChange) {
++                handleRefreshState(value);
++            }
++        };
++    }
++
++    @Override
++    public BooleanState newTileState() {
++        return new BooleanState();
++    }
++
++    @Override
++    protected void handleClick(@Nullable Expandable expandable) {
++        boolean isCurrentlyEnabled = mState.value;
++        if (isCurrentlyEnabled) {
++            Settings.Secure.putInt(mContext.getContentResolver(), SETTING_ENABLED, 0);
++        } else {
++            Settings.Secure.putInt(mContext.getContentResolver(), SETTING_ENABLED, 1);
++            Settings.Secure.putInt(mContext.getContentResolver(), "motion_assist_vehicle_auto", 0);
++        }
++        refreshState();
++    }
++
++    @Override
++    public Intent getLongClickIntent() {
++        Intent intent = new Intent("android.settings.ACCESSIBILITY_SETTINGS");
++        intent.setComponent(new android.content.ComponentName(
++                "com.android.settings", "com.android.settings.SubSettings"));
++        intent.putExtra(":settings:show_fragment",
++                "com.android.settings.accessibility.motionassist.MotionAssistSettings");
++        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
++        return intent;
++    }
++
++    @Override
++    protected void handleUpdateState(BooleanState state, Object arg) {
++        final boolean enabled = Settings.Secure.getInt(mContext.getContentResolver(), SETTING_ENABLED, 0) == 1;
++
++        state.label = mContext.getString(R.string.quick_settings_motion_assist_label);
++        state.icon = maybeLoadResourceIcon(R.drawable.ic_qs_motion_assist);
++        state.contentDescription = state.label;
++        state.expandedAccessibilityClassName = Switch.class.getName();
++
++        if (enabled) {
++            state.value = true;
++            state.state = Tile.STATE_ACTIVE;
++            state.secondaryLabel = mContext.getString(R.string.quick_settings_motion_assist_secondary_label_on);
++        } else {
++            state.value = false;
++            state.state = Tile.STATE_INACTIVE;
++            state.secondaryLabel = mContext.getString(R.string.quick_settings_motion_assist_secondary_label_off);
++        }
++    }
++
++    @Override
++    public CharSequence getTileLabel() {
++        return mContext.getString(R.string.quick_settings_motion_assist_label);
++    }
++
++    @Override
++    public int getMetricsCategory() {
++        return MetricsEvent.QS_CUSTOM;
++    }
++
++    @Override
++    public void handleSetListening(boolean listening) {
++        super.handleSetListening(listening);
++        mEnabledSetting.setListening(listening);
++    }
++
++    @Override
++    protected void handleDestroy() {
++        super.handleDestroy();
++        mEnabledSetting.setListening(false);
++    }
++}
