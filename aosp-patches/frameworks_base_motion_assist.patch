@@ -247,10 +247,10 @@ index 5a0cb1013d88..479a61026c7d 100644
  }
 diff --git a/packages/SystemUI/src/com/android/systemui/motionassist/MotionAssistController.java b/packages/SystemUI/src/com/android/systemui/motionassist/MotionAssistController.java
 new file mode 100644
-index 000000000000..0fab8ef7d199
+index 000000000000..36f2d9662175
 --- /dev/null
 +++ b/packages/SystemUI/src/com/android/systemui/motionassist/MotionAssistController.java
-@@ -0,0 +1,340 @@
+@@ -0,0 +1,346 @@
 +/*
 + * Copyright (C) 2026 The Android Open Source Project
 + *
@@ -378,8 +378,8 @@ index 000000000000..0fab8ef7d199
 +            public void onMotionUpdated(MotionVector motion) {
 +                if (mIsActive && mMotionCuesUi.isStarted()) {
 +                    // Scale physical acceleration vectors to pixel displacement for MotionCuesUi
-+                    float dx = motion.x * 20.0f;
-+                    float dy = motion.y * 20.0f;
++                    float dx = -motion.x * 2.0f;
++                    float dy = motion.y * 2.0f;
 +                    mMainHandler.post(() -> mMotionCuesUi.updateBubblePos(dx, dy));
 +                }
 +            }
@@ -471,10 +471,10 @@ index 000000000000..0fab8ef7d199
 +
 +            if (!mIsActive) {
 +                MotionCuesSettings settings = new MotionCuesSettings.Builder()
-+                        .setHorizontalSpacingDp(60)
-+                        .setVerticalSpacingDp(140)
++                        .setHorizontalSpacingDp(48)
++                        .setVerticalSpacingDp(50)
 +                        .setMarginSizeDp(20)
-+                        .setRadiusDp(15)
++                        .setRadiusDp(7)
 +                        .build();
 +                mMotionCuesUi.start(settings, UserHandle.myUserId(), "com.android.systemui");
 +                mIsActive = true;
@@ -926,10 +926,10 @@ index 000000000000..bcab5e35560b
 +    }
 +}
 diff --git a/packages/SystemUI/src/com/android/systemui/motioncues/MotionCuesUi.kt b/packages/SystemUI/src/com/android/systemui/motioncues/MotionCuesUi.kt
-index 5426d8747ef2..a268fbd3e29d 100644
+index 5426d8747ef2..69b92bd1f44b 100644
 --- a/packages/SystemUI/src/com/android/systemui/motioncues/MotionCuesUi.kt
 +++ b/packages/SystemUI/src/com/android/systemui/motioncues/MotionCuesUi.kt
-@@ -67,7 +67,27 @@ class MotionCuesUi(
+@@ -67,7 +67,34 @@ class MotionCuesUi(
  
      private var clientPackageName: String? = null
      private var userId: Int = 0
@@ -961,10 +961,11 @@ index 5426d8747ef2..a268fbd3e29d 100644
 +            overlayView?.postInvalidate()
 +        }
 +    }
++
      private val lock = Any()
      private lateinit var motionCuesSettings: MotionCuesSettings
      private var bubbleShape: Drawable? = null
-@@ -85,6 +89,44 @@ class MotionCuesUi(
+@@ -85,6 +112,44 @@ class MotionCuesUi(
      private var marginLeft = 0
      private var marginRight = 0
  
@@ -1009,7 +1010,16 @@ index 5426d8747ef2..a268fbd3e29d 100644
      init {
          reset()
      }
-@@ -160,7 +202,7 @@ class MotionCuesUi(
+@@ -123,7 +188,7 @@ class MotionCuesUi(
+     private fun reset() {
+         isStarted = false
+         clientPackageName = null
+-        userId =  UserHandle.USER_SYSTEM
++        userId = UserHandle.USER_SYSTEM
+         motionCuesSettings = DEFAULT_MOTION_CUES_SETTINGS
+         bubbleShape = null
+         bubbleShapeResId = 0
+@@ -160,7 +225,7 @@ class MotionCuesUi(
          Log.i(TAG, "Updating motion cues data")
          synchronized(lock) {
              paint.color = data.color
@@ -1018,7 +1028,7 @@ index 5426d8747ef2..a268fbd3e29d 100644
              bubbleShape?.let {
                  DrawableCompat.setTint(it, data.color)
                  bubbleShapeResId = data.shapeRes
-@@ -176,6 +218,13 @@ class MotionCuesUi(
+@@ -176,6 +241,13 @@ class MotionCuesUi(
      }
  
      private fun loadDrawableFromClient(drawableResId: Int): Drawable? {
@@ -1032,7 +1042,7 @@ index 5426d8747ef2..a268fbd3e29d 100644
          val pkgName = clientPackageName ?: return null
          return try {
              val clientContext = context.createPackageContextAsUser(pkgName, 0, UserHandle.of(userId))
-@@ -243,13 +292,16 @@ class MotionCuesUi(
+@@ -243,13 +315,16 @@ class MotionCuesUi(
              bubbleGridWidth = (colCount * bubbleSpacingX).toFloat()
              bubbleGridHeight = (rowCount * bubbleSpacingY).toFloat()
              val xOffset = ((bubbleGridWidth - screenDimensions.x) / 2).toInt()
@@ -1051,7 +1061,7 @@ index 5426d8747ef2..a268fbd3e29d 100644
                              motionCuesSettings.radiusDp.toFloat()
                          )
                      )
-@@ -272,6 +324,12 @@ class MotionCuesUi(
+@@ -272,6 +347,12 @@ class MotionCuesUi(
              return
          }
  
@@ -1064,7 +1074,7 @@ index 5426d8747ef2..a268fbd3e29d 100644
          val params = WindowManager.LayoutParams(
              WindowManager.LayoutParams.MATCH_PARENT,
              WindowManager.LayoutParams.MATCH_PARENT,
-@@ -288,10 +346,10 @@ class MotionCuesUi(
+@@ -288,10 +369,10 @@ class MotionCuesUi(
              layoutInDisplayCutoutMode =
                  WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
              setFrameRateBoostOnTouchEnabled(false)
@@ -1077,10 +1087,20 @@ index 5426d8747ef2..a268fbd3e29d 100644
              windowManager.addView(it, params)
          }
      }
-@@ -327,16 +385,68 @@ class MotionCuesUi(
+@@ -327,16 +408,62 @@ class MotionCuesUi(
                      adjustedRadius *= shrinkFactor
                  }
  
+-                bubbleShape?.let {
+-                    val radiusPx = adjustedRadius.toInt()
+-                    it.setBounds(
+-                        (x - radiusPx).toInt(),
+-                        (y - radiusPx).toInt(),
+-                        (x + radiusPx).toInt(),
+-                        (y + radiusPx).toInt()
+-                    )
+-                    it.draw(canvas)
+-                } ?: canvas.drawCircle(x, y, adjustedRadius, paint) // Fallback
 +                // --- Individual Per-Pelota Adaptive Contrast Calculation ---
 +                val normY = (y / screenDimensions.y.toFloat()).coerceIn(0f, 1f)
 +                val verticalWeight = normY * normY * (3f - 2f * normY)
@@ -1137,19 +1157,29 @@ index 5426d8747ef2..a268fbd3e29d 100644
 +                    canvas.drawCircle(x, y, adjustedRadius, localPaint)
 +                    canvas.drawCircle(x, y, adjustedRadius, strokePaint)
 +                }
--                bubbleShape?.let {
--                    val radiusPx = adjustedRadius.toInt()
--                    it.setBounds(
--                        (x - radiusPx).toInt(),
--                        (y - radiusPx).toInt(),
--                        (x + radiusPx).toInt(),
--                        (y + radiusPx).toInt()
--                    )
--                    it.draw(canvas)
--                } ?: canvas.drawCircle(x, y, adjustedRadius, paint) // Fallback
              }
          }
      }
+@@ -421,15 +548,15 @@ class MotionCuesUi(
+         // alpha. To resolve this, we need to ensure we're below that threshold. See ag/17071470 for
+         // more info.
+         const val OVERLAY_WINDOW_ALPHA = 0.8f
+-        const val EDGE_SHRINK_THRESHOLD = 50
++        const val EDGE_SHRINK_THRESHOLD = 24
+         private const val DRAW_FPS = 30L
+         private const val DEFAULT_BUBBLE_COLOR = Color.GRAY
+         private val DEFAULT_MOTION_CUES_SETTINGS =
+             MotionCuesSettings.Builder()
+-                .setHorizontalSpacingDp(60)
+-                .setVerticalSpacingDp(140)
++                .setHorizontalSpacingDp(48)
++                .setVerticalSpacingDp(50)
+                 .setMarginSizeDp(20)
+-                .setRadiusDp(15)
++                .setRadiusDp(7)
+                 .build()
+     }
+ }
 diff --git a/packages/SystemUI/src/com/android/systemui/motioncues/dagger/MotionCuesModule.kt b/packages/SystemUI/src/com/android/systemui/motioncues/dagger/MotionCuesModule.kt
 index fd5154615451..336f2341e6ac 100644
 --- a/packages/SystemUI/src/com/android/systemui/motioncues/dagger/MotionCuesModule.kt
@@ -1179,6 +1209,73 @@ index fd5154615451..336f2341e6ac 100644
          fun provideMotionCuesUi(
              context: Context,
              windowManager: WindowManager,
+diff --git a/packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileImpl.java b/packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileImpl.java
+index 67d901ec836c..bfb1bf8d9fa5 100644
+--- a/packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileImpl.java
++++ b/packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileImpl.java
+@@ -64,7 +64,10 @@ import com.android.systemui.plugins.ActivityStarter;
+ import com.android.systemui.plugins.FalsingManager;
+ import com.android.systemui.plugins.qs.QSTile;
+ import com.android.systemui.plugins.qs.QSTile.State;
++import android.app.ActivityManager;
++import com.android.internal.widget.LockPatternUtils;
+ import com.android.systemui.plugins.statusbar.StatusBarStateController;
++import com.android.systemui.statusbar.StatusBarState;
+ import com.android.systemui.qs.QSEvent;
+ import com.android.systemui.qs.QSHost;
+ import com.android.systemui.qs.QsEventLogger;
+@@ -615,6 +618,14 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
+             super(looper);
+         }
+ 
++        private boolean isKeyguardLocked() {
++            int state = mStatusBarStateController.getState();
++            if (state == StatusBarState.KEYGUARD || state == StatusBarState.SHADE_LOCKED) {
++                return new LockPatternUtils(mContext).isSecure(ActivityManager.getCurrentUser());
++            }
++            return false;
++        }
++
+         @Override
+         public void handleMessage(Message msg) {
+             String name = null;
+@@ -634,18 +645,32 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
+                         Intent intent = RestrictedLockUtils.getShowAdminSupportDetailsIntent(
+                                 mEnforcedAdmin);
+                         mActivityStarter.postStartActivityDismissingKeyguard(intent, 0);
++                    } else if (isKeyguardLocked() && !"flashlight".equals(mTileSpec)) {
++                        mQSLogger.logHandleClick(mTileSpec, msg.arg1);
++                        final Expandable exp = (Expandable) msg.obj;
++                        mActivityStarter.postQSRunnableDismissingKeyguard(() -> handleClick(exp));
+                     } else {
+                         mQSLogger.logHandleClick(mTileSpec, msg.arg1);
+                         handleClick((Expandable) msg.obj);
+                     }
+                 } else if (msg.what == SECONDARY_CLICK) {
+                     name = "handleSecondaryClick";
+-                    mQSLogger.logHandleSecondaryClick(mTileSpec, msg.arg1);
+-                    handleSecondaryClick((Expandable) msg.obj);
++                    if (isKeyguardLocked() && !"flashlight".equals(mTileSpec)) {
++                        final Expandable exp = (Expandable) msg.obj;
++                        mActivityStarter.postQSRunnableDismissingKeyguard(() -> handleSecondaryClick(exp));
++                    } else {
++                        mQSLogger.logHandleSecondaryClick(mTileSpec, msg.arg1);
++                        handleSecondaryClick((Expandable) msg.obj);
++                    }
+                 } else if (msg.what == LONG_CLICK) {
+                     name = "handleLongClick";
+-                    mQSLogger.logHandleLongClick(mTileSpec, msg.arg1);
+-                    handleLongClick((Expandable) msg.obj);
++                    if (isKeyguardLocked()) {
++                        final Expandable exp = (Expandable) msg.obj;
++                        mActivityStarter.postQSRunnableDismissingKeyguard(() -> handleLongClick(exp));
++                    } else {
++                        mQSLogger.logHandleLongClick(mTileSpec, msg.arg1);
++                        handleLongClick((Expandable) msg.obj);
++                    }
+                 } else if (msg.what == REFRESH_STATE) {
+                     name = "handleRefreshState";
+                     handleRefreshState(msg.obj);
 diff --git a/packages/SystemUI/src/com/android/systemui/qs/tiles/MotionAssistTile.java b/packages/SystemUI/src/com/android/systemui/qs/tiles/MotionAssistTile.java
 new file mode 100644
 index 000000000000..faa016ab2f39

@@ -113,12 +113,12 @@ class MotionCuesView @JvmOverloads constructor(
     private var marginLeft = 0f
     private var marginRight = 0f
 
-    // Google Motion Assist default specifications
-    private val horizontalSpacingDp = 60f
-    private val verticalSpacingDp = 140f
-    private val radiusDp = 15f
+    // Google Motion Assist official specifications (calibrated to Google Pixel Motion Cues)
+    private val horizontalSpacingDp = 48f
+    private val verticalSpacingDp = 50f
+    private val radiusDp = 6.8f
     private val marginPercent = 0.20f // 20% peripheral margin per side
-    private val edgeShrinkThresholdDp = 50f
+    private val edgeShrinkThresholdDp = 24f
 
     init {
         updateColors()
