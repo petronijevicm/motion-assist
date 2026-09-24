@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 petronijevicm -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 <resources>
-    <!-- Material You 3 Dynamic Colors Theme with NoActionBar -->
     <style name="Theme.MotionAssist" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">?attr/colorSurface</item>
-        <item name="android:colorBackground">?attr/colorSurface</item>
     </style>
 </resources>

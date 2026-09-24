@@ -1,73 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 petronijevicm -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 <resources>
-    <string name="app_name">Motion Assist</string>
-    <string name="motion_assist_title">Motion Assist</string>
-    <string name="motion_assist_description">Las señales de movimiento para vehículos (Motion Assist) reducen el mareo por movimiento cinetosis al usar el móvil proyectando puntos visuales sincronizados con la inercia real.</string>
-    <string name="motion_assist_turn_on">Activar Asistencia de movimiento</string>
-    <string name="motion_assist_turn_on_summary">Muestra señales visuales reactivas a la aceleración del vehículo</string>
-
-    <string name="motion_assist_auto_vehicle">Detección automática en vehículo</string>
-    <string name="motion_assist_auto_vehicle_summary">Activa las señales únicamente al detectar aceleración continua de coche, bus o tren</string>
-
-    <string name="motion_assist_options_category">Personalización y Estilo</string>
-    <string name="motion_assist_customize_title">Personalizar señales</string>
-    <string name="motion_assist_customize_summary">Cambia formas, paleta de colores, opacidad y fluidez</string>
-
-    <string name="motion_assist_qs_tile_title">Mosaico de Ajustes Rápidos</string>
-    <string name="motion_assist_qs_tile_summary">Activa o desactiva las señales desde cualquier pantalla</string>
-    <string name="motion_assist_qs_tile_action">Añadir mosaico a Ajustes Rápidos</string>
-
-    <string name="motion_assist_shortcut_dialog_title">Mosaico listo en Ajustes Rápidos</string>
-    <string name="motion_assist_shortcut_dialog_info_part1">Desliza hacia abajo dos veces desde la parte superior de la pantalla para abrir los Ajustes rápidos, pulsa el icono del lápiz y arrastra "Asistencia de movimiento".</string>
-    <string name="motion_assist_shortcut_dialog_info">Toca el mosaico para encenderlo o apagarlo. Mantén pulsado para abrir los ajustes.</string>
-    <string name="motion_assist_shortcut_dialog_pos_button_text">Entendido</string>
-
-    <string name="motion_assist_color_title">Paleta de colores</string>
-    <string name="motion_assist_color_system">Material You (Color dinámico del sistema)</string>
-    <string name="motion_assist_color_pink">Rosa salmón</string>
-    <string name="motion_assist_color_yellow">Amarillo ámbar</string>
-    <string name="motion_assist_color_green">Verde menta</string>
-    <string name="motion_assist_color_blue">Azul suave</string>
-    <string name="motion_assist_color_adaptive">Adaptativo (Alto contraste automático)</string>
-
-    <string name="motion_assist_shape_title">Forma de las señales</string>
-    <string name="motion_assist_shape_circle">Círculo</string>
-    <string name="motion_assist_shape_squircle">Squircle</string>
-    <string name="motion_assist_shape_pentagon">Pentágono</string>
-    <string name="motion_assist_shape_diamond">Rombo</string>
-
-    <string name="motion_assist_opacity_title">Opacidad de las señales</string>
-    <string name="motion_assist_randomization_title">Aleatorización de formas y colores</string>
-    <string name="motion_assist_randomization_summary">Alterna entre diferentes formas y colores cada pocos segundos</string>
-
-    <string name="motion_assist_smooth_animation_title">Animación fluida a 120 Hz</string>
-    <string name="motion_assist_smooth_animation_summary">Renderizado físico a la tasa de refresco máxima con optimización en ahorro de batería</string>
-
-    <string name="motion_assist_overlay_permission_title">Permiso de superposición necesario</string>
-    <string name="motion_assist_overlay_permission_desc">Para mostrar las señales visuales sobre otras aplicaciones, Motion Assist necesita el permiso de \'Mostrar sobre otras apps\'.\n\n⚠️ Si la opción aparece inhabilitada o gris (Ajustes restringidos en Android 13+):\nToca \'Info de la app\', pulsa el menú de 3 puntos (⋮) arriba a la derecha y selecciona \'Permitir ajustes restringidos\'.</string>
-    <string name="motion_assist_grant_permission">Conceder permiso</string>
-    <string name="motion_assist_open_app_info">Info de la app (Desbloquear)</string>
-    <string name="motion_assist_preview_card_title">Vista previa en tiempo real</string>
-    <string name="motion_assist_preview_card_desc">Muestra cómo responden las señales visuales cinéticas ante los movimientos y la aceleración del vehículo</string>
-    <string name="motion_assist_preview_tab_tutorial">Tutorial</string>
-    <string name="motion_assist_preview_tab_interactive">Física en vivo</string>
-
-    <string name="quick_settings_motion_assist_label">Motion Assist</string>
-    <string name="quick_settings_motion_assist_secondary_label_on">Activada</string>
-    <string name="quick_settings_motion_assist_secondary_label_off">Desactivada</string>
-    <string name="quick_settings_motion_assist_secondary_label_auto">Automática (Vehículo)</string>
-
-    <string name="notification_channel_name">Servicio de Asistencia de movimiento</string>
-    <string name="notification_title">Asistencia de movimiento activada</string>
-    <string name="notification_text">Mostrando señales cinéticas del vehículo en tiempo real</string>
-    <string name="motion_assist_sensitivity_title">Movimiento de las señales</string>
-    <string name="motion_assist_sensitivity_summary">Cuánto se desplazan las señales cuando el vehículo acelera, frena o gira</string>
-    <string name="motion_assist_size_title">Tamaño de las señales</string>
-    <string name="motion_assist_responsiveness_title">Capacidad de respuesta</string>
-    <string name="motion_assist_responsiveness_summary">Más bajo es más suave y tranquilo, más alto reacciona más rápido</string>
-    <string name="motion_assist_cue_area_title">Área de las señales</string>
-    <string name="motion_assist_cue_area_summary">Ancho de las franjas laterales con señales. El máximo ocupa toda la pantalla</string>
-    <string name="motion_assist_cue_area_full">Pantalla completa</string>
-    <string name="motion_assist_horizon_title">Línea del horizonte</string>
-    <string name="motion_assist_horizon_summary">Muestra un horizonte artificial que se mantiene nivelado con el suelo</string>
-    <string name="notification_action_stop">Detener</string>
+    <string name="preview_mode_guide">Guía</string>
+    <string name="preview_mode_live">En vivo</string>
+    <string name="preview_guide_title">Cómo funciona</string>
+    <string name="preview_guide_body">Los puntos de los bordes de la pantalla se mueven como tu cuerpo siente el viaje: hacia los lados en las curvas, hacia arriba al frenar y hacia abajo al acelerar.</string>
+    <string name="preview_live_title">Vista previa en vivo</string>
+    <string name="preview_live_body">Mueve o gira el teléfono y observa cómo reaccionan los puntos. También puedes arrastrarlos con el dedo.</string>
+    <string name="enable_title">Señales de movimiento</string>
+    <string name="enable_summary">Muestra puntos en movimiento en los bordes de la pantalla para aliviar el mareo</string>
+    <string name="auto_title">Iniciar en un vehículo en movimiento</string>
+    <string name="auto_summary">Mostrar las señales solo cuando se detecte el movimiento del vehículo</string>
+    <string name="tile_card_title">Botón de Ajustes rápidos</string>
+    <string name="tile_card_summary">Activa o desactiva las señales desde cualquier pantalla</string>
+    <string name="tile_card_action">Añadir botón</string>
+    <string name="tile_manual_title">Añade el botón tú mismo</string>
+    <string name="tile_manual_body">Abre Ajustes rápidos, toca el botón de editar (lápiz) y arrastra Motion Assist a tus botones. Tócalo para activar o desactivar las señales, o mantenlo pulsado para abrir esta aplicación.</string>
+    <string name="section_appearance">Aspecto</string>
+    <string name="section_motion">Movimiento</string>
+    <string name="section_display">Pantalla</string>
+    <string name="shape_title">Forma</string>
+    <string name="shape_circle">Círculo</string>
+    <string name="shape_squircle">Squircle</string>
+    <string name="shape_pentagon">Pentágono</string>
+    <string name="shape_diamond">Rombo</string>
+    <string name="palette_title">Color</string>
+    <string name="palette_system">Fondo de pantalla</string>
+    <string name="palette_salmon">Salmón</string>
+    <string name="palette_amber">Ámbar</string>
+    <string name="palette_mint">Menta</string>
+    <string name="palette_sky">Cielo</string>
+    <string name="palette_contrast">Alto contraste</string>
+    <string name="opacity_title">Opacidad</string>
+    <string name="size_title">Tamaño</string>
+    <string name="movement_title">Movimiento</string>
+    <string name="movement_summary">Cuánto se desplazan las señales cuando el vehículo acelera, frena o gira</string>
+    <string name="responsiveness_title">Capacidad de respuesta</string>
+    <string name="responsiveness_summary">Más bajo es más suave y tranquilo, más alto reacciona antes</string>
+    <string name="area_title">Área de las señales</string>
+    <string name="area_summary">Ancho de las franjas laterales con señales. El máximo ocupa toda la pantalla</string>
+    <string name="area_full">Pantalla completa</string>
+    <string name="horizon_title">Línea del horizonte</string>
+    <string name="horizon_summary">Muestra un horizonte artificial que se mantiene nivelado con el suelo</string>
+    <string name="shuffle_title">Mezclar</string>
+    <string name="shuffle_summary">Dispersa los puntos y cambia la forma y el color cada pocos segundos</string>
+    <string name="smooth_title">Animación fluida</string>
+    <string name="smooth_summary">Dibuja a la frecuencia de actualización máxima de la pantalla. Limitada a 30 fps con Ahorro de batería</string>
+    <string name="permission_title">Permitir mostrar sobre otras aplicaciones</string>
+    <string name="permission_body">Motion Assist dibuja las señales sobre otras aplicaciones, lo que requiere el permiso “Mostrar sobre otras aplicaciones”.\n\nSi el interruptor aparece en gris (Android 13 y posteriores, apps instaladas fuera de una tienda): abre Información de la aplicación, toca ⋮ en la esquina superior, elige “Permitir ajustes restringidos” y vuelve.</string>
+    <string name="permission_open">Abrir ajustes</string>
+    <string name="permission_app_info">Información de la aplicación</string>
+    <string name="tile_label">Señales de movimiento</string>
+    <string name="tile_state_on">Activadas</string>
+    <string name="tile_state_off">Desactivadas</string>
+    <string name="tile_state_auto">Automático</string>
+    <string name="notification_channel">Señales de movimiento</string>
+    <string name="notification_channel_description">Se muestra mientras las señales están activas</string>
+    <string name="notification_title">Las señales de movimiento están activadas</string>
+    <string name="notification_text">Toca para ajustar</string>
+    <string name="notification_stop">Desactivar</string>
 </resources>

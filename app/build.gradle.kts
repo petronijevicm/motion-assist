@@ -1,19 +1,20 @@
+// SPDX-FileCopyrightText: 2026 petronijevicm
+// SPDX-License-Identifier: Apache-2.0
+
 plugins {
     id("com.android.application")
 }
 
 android {
-    namespace = "com.rhythmcreative.motionassist"
+    namespace = "com.petronijevicm.motionassist"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.rhythmcreative.motionassist"
+        applicationId = "com.petronijevicm.motionassist"
         minSdk = 29
         targetSdk = 35
-        versionCode = 11
-        versionName = "1.2.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        versionCode = 20
+        versionName = "2.0.0"
     }
 
     // Release signing comes from the environment (see .github/workflows/android.yml).
@@ -35,14 +36,9 @@ android {
             if (releaseKeystore != null) {
                 signingConfig = signingConfigs.getByName("release")
             }
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-        debug {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 
@@ -55,10 +51,6 @@ dependencies {
     implementation("androidx.core:core-ktx:1.18.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("com.google.android.material:material:1.13.0")
-    implementation("com.airbnb.android:lottie:6.6.2") {
-        exclude(group = "com.squareup.okio")
-    }
-    implementation("com.squareup.okio:okio-jvm:3.9.1")
 
     testImplementation("junit:junit:4.13.2")
 }

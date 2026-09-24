@@ -1,38 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 petronijevicm -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Permissions required for sensor fusion and overlay cues -->
+    <!-- Draw cues over other apps -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- Keep sensors and the overlay running while other apps are in front -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS" />
+    <!-- Restore cues after reboot when they were left on -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_motion_assist_tile"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_motion_assist_tile"
         android:supportsRtl="true"
         android:theme="@style/Theme.MotionAssist">
 
-        <!-- Main Configuration Activity -->
         <activity
             android:name=".ui.MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MotionAssist">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- Long-pressing the Quick Settings tile opens this screen -->
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
+            </intent-filter>
         </activity>
 
-        <!-- Motion Assist Overlay & Sensor Service -->
         <service
-            android:name=".service.MotionAssistService"
-            android:enabled="true"
+            android:name=".overlay.CueOverlayService"
             android:exported="false"
             android:foregroundServiceType="specialUse">
             <property
@@ -40,29 +41,28 @@
                 android:value="Accessibility overlay that draws vehicle motion cues to reduce motion sickness" />
         </service>
 
-        <!-- Restore the overlay after reboot / app update when enabled -->
+        <service
+            android:name=".overlay.CueTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_tile"
+            android:label="@string/tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.quicksettings.TOGGLEABLE_TILE"
+                android:value="true" />
+        </service>
+
         <receiver
-            android:name=".service.BootReceiver"
+            android:name=".overlay.BootReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
-
-        <!-- Quick Settings Tile -->
-        <service
-            android:name=".qs.MotionAssistTileService"
-            android:enabled="true"
-            android:exported="true"
-            android:icon="@drawable/ic_qs_motion_assist"
-            android:label="@string/quick_settings_motion_assist_label"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE" />
-            </intent-filter>
-        </service>
-
     </application>
 
 </manifest>

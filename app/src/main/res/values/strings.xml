@@ -1,73 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 petronijevicm -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 <resources>
-    <string name="app_name">Motion Assist</string>
-    <string name="motion_assist_title">Motion Assist</string>
-    <string name="motion_assist_description">Vehicle motion cues (Motion Assist) can help prevent motion sickness while you use your device in moving vehicles by projecting dynamic visual anchors aligned to physical vehicle inertia.</string>
-    <string name="motion_assist_turn_on">Enable Motion Assist</string>
-    <string name="motion_assist_turn_on_summary">Show dynamic visual cues synced to vehicle movement</string>
-
-    <string name="motion_assist_auto_vehicle">Vehicle Auto-Detection</string>
-    <string name="motion_assist_auto_vehicle_summary">Automatically show motion cues only when vehicle acceleration is detected</string>
-
-    <string name="motion_assist_options_category">Customization &amp; Style</string>
-    <string name="motion_assist_customize_title">Customize Cues</string>
-    <string name="motion_assist_customize_summary">Change shape, color palette, opacity, and responsiveness</string>
-
-    <string name="motion_assist_qs_tile_title">Quick Settings Tile</string>
-    <string name="motion_assist_qs_tile_summary">Toggle motion assist from anywhere with one tap</string>
-    <string name="motion_assist_qs_tile_action">Add tile to Quick Settings</string>
-
-    <string name="motion_assist_shortcut_dialog_title">Quick Settings tile ready</string>
-    <string name="motion_assist_shortcut_dialog_info_part1">Swipe down twice from top of your screen to open Quick Settings, tap the pencil (edit) icon, and drag "Motion assist" into your active tiles.</string>
-    <string name="motion_assist_shortcut_dialog_info">Tap the tile to turn cues on or off. Long press to open Motion Assist settings.</string>
-    <string name="motion_assist_shortcut_dialog_pos_button_text">Got it</string>
-
-    <string name="motion_assist_color_title">Color Palette</string>
-    <string name="motion_assist_color_system">Material You (Dynamic System Accent)</string>
-    <string name="motion_assist_color_pink">Salmon Pink</string>
-    <string name="motion_assist_color_yellow">Amber Yellow</string>
-    <string name="motion_assist_color_green">Mint Green</string>
-    <string name="motion_assist_color_blue">Soft Blue</string>
-    <string name="motion_assist_color_adaptive">Adaptive (High Contrast Auto-Invert)</string>
-
-    <string name="motion_assist_shape_title">Cue Shape</string>
-    <string name="motion_assist_shape_circle">Circle</string>
-    <string name="motion_assist_shape_squircle">Squircle</string>
-    <string name="motion_assist_shape_pentagon">Pentagon</string>
-    <string name="motion_assist_shape_diamond">Diamond</string>
-
-    <string name="motion_assist_opacity_title">Cue Opacity</string>
-    <string name="motion_assist_sensitivity_title">Cue Movement</string>
-    <string name="motion_assist_sensitivity_summary">How far cues travel when the vehicle accelerates, brakes, or turns</string>
-    <string name="motion_assist_randomization_title">Shape &amp; Color Randomization</string>
-    <string name="motion_assist_randomization_summary">Automatically change shape and color periodically</string>
-
-    <string name="motion_assist_smooth_animation_title">Smooth 120Hz Animation</string>
-    <string name="motion_assist_smooth_animation_summary">Run physics rendering at full display refresh rate with battery saver throttle</string>
-
-    <string name="motion_assist_overlay_permission_title">Overlay Permission Needed</string>
-    <string name="motion_assist_overlay_permission_desc">To display visual motion cues over other apps, Motion Assist requires \"Display over other apps\" permission.\n\n⚠️ If the option appears greyed out or disabled (Android 13+ Restricted Settings):\nTap \"App Info\", tap the 3-dot menu (⋮) in the top-right corner, and select \"Allow restricted settings\".</string>
-    <string name="motion_assist_grant_permission">Grant Permission</string>
-    <string name="motion_assist_open_app_info">App Info (Unlock)</string>
-    <string name="motion_assist_preview_card_title">Real-time Preview</string>
-    <string name="motion_assist_preview_card_desc">Demonstrates how kinetic motion cues respond to vehicle movements and acceleration in real time</string>
-    <string name="motion_assist_preview_tab_tutorial">Tutorial</string>
-    <string name="motion_assist_preview_tab_interactive">Live Physics</string>
-
-    <string name="quick_settings_motion_assist_label">Motion assist</string>
-    <string name="quick_settings_motion_assist_secondary_label_on">Active</string>
-    <string name="quick_settings_motion_assist_secondary_label_off">Off</string>
-    <string name="quick_settings_motion_assist_secondary_label_auto">Auto (Vehicle)</string>
-
-    <string name="notification_channel_name">Motion Assist Service</string>
-    <string name="notification_title">Motion Assist is active</string>
-    <string name="notification_text">Displaying vehicle motion cues in real time</string>
-    <string name="motion_assist_size_title">Cue Size</string>
-    <string name="motion_assist_responsiveness_title">Responsiveness</string>
-    <string name="motion_assist_responsiveness_summary">Lower is calmer and smoother, higher reacts faster</string>
-    <string name="motion_assist_cue_area_title">Cue Area</string>
-    <string name="motion_assist_cue_area_summary">Width of the side bands with cues. Maximum fills the whole screen</string>
-    <string name="motion_assist_cue_area_full">Full screen</string>
-    <string name="motion_assist_horizon_title">Horizon Line</string>
-    <string name="motion_assist_horizon_summary">Show an artificial horizon that stays level with the ground</string>
-    <string name="notification_action_stop">Stop</string>
+    <string name="app_name" translatable="false">Motion Assist</string>
+    <string name="preview_mode_guide">Guide</string>
+    <string name="preview_mode_live">Live</string>
+    <string name="preview_guide_title">How it works</string>
+    <string name="preview_guide_body">Dots at the edges of the screen move the way your body feels the ride: sideways in turns, up when braking, down when speeding up.</string>
+    <string name="preview_live_title">Live preview</string>
+    <string name="preview_live_body">Move or turn your phone and watch the cues react. You can also drag them with a finger.</string>
+    <string name="enable_title">Motion cues</string>
+    <string name="enable_summary">Show moving dots at the screen edges to ease motion sickness</string>
+    <string name="auto_title">Start in a moving vehicle</string>
+    <string name="auto_summary">Only show cues while vehicle motion is detected</string>
+    <string name="tile_card_title">Quick Settings tile</string>
+    <string name="tile_card_summary">Turn cues on or off from any screen</string>
+    <string name="tile_card_action">Add tile</string>
+    <string name="tile_manual_title">Add the tile yourself</string>
+    <string name="tile_manual_body">Open Quick Settings, tap the edit (pencil) button and drag Motion Assist into your tiles. Tap the tile to turn cues on or off, or long-press it to open this app.</string>
+    <string name="section_appearance">Appearance</string>
+    <string name="section_motion">Motion</string>
+    <string name="section_display">Display</string>
+    <string name="shape_title">Shape</string>
+    <string name="shape_circle">Circle</string>
+    <string name="shape_squircle">Squircle</string>
+    <string name="shape_pentagon">Pentagon</string>
+    <string name="shape_diamond">Diamond</string>
+    <string name="palette_title">Color</string>
+    <string name="palette_system">Wallpaper</string>
+    <string name="palette_salmon">Salmon</string>
+    <string name="palette_amber">Amber</string>
+    <string name="palette_mint">Mint</string>
+    <string name="palette_sky">Sky</string>
+    <string name="palette_contrast">High contrast</string>
+    <string name="opacity_title">Opacity</string>
+    <string name="size_title">Size</string>
+    <string name="movement_title">Movement</string>
+    <string name="movement_summary">How far the cues travel when the vehicle speeds up, brakes or turns</string>
+    <string name="responsiveness_title">Responsiveness</string>
+    <string name="responsiveness_summary">Lower is calmer and smoother, higher reacts sooner</string>
+    <string name="area_title">Cue area</string>
+    <string name="area_summary">Width of the side bands that show cues. The maximum fills the whole screen</string>
+    <string name="area_full">Full screen</string>
+    <string name="horizon_title">Horizon line</string>
+    <string name="horizon_summary">Show an artificial horizon that stays level with the ground</string>
+    <string name="shuffle_title">Shuffle</string>
+    <string name="shuffle_summary">Scatter the dots and change shape and color every few seconds</string>
+    <string name="smooth_title">Smooth animation</string>
+    <string name="smooth_summary">Draw at the full refresh rate of your display. Limited to 30 fps in Battery Saver</string>
+    <string name="permission_title">Allow display over other apps</string>
+    <string name="permission_body">Motion Assist draws the cues on top of other apps, which needs the “Display over other apps” permission.\n\nIf that switch is greyed out (Android 13 and later, for apps installed outside an app store): open App info, tap ⋮ in the top corner, choose “Allow restricted settings” and come back.</string>
+    <string name="permission_open">Open settings</string>
+    <string name="permission_app_info">App info</string>
+    <string name="tile_label">Motion cues</string>
+    <string name="tile_state_on">On</string>
+    <string name="tile_state_off">Off</string>
+    <string name="tile_state_auto">Auto</string>
+    <string name="notification_channel">Motion cues</string>
+    <string name="notification_channel_description">Shown while motion cues are running</string>
+    <string name="notification_title">Motion cues are on</string>
+    <string name="notification_text">Tap to adjust</string>
+    <string name="notification_stop">Turn off</string>
+    <string name="label_percent" translatable="false">%1$s: %2$d%%</string>
 </resources>
