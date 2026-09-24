@@ -22,7 +22,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import android.os.SystemClock
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -30,21 +29,14 @@ import com.google.android.material.color.MaterialColors
 import java.util.Random
 import kotlin.math.abs
 import kotlin.math.cos
+import kotlin.math.min
 import kotlin.math.sin
 
 /**
- * Official Google Motion Assist peripheral visual cues view with true 2nd-order
- * spring-mass-damper particle physics.
+ * Official Google Motion Assist / Vehicle Motion Cues drawing and physics engine.
  *
- * Places subtle, elegant kinetic visual dots strictly along the left and right
- * edges of the screen (in the user's peripheral visual field), leaving the entire
- * center area completely unobstructed for reading, typing, and media consumption.
- *
- * Features:
- * - True 2nd-order harmonic spring-mass-damper physics with inertial lag and fluid wave propagation.
- * - Responsive to vehicle acceleration, braking, cornering, device tilt, and interactive touch drag.
- * - Dynamic contrast outer ring for high visibility on both dark and light content.
- * - Material You 3 dynamic color palettes and customizable geometric shapes.
+ * Implements Google's exact AOSP toroidal wrapping grid with edge margin filtering,
+ * edge shrinking threshold (50dp), and continuous kinematic displacement flow.
  */
 class MotionCuesView @JvmOverloads constructor(
     context: Context,
@@ -55,6 +47,7 @@ class MotionCuesView @JvmOverloads constructor(
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
+        strokeWidth = 2.8f
     }
     private val scratchPath = Path()
 
@@ -101,44 +94,31 @@ class MotionCuesView @JvmOverloads constructor(
     var isTouchInteractive: Boolean = false
     var onDragListener: ((Float, Float) -> Unit)? = null
 
-    // Target displacement offsets from external vehicle motion
-    private var targetOffsetX = 0f
-    private var targetOffsetY = 0f
-    private var rollRadians = 0f
-    private var yawRateRps = 0f
-
-    // Touch interaction displacement
-    private var touchOffsetX = 0f
-    private var touchOffsetY = 0f
-    private var touchStartX = 0f
-    private var touchStartY = 0f
-
-    // High-resolution physics simulation timer
-    private var lastFrameTimeNs = 0L
+    // Touch interaction tracking
+    private var lastTouchX = 0f
+    private var lastTouchY = 0f
 
     /**
-     * Individual physical cue particle with mass, velocity, spring, and damping.
+     * Represents a single motion cue bubble in Google's coordinate space.
      */
-    data class CueParticle(
-        val baseX: Float,
-        val baseY: Float,
-        val radius: Float,
-        val phaseLag: Float,
-        val isRightColumn: Boolean,
-        var currentX: Float = baseX,
-        var currentY: Float = baseY,
-        var velocityX: Float = 0f,
-        var velocityY: Float = 0f
-    ) {
-        fun reset() {
-            currentX = baseX
-            currentY = baseY
-            velocityX = 0f
-            velocityY = 0f
-        }
-    }
+    data class MotionCue(
+        var x: Float,
+        var y: Float,
+        var radius: Float
+    )
 
-    private val particles = mutableListOf<CueParticle>()
+    private val motionCues = mutableListOf<MotionCue>()
+    private var bubbleGridWidth = 0f
+    private var bubbleGridHeight = 0f
+    private var marginLeft = 0f
+    private var marginRight = 0f
+
+    // Google Motion Assist default specifications
+    private val horizontalSpacingDp = 60f
+    private val verticalSpacingDp = 140f
+    private val radiusDp = 15f
+    private val marginPercent = 0.20f // 20% peripheral margin per side
+    private val edgeShrinkThresholdDp = 50f
 
     init {
         updateColors()
@@ -147,106 +127,72 @@ class MotionCuesView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         buildGrid()
-        lastFrameTimeNs = 0L
     }
 
     /**
-     * Builds the official Google Motion Assist peripheral cue columns.
-     * Subtle dots are placed along the left and right borders of the screen.
-     * The center reading/viewing area is left completely clear.
+     * Builds Google's official toroidal staggered grid of bubbles.
      */
     private fun buildGrid() {
-        particles.clear()
+        motionCues.clear()
         if (width <= 0 || height <= 0) return
 
         val density = resources.displayMetrics.density
-        // Official Google dot radius: ~6.5dp
-        val radius = 6.5f * density
-        // Margin from left/right screen edge: 26dp
-        val edgeMargin = 26f * density
+        val bubbleSpacingX = horizontalSpacingDp * density
+        val bubbleSpacingY = verticalSpacingDp * density
+        val radius = radiusDp * density
 
-        // Distribute dots vertically in the peripheral field
-        val startY = height * 0.16f
-        val endY = height * 0.84f
-        val usableHeight = endY - startY
+        var rowCount = (height / bubbleSpacingY).toInt() + 1
+        val colCount = (width / bubbleSpacingX).toInt() + 1
+        if (rowCount % 2 != 0) {
+            rowCount++
+        }
 
-        // 4 dots in compact preview containers, 6 dots in full screen overlay
-        val dotCountPerEdge = if (height < 320 * density) 4 else 6
-        val stepY = if (dotCountPerEdge > 1) usableHeight / (dotCountPerEdge - 1) else 0f
+        bubbleGridWidth = colCount * bubbleSpacingX
+        bubbleGridHeight = rowCount * bubbleSpacingY
+        val xOffset = (bubbleGridWidth - width) / 2f
         val random = Random(1337L)
 
-        for (i in 0 until dotCountPerEdge) {
-            val baseY = startY + i * stepY
-            val jitterY = if (isRandomized) ((random.nextFloat() - 0.5f) * 14f * density) else 0f
-            val jitterX = if (isRandomized) ((random.nextFloat() - 0.5f) * 6f * density) else 0f
-            val phaseLag = if (dotCountPerEdge > 1) (i.toFloat() / (dotCountPerEdge - 1)) else 0f
+        for (row in 0 until rowCount) {
+            for (col in 0 until colCount) {
+                val rowOffset = if (row % 2 == 1) bubbleSpacingX / 2f else 0f
+                val jitterX = if (isRandomized) ((random.nextFloat() - 0.5f) * bubbleSpacingX * 0.45f) else 0f
+                val jitterY = if (isRandomized) ((random.nextFloat() - 0.5f) * bubbleSpacingY * 0.45f) else 0f
 
-            // Left lateral column
-            particles.add(
-                CueParticle(
-                    baseX = edgeMargin + jitterX,
-                    baseY = baseY + jitterY,
-                    radius = radius,
-                    phaseLag = phaseLag,
-                    isRightColumn = false
+                motionCues.add(
+                    MotionCue(
+                        x = col * bubbleSpacingX + rowOffset - xOffset + jitterX,
+                        y = row * bubbleSpacingY + jitterY,
+                        radius = radius
+                    )
                 )
-            )
-
-            // Right lateral column
-            particles.add(
-                CueParticle(
-                    baseX = width - edgeMargin - jitterX,
-                    baseY = baseY + jitterY,
-                    radius = radius,
-                    phaseLag = phaseLag,
-                    isRightColumn = true
-                )
-            )
+            }
         }
+
+        marginLeft = width * marginPercent
+        marginRight = width - marginLeft
     }
 
     /**
-     * Smoothly sets the physical displacement vector and rotation from vehicle motion.
+     * Updates the position of all motion cues by displacement delta (Google official method).
+     */
+    fun updateBubblePos(dx: Float, dy: Float) {
+        if (motionCues.isEmpty()) return
+        for (cue in motionCues) {
+            cue.x += dx
+            cue.y += dy
+        }
+        postInvalidateOnAnimation()
+    }
+
+    /**
+     * Compatibility alias for updateBubblePos.
      */
     fun updateOffset(dx: Float, dy: Float, rollRad: Float = 0f, yawRate: Float = 0f) {
-        val density = resources.displayMetrics.density
-        val maxDisplacement = 35f * density
-        targetOffsetX = dx.coerceIn(-maxDisplacement, maxDisplacement)
-        targetOffsetY = dy.coerceIn(-maxDisplacement, maxDisplacement)
-        rollRadians = rollRad
-        yawRateRps = yawRate
-        postInvalidateOnAnimation()
-    }
-
-    /**
-     * Applies manual drag displacement to the particle field.
-     */
-    fun setTouchOffset(dx: Float, dy: Float) {
-        val density = resources.displayMetrics.density
-        val maxDrag = 42f * density
-        touchOffsetX = dx.coerceIn(-maxDrag, maxDrag)
-        touchOffsetY = dy.coerceIn(-maxDrag, maxDrag)
-        postInvalidateOnAnimation()
-    }
-
-    /**
-     * Releases touch drag and lets spring-damper recoil snap dots back to equilibrium.
-     */
-    fun releaseTouch() {
-        touchOffsetX = 0f
-        touchOffsetY = 0f
-        postInvalidateOnAnimation()
+        updateBubblePos(dx, dy)
     }
 
     fun resetPhysics() {
-        targetOffsetX = 0f
-        targetOffsetY = 0f
-        touchOffsetX = 0f
-        touchOffsetY = 0f
-        for (p in particles) {
-            p.reset()
-        }
-        lastFrameTimeNs = 0L
+        buildGrid()
         postInvalidateOnAnimation()
     }
 
@@ -255,21 +201,22 @@ class MotionCuesView @JvmOverloads constructor(
 
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                touchStartX = event.x
-                touchStartY = event.y
+                lastTouchX = event.x
+                lastTouchY = event.y
                 parent?.requestDisallowInterceptTouchEvent(true)
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
-                val dx = (event.x - touchStartX) * 0.72f
-                val dy = (event.y - touchStartY) * 0.72f
-                setTouchOffset(dx, dy)
+                val dx = event.x - lastTouchX
+                val dy = event.y - lastTouchY
+                lastTouchX = event.x
+                lastTouchY = event.y
+                updateBubblePos(dx, dy)
                 onDragListener?.invoke(dx, dy)
                 return true
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 parent?.requestDisallowInterceptTouchEvent(false)
-                releaseTouch()
                 onDragListener?.invoke(0f, 0f)
                 return true
             }
@@ -307,118 +254,58 @@ class MotionCuesView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (particles.isEmpty()) return
+        if (motionCues.isEmpty() || bubbleGridWidth <= 0f || bubbleGridHeight <= 0f) return
 
         val density = resources.displayMetrics.density
-        val nowNs = SystemClock.elapsedRealtimeNanos()
-        val dt = if (lastFrameTimeNs == 0L) {
-            0.016f
-        } else {
-            ((nowNs - lastFrameTimeNs) / 1_000_000_000f).coerceIn(0.001f, 0.033f)
-        }
-        lastFrameTimeNs = nowNs
-
-        // 2nd-order harmonic spring-mass-damper physics constants
-        // Natural frequency: omega_0 = sqrt(k/m) ~ 14.5 rad/s
-        // Damping ratio: zeta = c / (2 * sqrt(m*k)) ~ 0.74 (near critical damping with natural organic bounce)
-        val springK = 210f
-        val dampingC = 22f
-        val mass = 1.0f
-        val couplingK = 14f
-
-        var hasKineticEnergy = false
-
-        // Update physics for each dot particle independently
-        val count = particles.size
-        for (i in 0 until count) {
-            val p = particles[i]
-
-            // Fluid vertical phase wave: dots follow inertial acceleration with organic delay
-            val phaseFactor = p.phaseLag
-            val effectiveTargetX = targetOffsetX * (1f - phaseFactor * 0.22f) + touchOffsetX
-            val effectiveTargetY = targetOffsetY * (1f - phaseFactor * 0.12f) + touchOffsetY
-
-            // Centrifugal turning displacement from vehicle yaw rate
-            val centrifugalForce = if (p.isRightColumn) {
-                -yawRateRps * 5f * density
-            } else {
-                yawRateRps * 5f * density
-            }
-
-            val targetX = p.baseX + effectiveTargetX + centrifugalForce
-            val targetY = p.baseY + effectiveTargetY
-
-            // Hooke's spring restoring force towards target equilibrium
-            val fSpringX = -springK * (p.currentX - targetX)
-            val fSpringY = -springK * (p.currentY - targetY)
-
-            // Viscous damping force opposing current velocity
-            val fDampX = -dampingC * p.velocityX
-            val fDampY = -dampingC * p.velocityY
-
-            // Inter-dot elastic chain coupling along the vertical column
-            var fCoupleY = 0f
-            // Left column has even indices (0, 2, 4...), Right column has odd indices (1, 3, 5...)
-            val prevIndex = i - 2
-            val nextIndex = i + 2
-            if (prevIndex >= 0) {
-                val prev = particles[prevIndex]
-                fCoupleY += (prev.currentY - prev.baseY - (p.currentY - p.baseY)) * couplingK
-            }
-            if (nextIndex < count) {
-                val next = particles[nextIndex]
-                fCoupleY += (next.currentY - next.baseY - (p.currentY - p.baseY)) * couplingK
-            }
-
-            // Semi-implicit Euler integration (stable, robust energy conservation)
-            val accelX = (fSpringX + fDampX) / mass
-            val accelY = (fSpringY + fDampY + fCoupleY) / mass
-
-            p.velocityX += accelX * dt
-            p.velocityY += accelY * dt
-
-            p.currentX += p.velocityX * dt
-            p.currentY += p.velocityY * dt
-
-            // Soft elastic boundary protection (dots stay in lateral peripheral zone)
-            val maxLatDisp = 38f * density
-            p.currentX = p.currentX.coerceIn(p.baseX - maxLatDisp, p.baseX + maxLatDisp)
-
-            // Check if particle still has significant kinetic energy or position error
-            if (abs(p.velocityX) > 0.35f || abs(p.velocityY) > 0.35f ||
-                abs(p.currentX - targetX) > 0.15f || abs(p.currentY - targetY) > 0.15f
-            ) {
-                hasKineticEnergy = true
-            }
-        }
-
-        val strokeWidthPx = 1.35f * density
-        strokePaint.strokeWidth = strokeWidthPx
-
-        val baseColor = getResolvedColor()
+        val edgeShrinkThreshold = edgeShrinkThresholdDp * density
         val currentFillColor = if (isAdaptiveMode) {
             val alpha = fillPaint.alpha
             if (topDarkIntensity > 0.45f) Color.argb(alpha, 25, 25, 25) else Color.argb(alpha, 245, 245, 245)
         } else {
-            val alpha = (cueOpacity * 2.55f).toInt().coerceIn(25, 255)
-            (alpha shl 24) or (baseColor and 0x00FFFFFF)
+            fillPaint.color
         }
 
-        fillPaint.color = currentFillColor
-
-        // Dynamic high-contrast outline ring (ensures visibility across any app background)
         val lum = 0.299 * Color.red(currentFillColor) + 0.587 * Color.green(currentFillColor) + 0.114 * Color.blue(currentFillColor)
-        strokePaint.color = if (lum < 135) Color.argb(210, 255, 255, 255) else Color.argb(200, 20, 20, 20)
+        val strokeAlpha = 220
+        strokePaint.color = if (lum < 135) {
+            Color.argb(strokeAlpha, 255, 255, 255)
+        } else {
+            Color.argb(strokeAlpha, 18, 18, 18)
+        }
 
-        // Render each dot at its physical simulated position
-        for (particle in particles) {
-            val x = particle.currentX
-            val y = particle.currentY
-            val r = particle.radius
+        for (motionCue in motionCues) {
+            // Google Toroidal Wrap: wrap around screen dimensions seamlessly
+            var x = (motionCue.x + bubbleGridWidth) % bubbleGridWidth
+            var y = (motionCue.y + bubbleGridHeight) % bubbleGridHeight
+
+            if (x < 0) x += bubbleGridWidth
+            if (y < 0) y += bubbleGridHeight
+
+            // Google Margin Rule: Only draw in the peripheral margins, leaving the center clear
+            if (x > marginLeft && x < marginRight) {
+                continue
+            }
+
+            // Google Edge Shrink Rule: Calculate distance from nearest boundary
+            val distanceFromEdgeX = min(abs(marginRight - x), abs(marginLeft - x))
+            val distanceFromEdgeY = min(y, height.toFloat() - y)
+            val distanceFromEdge = min(distanceFromEdgeX, distanceFromEdgeY)
+
+            // Adjust radius based on distance from edge
+            var adjustedRadius = motionCue.radius
+            if (distanceFromEdge < edgeShrinkThreshold) {
+                val shrinkFactor = distanceFromEdge / edgeShrinkThreshold
+                adjustedRadius *= shrinkFactor
+            }
+
+            if (adjustedRadius <= 0.8f) continue
+
+            val r = adjustedRadius
+            strokePaint.strokeWidth = Math.max(2.4f, r * 0.16f)
 
             when (shapeIndex) {
                 1 -> { // Squircle
-                    val corner = r * 0.38f
+                    val corner = r * 0.35f
                     canvas.drawRoundRect(x - r, y - r, x + r, y + r, corner, corner, fillPaint)
                     canvas.drawRoundRect(x - r, y - r, x + r, y + r, corner, corner, strokePaint)
                 }
@@ -444,15 +331,11 @@ class MotionCuesView @JvmOverloads constructor(
                     canvas.drawPath(scratchPath, fillPaint)
                     canvas.drawPath(scratchPath, strokePaint)
                 }
-                else -> { // Circle (Official Google Motion Cues)
+                else -> { // Circle (Official Google Default)
                     canvas.drawCircle(x, y, r, fillPaint)
                     canvas.drawCircle(x, y, r, strokePaint)
                 }
             }
-        }
-
-        if (hasKineticEnergy || targetOffsetX != 0f || targetOffsetY != 0f || touchOffsetX != 0f || touchOffsetY != 0f) {
-            postInvalidateOnAnimation()
         }
     }
 }

@@ -374,12 +374,12 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
 
     override fun onMotionUpdated(motion: MotionVector) {
         val density = resources.displayMetrics.density
-        val dx = motion.x * 18f * density
-        val dy = motion.y * 18f * density
+        val dx = -motion.x * 2.0f * density
+        val dy = motion.y * 2.0f * density
         val rollDeg = Math.toDegrees(motion.rollRadians.toDouble()).toFloat()
         val rotationDeg = (-motion.x * 20f + rollDeg).coerceIn(-45f, 45f)
         runOnUiThread {
-            binding.previewCuesView.updateOffset(dx, dy, motion.rollRadians, motion.yawRateRps)
+            binding.previewCuesView.updateBubblePos(dx, dy)
             binding.imgCenterSteering.rotation = rotationDeg
         }
     }

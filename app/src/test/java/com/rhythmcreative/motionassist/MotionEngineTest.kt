@@ -74,53 +74,57 @@ class MotionEngineTest {
     }
 
     @Test
-    fun testSpringMassDamperConvergence() {
-        // Test harmonic spring-mass-damper 2nd-order ODE integration step
-        val springK = 210f
-        val dampingC = 22f
-        val mass = 1.0f
-        val dt = 0.016f // 60 FPS frame time
+    fun testGoogleToroidalWrapping() {
+        val gridWidth = 400f
 
-        var currentX = 50f
-        var velocityX = 0f
-        val targetX = 0f
-
-        // Run 60 frames (~1.0 second) of physics simulation
-        for (frame in 0 until 60) {
-            val displacement = currentX - targetX
-            val force = -springK * displacement - dampingC * velocityX
-            val acceleration = force / mass
-            velocityX += acceleration * dt
-            currentX += velocityX * dt
+        fun wrap(coord: Float, limit: Float): Float {
+            var v = (coord + limit) % limit
+            if (v < 0) v += limit
+            return v
         }
 
-        // Particle must converge to equilibrium within tight bound (< 0.05 px)
-        assertEquals(0f, currentX, 0.05f)
-        assertEquals(0f, velocityX, 0.1f)
+        // Test normal in-bounds
+        assertEquals(150f, wrap(150f, gridWidth), 0.001f)
+        // Test right-side wrap
+        assertEquals(20f, wrap(420f, gridWidth), 0.001f)
+        // Test left-side wrap
+        assertEquals(380f, wrap(-20f, gridWidth), 0.001f)
     }
 
     @Test
-    fun testCentrifugalForceYawReaction() {
-        val yawRate = 0.25f // vehicle turning right at 0.25 rad/s
-        val density = 2.0f
+    fun testGoogleEdgeShrinkThreshold() {
+        val baseRadius = 15f
+        val edgeShrinkThreshold = 50f
 
-        val leftColumnForce = yawRate * 5f * density
-        val rightColumnForce = -yawRate * 5f * density
+        fun computeRadius(distanceFromEdge: Float): Float {
+            return if (distanceFromEdge < edgeShrinkThreshold) {
+                baseRadius * (distanceFromEdge / edgeShrinkThreshold)
+            } else {
+                baseRadius
+            }
+        }
 
-        assertEquals(2.5f, leftColumnForce, 0.001f)
-        assertEquals(-2.5f, rightColumnForce, 0.001f)
+        assertEquals(15f, computeRadius(60f), 0.001f) // Outside threshold, full size
+        assertEquals(7.5f, computeRadius(25f), 0.001f) // Halfway, half size
+        assertEquals(0f, computeRadius(0f), 0.001f) // At border, fully shrunk
     }
 
     @Test
-    fun testFluidPhaseLagFactor() {
-        val phaseLagTop = 0.0f
-        val phaseLagBottom = 1.0f
-        val targetX = 20.0f
+    fun testGoogleMarginPeripheralExclusion() {
+        val screenWidth = 1080f
+        val marginPercent = 0.20f
+        val marginLeft = screenWidth * marginPercent // 216px
+        val marginRight = screenWidth - marginLeft // 864px
 
-        val effectiveTop = targetX * (1f - phaseLagTop * 0.22f)
-        val effectiveBottom = targetX * (1f - phaseLagBottom * 0.22f)
+        fun isVisibleInMargin(x: Float): Boolean {
+            return !(x > marginLeft && x < marginRight)
+        }
 
-        assertEquals(20.0f, effectiveTop, 0.001f)
-        assertEquals(15.6f, effectiveBottom, 0.001f)
+        // Left peripheral margin is visible
+        assertEquals(true, isVisibleInMargin(100f))
+        // Center reading zone is completely clear/hidden
+        assertEquals(false, isVisibleInMargin(540f))
+        // Right peripheral margin is visible
+        assertEquals(true, isVisibleInMargin(950f))
     }
 }

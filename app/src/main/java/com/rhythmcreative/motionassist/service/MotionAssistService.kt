@@ -192,11 +192,11 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
 
     override fun onMotionUpdated(motion: MotionVector) {
         val density = resources.displayMetrics.density
-        val scale = 6.0f * density
-        val dx = motion.x * scale
+        val scale = 2.0f * density
+        val dx = -motion.x * scale
         val dy = motion.y * scale
         mainHandler.post {
-            overlayView?.updateOffset(dx, dy, motion.rollRadians, motion.yawRateRps)
+            overlayView?.updateBubblePos(dx, dy)
         }
     }
 
