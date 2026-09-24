@@ -198,6 +198,74 @@ class MotionEngineTest {
     }
 
     @Test
+    fun uprightPhoneIsLevelWithZeroPitch() {
+        val sim = Sim()
+        val out = sim.run(1f, upright)
+        assertEquals(0f, out.rollRadians, 0.001f)
+        assertEquals(0f, out.pitchRadians, 0.001f)
+        assertEquals(1f, out.levelConfidence, 0.001f)
+    }
+
+    @Test
+    fun rollingPhoneClockwiseGivesNegativeRoll() {
+        // Top edge tilted 30 degrees to the right: world up now leans towards screen-left
+        val a = Math.toRadians(30.0)
+        val sim = Sim()
+        val out = sim.run(1f, { floatArrayOf((-g * sin(a)).toFloat(), (g * cos(a)).toFloat(), 0f) })
+        assertEquals(-Math.toRadians(30.0).toFloat(), out.rollRadians, 0.01f)
+    }
+
+    @Test
+    fun tiltingScreenUpwardsGivesPositivePitchAndFlatLosesLevel() {
+        val a = Math.toRadians(40.0)
+        val sim = Sim()
+        val tilted = sim.run(1f, { floatArrayOf(0f, (g * cos(a)).toFloat(), (g * sin(a)).toFloat()) })
+        assertEquals(Math.toRadians(40.0).toFloat(), tilted.pitchRadians, 0.01f)
+        val lying = sim.run(1f, flat)
+        assertTrue("confidence=${lying.levelConfidence}", lying.levelConfidence < 0.01f)
+    }
+
+    @Test
+    fun bumpShowsUpAsVerticalAcceleration() {
+        val sim = Sim()
+        sim.run(1f, upright)
+        // Upward push along world up (device +y when upright)
+        val out = sim.run(0.8f, upright, linear = { floatArrayOf(0f, 2f, 0f) })
+        assertTrue("vertical=${out.vertical}", out.vertical > 1.2f)
+        assertEquals(0f, out.lateral, 0.05f)
+        assertEquals(0f, out.longitudinal, 0.05f)
+    }
+
+    @Test
+    fun gyroBiasIsLearnedWhileAtRest() {
+        val sim = Sim()
+        // Uncalibrated gyro reads 0.05 rad/s about the vertical axis while lying still
+        val biased = { _: Float -> floatArrayOf(0f, 0f, 0.05f) }
+        val first = sim.run(0.5f, flat, gyro = biased)
+        assertTrue("yaw before learning=${first.yawRateRps}", first.yawRateRps > 0.01f)
+        val learned = sim.run(5f, flat, gyro = biased)
+        assertEquals(0f, learned.yawRateRps, 0.001f)
+    }
+
+    @Test
+    fun slowerResponsivenessSmoothsMore() {
+        val snappy = Sim(MotionFilter().apply { accelSmoothingSec = 0.1f })
+        val calm = Sim(MotionFilter().apply { accelSmoothingSec = 0.6f })
+        snappy.run(1f, flat)
+        calm.run(1f, flat)
+        val s = snappy.run(0.2f, flat, linear = { floatArrayOf(2f, 0f, 0f) })
+        val c = calm.run(0.2f, flat, linear = { floatArrayOf(2f, 0f, 0f) })
+        assertTrue("snappy=${s.lateral} calm=${c.lateral}", s.lateral > c.lateral * 1.8f)
+    }
+
+    @Test
+    fun responsivenessMapping() {
+        assertEquals(0.6f, MotionFilter.smoothingSecForResponsiveness(0), 0.001f)
+        assertEquals(0.25f, MotionFilter.smoothingSecForResponsiveness(70), 0.001f)
+        assertEquals(0.1f, MotionFilter.smoothingSecForResponsiveness(100), 0.001f)
+    }
+
+    @Test
     fun softDeadband() {
         assertEquals(0f, MotionFilter.softDeadband(0.005f, 0.01f), 0.0001f)
         assertEquals(0f, MotionFilter.softDeadband(-0.005f, 0.01f), 0.0001f)

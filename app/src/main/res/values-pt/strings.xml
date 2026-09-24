@@ -50,4 +50,13 @@
     <string name="motion_assist_preview_tab_interactive">Física ao vivo</string>
     <string name="motion_assist_sensitivity_title">Movimento das indicações</string>
     <string name="motion_assist_sensitivity_summary">Quanto as indicações se deslocam quando o veículo acelera, trava ou curva</string>
+    <string name="motion_assist_size_title">Tamanho das indicações</string>
+    <string name="motion_assist_responsiveness_title">Capacidade de resposta</string>
+    <string name="motion_assist_responsiveness_summary">Mais baixo é mais calmo e suave, mais alto reage mais rápido</string>
+    <string name="motion_assist_cue_area_title">Área das indicações</string>
+    <string name="motion_assist_cue_area_summary">Largura das faixas laterais com indicações. O máximo preenche o ecrã inteiro</string>
+    <string name="motion_assist_cue_area_full">Ecrã inteiro</string>
+    <string name="motion_assist_horizon_title">Linha do horizonte</string>
+    <string name="motion_assist_horizon_summary">Mostra um horizonte artificial que se mantém nivelado com o chão</string>
+    <string name="notification_action_stop">Parar</string>
 </resources>

@@ -50,4 +50,13 @@
     <string name="motion_assist_preview_tab_interactive">ライブ物理</string>
     <string name="motion_assist_sensitivity_title">キューの動き</string>
     <string name="motion_assist_sensitivity_summary">車両の加速、ブレーキ、旋回時にキューが動く距離</string>
+    <string name="motion_assist_size_title">キューのサイズ</string>
+    <string name="motion_assist_responsiveness_title">反応性</string>
+    <string name="motion_assist_responsiveness_summary">低いほど穏やかで滑らか、高いほど素早く反応します</string>
+    <string name="motion_assist_cue_area_title">キューの領域</string>
+    <string name="motion_assist_cue_area_summary">キューを表示する左右の帯の幅。最大で画面全体</string>
+    <string name="motion_assist_cue_area_full">全画面</string>
+    <string name="motion_assist_horizon_title">水平線</string>
+    <string name="motion_assist_horizon_summary">地面と水平を保つ人工の水平線を表示します</string>
+    <string name="notification_action_stop">停止</string>
 </resources>

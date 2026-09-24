@@ -50,4 +50,13 @@
     <string name="motion_assist_preview_tab_interactive">Fisica dal vivo</string>
     <string name="motion_assist_sensitivity_title">Movimento dei segnali</string>
     <string name="motion_assist_sensitivity_summary">Quanto si spostano i segnali quando il veicolo accelera, frena o svolta</string>
+    <string name="motion_assist_size_title">Dimensione dei segnali</string>
+    <string name="motion_assist_responsiveness_title">Reattività</string>
+    <string name="motion_assist_responsiveness_summary">Più basso è più calmo e fluido, più alto reagisce più velocemente</string>
+    <string name="motion_assist_cue_area_title">Area dei segnali</string>
+    <string name="motion_assist_cue_area_summary">Larghezza delle fasce laterali con segnali. Il massimo riempie tutto lo schermo</string>
+    <string name="motion_assist_cue_area_full">Schermo intero</string>
+    <string name="motion_assist_horizon_title">Linea dell\'orizzonte</string>
+    <string name="motion_assist_horizon_summary">Mostra un orizzonte artificiale che resta in piano con il suolo</string>
+    <string name="notification_action_stop">Interrompi</string>
 </resources>

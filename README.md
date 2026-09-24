@@ -25,7 +25,12 @@ ______________________________________________________________________
 
 - **Gravity-Referenced Sensor Fusion**: Fuses Gravity, Linear Acceleration, and Gyroscope streams into screen-space vehicle acceleration and turn rate. Cues shift opposite to the vehicle's acceleration (like loose objects in the car) and spring back when it stops; turns scroll the cue field sideways.
 - **Hand-Motion Rejection**: Tilting the phone (looking up/down) or re-orienting it in the hand is detected via the gyroscope and ignored, so cues only react to the vehicle. Hand tremor and road vibration are filtered out.
-- **Adjustable Cue Movement**: Scale how far cues travel (25-200%).
+- **Bump Cues**: Vertical jolts (potholes, crests, dips) briefly grow or shrink the cues.
+- **Artificial Horizon Line** (optional): A horizon levelled with gravity is drawn in the side bands; it tilts as the vehicle or phone rolls and shifts with pitch changes, keeping the reading area clear.
+- **Tuning Sliders**: Cue size, cue movement, responsiveness (smoothing), and cue area (side band width up to full screen).
+- **Touch-Through on Android 12+**: The overlay window stays under the system's maximum obscuring opacity, so apps underneath remain fully usable.
+- **Battery Aware**: Sensors stop when the screen is off; in auto mode vehicle detection runs at 10 Hz with hardware batching until motion is detected. Notification has a Stop action.
+- **No Network, No Google Play Services**: Uses only on-device sensors and the Android framework.
 - **Quick Settings Tile**: Toggle Motion Assist instantly from anywhere with one tap (`ic_qs_motion_assist`). Long-press to open settings or customization.
 - **Vehicle Auto-Detection (heuristic)**: Shows cues after a few seconds of vehicle-like acceleration (walking is ignored) and hides them after ~3 minutes without any.
 - **Customizable Shapes**: Support for **Circle**, **Squircle**, **Pentagon**, and **Diamond** shapes.

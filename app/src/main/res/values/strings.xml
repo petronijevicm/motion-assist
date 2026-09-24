@@ -61,4 +61,13 @@
     <string name="notification_channel_name">Motion Assist Service</string>
     <string name="notification_title">Motion Assist is active</string>
     <string name="notification_text">Displaying vehicle motion cues in real time</string>
+    <string name="motion_assist_size_title">Cue Size</string>
+    <string name="motion_assist_responsiveness_title">Responsiveness</string>
+    <string name="motion_assist_responsiveness_summary">Lower is calmer and smoother, higher reacts faster</string>
+    <string name="motion_assist_cue_area_title">Cue Area</string>
+    <string name="motion_assist_cue_area_summary">Width of the side bands with cues. Maximum fills the whole screen</string>
+    <string name="motion_assist_cue_area_full">Full screen</string>
+    <string name="motion_assist_horizon_title">Horizon Line</string>
+    <string name="motion_assist_horizon_summary">Show an artificial horizon that stays level with the ground</string>
+    <string name="notification_action_stop">Stop</string>
 </resources>

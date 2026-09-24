@@ -50,4 +50,13 @@
     <string name="motion_assist_preview_tab_interactive">实时物理</string>
     <string name="motion_assist_sensitivity_title">提示移动幅度</string>
     <string name="motion_assist_sensitivity_summary">车辆加速、刹车或转弯时提示点移动的距离</string>
+    <string name="motion_assist_size_title">提示大小</string>
+    <string name="motion_assist_responsiveness_title">响应速度</string>
+    <string name="motion_assist_responsiveness_summary">越低越平稳柔和，越高反应越快</string>
+    <string name="motion_assist_cue_area_title">提示区域</string>
+    <string name="motion_assist_cue_area_summary">显示提示的两侧区域宽度。最大值为全屏</string>
+    <string name="motion_assist_cue_area_full">全屏</string>
+    <string name="motion_assist_horizon_title">地平线</string>
+    <string name="motion_assist_horizon_summary">显示与地面保持水平的人工地平线</string>
+    <string name="notification_action_stop">停止</string>
 </resources>

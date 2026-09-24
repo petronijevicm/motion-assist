@@ -50,4 +50,13 @@
     <string name="motion_assist_preview_tab_interactive">Physique en direct</string>
     <string name="motion_assist_sensitivity_title">Mouvement des repères</string>
     <string name="motion_assist_sensitivity_summary">Amplitude du déplacement des repères lorsque le véhicule accélère, freine ou tourne</string>
+    <string name="motion_assist_size_title">Taille des repères</string>
+    <string name="motion_assist_responsiveness_title">Réactivité</string>
+    <string name="motion_assist_responsiveness_summary">Plus bas est plus calme et fluide, plus haut réagit plus vite</string>
+    <string name="motion_assist_cue_area_title">Zone des repères</string>
+    <string name="motion_assist_cue_area_summary">Largeur des bandes latérales avec repères. Le maximum remplit tout l\'écran</string>
+    <string name="motion_assist_cue_area_full">Plein écran</string>
+    <string name="motion_assist_horizon_title">Ligne d\'horizon</string>
+    <string name="motion_assist_horizon_summary">Affiche un horizon artificiel qui reste de niveau avec le sol</string>
+    <string name="notification_action_stop">Arrêter</string>
 </resources>

@@ -56,6 +56,29 @@ class MotionPreferences(context: Context) {
         get() = prefs.getInt(KEY_SENSITIVITY, 100)
         set(value) = prefs.edit().putInt(KEY_SENSITIVITY, value).apply()
 
+    /** Cue size in percent (50..200, default 100). */
+    var sizePercent: Int
+        get() = prefs.getInt(KEY_SIZE, 100)
+        set(value) = prefs.edit().putInt(KEY_SIZE, value).apply()
+
+    /** 0 = calm / heavily smoothed, 100 = snappy (default 70). */
+    var responsiveness: Int
+        get() = prefs.getInt(KEY_RESPONSIVENESS, 70)
+        set(value) = prefs.edit().putInt(KEY_RESPONSIVENESS, value).apply()
+
+    /** Width of each side band with cues, percent of screen width (10..50, 50 = full screen). */
+    var cueAreaPercent: Int
+        get() = prefs.getInt(KEY_CUE_AREA, 20)
+        set(value) = prefs.edit().putInt(KEY_CUE_AREA, value).apply()
+
+    var isHorizon: Boolean
+        get() = prefs.getBoolean(KEY_HORIZON, false)
+        set(value) = prefs.edit().putBoolean(KEY_HORIZON, value).apply()
+
+    /** Acceleration smoothing time constant derived from [responsiveness]. */
+    val smoothingSec: Float
+        get() = MotionFilter.smoothingSecForResponsiveness(responsiveness)
+
     fun registerListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
         prefs.registerOnSharedPreferenceChangeListener(listener)
     }
@@ -74,5 +97,9 @@ class MotionPreferences(context: Context) {
         const val KEY_RANDOMIZE = "motion_assist_randomize"
         const val KEY_SMOOTH_ANIMATION = "motion_assist_smooth_animation"
         const val KEY_SENSITIVITY = "motion_assist_sensitivity"
+        const val KEY_SIZE = "motion_assist_size"
+        const val KEY_RESPONSIVENESS = "motion_assist_responsiveness"
+        const val KEY_CUE_AREA = "motion_assist_cue_area"
+        const val KEY_HORIZON = "motion_assist_horizon"
     }
 }

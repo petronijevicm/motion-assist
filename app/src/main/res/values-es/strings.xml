@@ -61,4 +61,13 @@
     <string name="notification_text">Mostrando señales cinéticas del vehículo en tiempo real</string>
     <string name="motion_assist_sensitivity_title">Movimiento de las señales</string>
     <string name="motion_assist_sensitivity_summary">Cuánto se desplazan las señales cuando el vehículo acelera, frena o gira</string>
+    <string name="motion_assist_size_title">Tamaño de las señales</string>
+    <string name="motion_assist_responsiveness_title">Capacidad de respuesta</string>
+    <string name="motion_assist_responsiveness_summary">Más bajo es más suave y tranquilo, más alto reacciona más rápido</string>
+    <string name="motion_assist_cue_area_title">Área de las señales</string>
+    <string name="motion_assist_cue_area_summary">Ancho de las franjas laterales con señales. El máximo ocupa toda la pantalla</string>
+    <string name="motion_assist_cue_area_full">Pantalla completa</string>
+    <string name="motion_assist_horizon_title">Línea del horizonte</string>
+    <string name="motion_assist_horizon_summary">Muestra un horizonte artificial que se mantiene nivelado con el suelo</string>
+    <string name="notification_action_stop">Detener</string>
 </resources>

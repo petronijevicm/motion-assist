@@ -30,9 +30,11 @@ import com.google.android.material.color.MaterialColors
 import java.util.Random
 import kotlin.math.abs
 import kotlin.math.cos
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlin.math.tan
 
 /**
  * Official Google Motion Assist / Vehicle Motion Cues drawing and physics engine.
@@ -41,7 +43,9 @@ import kotlin.math.sqrt
  * edge shrinking threshold, and a per-frame physics step:
  *  - acceleration displaces the whole field opposite to the vehicle's acceleration, like loose
  *    objects inside the car, and a critically damped spring brings it back when it stops;
- *  - turning (yaw rate) scrolls the field sideways, like scenery through a side window.
+ *  - turning (yaw rate) scrolls the field sideways, like scenery through a side window;
+ *  - bumps (vertical acceleration) briefly grow or shrink the cues;
+ *  - an optional artificial horizon line, levelled with gravity, is drawn in the margins.
  *
  * Motion is pulled from [motionSource] once per display frame, so the sensor rate never
  * floods the UI thread and the animation stays smooth at any refresh rate.
@@ -58,6 +62,14 @@ class MotionCuesView @JvmOverloads constructor(
         strokeWidth = 2.8f
     }
     private val scratchPath = Path()
+    private val horizonPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeCap = Paint.Cap.ROUND
+    }
+    private val horizonOutlinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeCap = Paint.Cap.ROUND
+    }
 
     var shapeIndex: Int = 0
         set(value) {
@@ -118,6 +130,31 @@ class MotionCuesView @JvmOverloads constructor(
     /** 0 = follow the display refresh rate, otherwise cap the frame rate (power saving). */
     var maxFrameRate: Int = 0
 
+    /** Cue size multiplier (1.0 = default). */
+    var sizeScale: Float = 1f
+        set(value) {
+            field = value.coerceIn(0.4f, 2.5f)
+            invalidate()
+        }
+
+    /**
+     * Width of each side band that shows cues, as a fraction of the view width.
+     * 0.5 or more fills the whole screen.
+     */
+    var cueAreaFraction: Float = DEFAULT_CUE_AREA
+        set(value) {
+            field = value.coerceIn(0.08f, 0.5f)
+            updateMargins()
+            invalidate()
+        }
+
+    /** Draws an artificial horizon, levelled with gravity, across the side bands. */
+    var showHorizon: Boolean = false
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     // Touch interaction tracking
     private var lastTouchX = 0f
     private var lastTouchY = 0f
@@ -136,6 +173,14 @@ class MotionCuesView @JvmOverloads constructor(
     private var lastFrameNs = 0L
     private var lastDrawnFrameNs = 0L
     private var frameLoopRunning = false
+    private var bumpScale = 1f
+
+    // Horizon state
+    private var horizonRoll = 0f
+    private var horizonPitchBaseline = 0f
+    private var horizonOffsetPx = 0f
+    private var horizonAlpha = 0f
+    private var horizonInitialized = false
 
     private val frameCallback = object : Choreographer.FrameCallback {
         override fun doFrame(frameTimeNanos: Long) {
@@ -164,7 +209,6 @@ class MotionCuesView @JvmOverloads constructor(
     private val horizontalSpacingDp = 48f
     private val verticalSpacingDp = 50f
     private val radiusDp = 6.8f
-    private val marginPercent = 0.20f // 20% peripheral margin per side
     private val edgeShrinkThresholdDp = 24f
 
     init {
@@ -215,9 +259,22 @@ class MotionCuesView @JvmOverloads constructor(
             }
         }
 
-        marginLeft = width * marginPercent
-        marginRight = width - marginLeft
+        updateMargins()
     }
+
+    private fun updateMargins() {
+        if (cueAreaFraction >= 0.5f) {
+            // Full screen: no clear reading zone
+            marginLeft = width.toFloat()
+            marginRight = width.toFloat()
+        } else {
+            marginLeft = width * cueAreaFraction
+            marginRight = width - marginLeft
+        }
+    }
+
+    private val isFullScreenCues: Boolean
+        get() = cueAreaFraction >= 0.5f
 
     /**
      * Shifts the whole field by a displacement delta (manual / legacy use).
@@ -239,6 +296,8 @@ class MotionCuesView @JvmOverloads constructor(
         lastFrameNs = 0L
         drawOffsetX = 0f
         drawOffsetY = 0f
+        bumpScale = 1f
+        horizonInitialized = false
         buildGrid()
         invalidate()
     }
@@ -314,21 +373,67 @@ class MotionCuesView @JvmOverloads constructor(
             dragY -= dragY * decay
         }
 
+        // Bumps: upward push briefly enlarges the cues, a dip shrinks them
+        val bumpTarget = 1f + (motion.vertical * BUMP_GAIN * sensitivity).coerceIn(-BUMP_MAX_SHRINK, BUMP_MAX_GROW)
+        bumpScale += (bumpTarget - bumpScale) * (dt / (BUMP_SMOOTHING_SEC + dt))
+
+        val horizonChanged = showHorizon && stepHorizon(motion, dt)
+
         onFrameListener?.invoke(motion)
 
         if (maxFrameRate > 0 && lastDrawnFrameNs != 0L &&
             frameTimeNanos - lastDrawnFrameNs < 1_000_000_000L / maxFrameRate - 2_000_000L) {
             return
         }
-        refreshOffset(frameTimeNanos)
+        refreshOffset(frameTimeNanos, horizonChanged || abs(bumpScale - drawnBumpScale) > 0.005f)
     }
 
-    private fun refreshOffset(frameTimeNanos: Long = 0L) {
+    /**
+     * Levels the horizon with gravity (roll) and moves it with pitch changes relative to a
+     * slowly adapting baseline, so it stays near the middle for any comfortable holding angle
+     * but reacts to the vehicle (or phone) pitching. Returns true when a redraw is needed.
+     */
+    private fun stepHorizon(motion: MotionVector, dt: Float): Boolean {
+        val oldRoll = horizonRoll
+        val oldOffset = horizonOffsetPx
+        val oldAlpha = horizonAlpha
+
+        if (!horizonInitialized && motion.levelConfidence > 0f) {
+            horizonRoll = motion.rollRadians
+            horizonPitchBaseline = motion.pitchRadians
+            horizonInitialized = true
+        }
+
+        val a = dt / (HORIZON_SMOOTHING_SEC + dt)
+        horizonRoll += wrapAngle(motion.rollRadians - horizonRoll) * a
+        horizonRoll = wrapAngle(horizonRoll)
+
+        // Re-centre quickly while the user is re-orienting the phone, slowly otherwise
+        val baselineSec = if (motion.isHandling) HORIZON_BASELINE_FAST_SEC else HORIZON_BASELINE_SEC
+        horizonPitchBaseline += (motion.pitchRadians - horizonPitchBaseline) * (dt / (baselineSec + dt))
+        val focal = max(width, height) * HORIZON_FOCAL_FRACTION
+        val relPitch = (motion.pitchRadians - horizonPitchBaseline).coerceIn(-0.6f, 0.6f)
+        val targetOffset = (focal * tan(relPitch)).coerceIn(-height * 0.4f, height * 0.4f)
+        horizonOffsetPx += (targetOffset - horizonOffsetPx) * a
+
+        // Fade out when the phone lies flat and "level" becomes meaningless
+        val targetAlpha = smoothstep(0.2f, 0.5f, motion.levelConfidence)
+        horizonAlpha += (targetAlpha - horizonAlpha) * a
+
+        return abs(horizonRoll - oldRoll) > 0.0005f ||
+            abs(horizonOffsetPx - oldOffset) > 0.1f ||
+            abs(horizonAlpha - oldAlpha) > 0.005f
+    }
+
+    private var drawnBumpScale = 1f
+
+    private fun refreshOffset(frameTimeNanos: Long = 0L, force: Boolean = false) {
         val newX = springX + flowX + dragX
         val newY = springY + dragY
-        if (abs(newX - drawOffsetX) < 0.05f && abs(newY - drawOffsetY) < 0.05f) return
+        if (!force && abs(newX - drawOffsetX) < 0.05f && abs(newY - drawOffsetY) < 0.05f) return
         drawOffsetX = newX
         drawOffsetY = newY
+        drawnBumpScale = bumpScale
         if (frameTimeNanos != 0L) lastDrawnFrameNs = frameTimeNanos
         invalidate()
     }
@@ -412,6 +517,9 @@ class MotionCuesView @JvmOverloads constructor(
             Color.argb(strokeAlpha, 18, 18, 18)
         }
 
+        val sizeFactor = sizeScale * drawnBumpScale
+        val fullScreen = isFullScreenCues
+
         for (motionCue in motionCues) {
             // Google Toroidal Wrap: wrap around screen dimensions seamlessly
             var x = (motionCue.x + drawOffsetX) % bubbleGridWidth
@@ -421,17 +529,20 @@ class MotionCuesView @JvmOverloads constructor(
             if (y < 0) y += bubbleGridHeight
 
             // Google Margin Rule: Only draw in the peripheral margins, leaving the center clear
-            if (x > marginLeft && x < marginRight) {
+            if (!fullScreen && x > marginLeft && x < marginRight) {
                 continue
             }
 
             // Google Edge Shrink Rule: Calculate distance from nearest boundary
-            val distanceFromEdgeX = min(abs(marginRight - x), abs(marginLeft - x))
             val distanceFromEdgeY = min(y, height.toFloat() - y)
-            val distanceFromEdge = min(distanceFromEdgeX, distanceFromEdgeY)
+            val distanceFromEdge = if (fullScreen) {
+                distanceFromEdgeY
+            } else {
+                min(min(abs(marginRight - x), abs(marginLeft - x)), distanceFromEdgeY)
+            }
 
             // Adjust radius based on distance from edge
-            var adjustedRadius = motionCue.radius
+            var adjustedRadius = motionCue.radius * sizeFactor
             if (distanceFromEdge < edgeShrinkThreshold) {
                 val shrinkFactor = distanceFromEdge / edgeShrinkThreshold
                 adjustedRadius *= shrinkFactor
@@ -450,11 +561,9 @@ class MotionCuesView @JvmOverloads constructor(
                 }
                 2 -> { // Pentagon
                     scratchPath.rewind()
-                    for (i in 0 until 5) {
-                        val angle = Math.toRadians((i * 72.0) - 90.0)
-                        val px = (x + r * cos(angle)).toFloat()
-                        val py = (y + r * sin(angle)).toFloat()
-                        if (i == 0) scratchPath.moveTo(px, py) else scratchPath.lineTo(px, py)
+                    scratchPath.moveTo(x + r * PENTAGON_X[0], y + r * PENTAGON_Y[0])
+                    for (i in 1 until 5) {
+                        scratchPath.lineTo(x + r * PENTAGON_X[i], y + r * PENTAGON_Y[i])
                     }
                     scratchPath.close()
                     canvas.drawPath(scratchPath, fillPaint)
@@ -476,6 +585,43 @@ class MotionCuesView @JvmOverloads constructor(
                 }
             }
         }
+
+        if (showHorizon && horizonAlpha > 0.02f) {
+            drawHorizon(canvas, currentFillColor)
+        }
+    }
+
+    private fun drawHorizon(canvas: Canvas, color: Int) {
+        val density = resources.displayMetrics.density
+        val cx = width / 2f
+        val cy = height / 2f
+        // Screen "up" in view coordinates is (sin roll, -cos roll); the line runs perpendicular
+        val dirX = cos(horizonRoll)
+        val dirY = sin(horizonRoll)
+        val centerX = cx + sin(horizonRoll) * horizonOffsetPx
+        val centerY = cy - cos(horizonRoll) * horizonOffsetPx
+        val halfLen = width.toFloat() + height.toFloat()
+
+        val alphaScale = horizonAlpha
+        val coreAlpha = (Color.alpha(color).coerceAtLeast(140) * alphaScale).toInt()
+        horizonPaint.color = Color.argb(coreAlpha, Color.red(color), Color.green(color), Color.blue(color))
+        horizonPaint.strokeWidth = HORIZON_WIDTH_DP * density * sizeScale
+        horizonOutlinePaint.color = Color.argb((Color.alpha(strokePaint.color) * alphaScale).toInt(),
+            Color.red(strokePaint.color), Color.green(strokePaint.color), Color.blue(strokePaint.color))
+        horizonOutlinePaint.strokeWidth = horizonPaint.strokeWidth + 2.4f * density
+
+        // Keep the reading zone clear: only draw where cues are drawn (or the outer 20%)
+        val gapLeft = if (isFullScreenCues) width * HORIZON_FULLSCREEN_BAND else marginLeft
+        val gapRight = width - gapLeft
+        canvas.save()
+        canvas.clipOutRect(gapLeft, 0f, gapRight, height.toFloat())
+        val x0 = centerX - dirX * halfLen
+        val y0 = centerY - dirY * halfLen
+        val x1 = centerX + dirX * halfLen
+        val y1 = centerY + dirY * halfLen
+        canvas.drawLine(x0, y0, x1, y1, horizonOutlinePaint)
+        canvas.drawLine(x0, y0, x1, y1, horizonPaint)
+        canvas.restore()
     }
 
     companion object {
@@ -488,5 +634,38 @@ class MotionCuesView @JvmOverloads constructor(
         /** Spring natural frequency (rad/s); critically damped, settles in ~0.5 s. */
         const val SPRING_OMEGA = 9f
         private const val DRAG_RETURN_SEC = 0.35f
+
+        const val DEFAULT_CUE_AREA = 0.20f
+
+        /** Relative size change per m/s^2 of vertical acceleration. */
+        private const val BUMP_GAIN = 0.07f
+        private const val BUMP_MAX_GROW = 0.4f
+        private const val BUMP_MAX_SHRINK = 0.3f
+        private const val BUMP_SMOOTHING_SEC = 0.06f
+
+        private const val HORIZON_WIDTH_DP = 2.5f
+        private const val HORIZON_SMOOTHING_SEC = 0.08f
+        private const val HORIZON_BASELINE_SEC = 4f
+        private const val HORIZON_BASELINE_FAST_SEC = 0.4f
+        /** Virtual camera focal length as a fraction of the longer screen side. */
+        private const val HORIZON_FOCAL_FRACTION = 0.9f
+        private const val HORIZON_FULLSCREEN_BAND = 0.2f
+
+        private val PENTAGON_X = FloatArray(5) { cos(Math.toRadians(it * 72.0 - 90.0)).toFloat() }
+        private val PENTAGON_Y = FloatArray(5) { sin(Math.toRadians(it * 72.0 - 90.0)).toFloat() }
+
+        private fun wrapAngle(a: Float): Float {
+            var r = a
+            while (r > PI_F) r -= 2f * PI_F
+            while (r < -PI_F) r += 2f * PI_F
+            return r
+        }
+
+        private fun smoothstep(edge0: Float, edge1: Float, x: Float): Float {
+            val t = ((x - edge0) / (edge1 - edge0)).coerceIn(0f, 1f)
+            return t * t * (3f - 2f * t)
+        }
+
+        private const val PI_F = 3.1415927f
     }
 }

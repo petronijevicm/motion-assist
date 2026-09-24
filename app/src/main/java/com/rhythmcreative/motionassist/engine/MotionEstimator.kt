@@ -33,6 +33,9 @@ import android.view.Display
  *
  * Sensor events are never forwarded one-by-one to the UI thread; the cue view pulls
  * [latest] once per display frame instead.
+ *
+ * In [lowPower] mode (cues hidden, only vehicle detection running) sensors are sampled at a
+ * low rate and batched in the sensor hub, so the application processor can stay asleep.
  */
 class MotionEstimator(context: Context) {
 
@@ -69,6 +72,21 @@ class MotionEstimator(context: Context) {
 
     val isRunning: Boolean
         get() = sensorThread != null
+
+    /** Low-rate, hardware-batched sampling; enough for vehicle detection, not for cues. */
+    var lowPower: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            if (isRunning) registerSensors()
+        }
+
+    /** Acceleration smoothing, see [MotionFilter.accelSmoothingSec]. */
+    var smoothingSec: Float = MotionFilter.DEFAULT_ACCEL_SMOOTHING_SEC
+        set(value) {
+            field = value
+            sensorHandler?.post { filter.accelSmoothingSec = value } ?: run { filter.accelSmoothingSec = value }
+        }
 
     /** True when the device has the sensors needed for useful cues. */
     val isSupported: Boolean
@@ -147,17 +165,30 @@ class MotionEstimator(context: Context) {
         sensorThread = thread
         sensorHandler = handler
 
-        handler.post { filter.reset() }
+        val smoothing = smoothingSec
+        handler.post {
+            filter.reset()
+            filter.accelSmoothingSec = smoothing
+        }
         syncDisplayRotation()
         displayManager?.registerDisplayListener(displayListener, mainHandler)
+        registerSensors()
+    }
 
-        val rate = SensorManager.SENSOR_DELAY_GAME
-        gravitySensor?.let { sm.registerListener(sensorListener, it, rate, handler) }
-        linearAccel?.let { sm.registerListener(sensorListener, it, rate, handler) }
-        if (gravitySensor == null || linearAccel == null) {
-            accelerometer?.let { sm.registerListener(sensorListener, it, rate, handler) }
+    private fun registerSensors() {
+        val sm = sensorManager ?: return
+        val handler = sensorHandler ?: return
+        sm.unregisterListener(sensorListener)
+        val periodUs = if (lowPower) LOW_POWER_PERIOD_US else ACTIVE_PERIOD_US
+        val latencyUs = if (lowPower) LOW_POWER_BATCH_US else 0
+        fun register(sensor: Sensor?) {
+            sensor ?: return
+            sm.registerListener(sensorListener, sensor, periodUs, latencyUs, handler)
         }
-        gyroscope?.let { sm.registerListener(sensorListener, it, rate, handler) }
+        register(gravitySensor)
+        register(linearAccel)
+        if (gravitySensor == null || linearAccel == null) register(accelerometer)
+        register(gyroscope)
     }
 
     fun stop() {
@@ -174,5 +205,10 @@ class MotionEstimator(context: Context) {
 
     companion object {
         private const val FALLBACK_GRAVITY_SEC = 0.5f
+        // 50 Hz while cues are on screen
+        private const val ACTIVE_PERIOD_US = 20_000
+        // 10 Hz, delivered in 2 s batches while only watching for vehicle motion
+        private const val LOW_POWER_PERIOD_US = 100_000
+        private const val LOW_POWER_BATCH_US = 2_000_000
     }
 }

@@ -50,4 +50,13 @@
     <string name="motion_assist_preview_tab_interactive">Живая физика</string>
     <string name="motion_assist_sensitivity_title">Движение подсказок</string>
     <string name="motion_assist_sensitivity_summary">Насколько смещаются подсказки при разгоне, торможении или повороте</string>
+    <string name="motion_assist_size_title">Размер подсказок</string>
+    <string name="motion_assist_responsiveness_title">Отзывчивость</string>
+    <string name="motion_assist_responsiveness_summary">Меньше - спокойнее и плавнее, больше - быстрее реакция</string>
+    <string name="motion_assist_cue_area_title">Область подсказок</string>
+    <string name="motion_assist_cue_area_summary">Ширина боковых полос с подсказками. Максимум заполняет весь экран</string>
+    <string name="motion_assist_cue_area_full">Весь экран</string>
+    <string name="motion_assist_horizon_title">Линия горизонта</string>
+    <string name="motion_assist_horizon_summary">Показывает искусственный горизонт, выровненный по земле</string>
+    <string name="notification_action_stop">Остановить</string>
 </resources>

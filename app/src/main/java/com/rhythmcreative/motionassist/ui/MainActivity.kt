@@ -28,6 +28,7 @@ import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.slider.Slider
 import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.model.KeyPath
 import com.google.android.material.color.DynamicColors
@@ -64,10 +65,14 @@ class MainActivity : AppCompatActivity() {
         binding.switchAutoVehicle.isChecked = prefs.isVehicleAuto
         binding.switchRandomize.isChecked = prefs.isRandomize
         binding.switchSmoothAnimation.isChecked = prefs.isSmoothAnimation
-        binding.sliderOpacity.value = prefs.opacity.toFloat()
+        binding.sliderOpacity.setSnapped(prefs.opacity)
         binding.textOpacityValue.text = "${getString(R.string.motion_assist_opacity_title)}: ${prefs.opacity}%"
-        binding.sliderSensitivity.value = prefs.sensitivity.coerceIn(25, 200).toFloat()
-        binding.textSensitivityValue.text = "${getString(R.string.motion_assist_sensitivity_title)}: ${prefs.sensitivity}%"
+        binding.sliderSensitivity.setSnapped(prefs.sensitivity)
+        binding.sliderSize.setSnapped(prefs.sizePercent)
+        binding.sliderResponsiveness.setSnapped(prefs.responsiveness)
+        binding.sliderCueArea.setSnapped(prefs.cueAreaPercent)
+        binding.switchHorizon.isChecked = prefs.isHorizon
+        updateSliderLabels()
 
         // Select shape chip
         when (prefs.shapeIndex) {
@@ -139,6 +144,10 @@ class MainActivity : AppCompatActivity() {
         binding.previewCuesView.isRandomized = prefs.isRandomize
         binding.previewCuesView.isAdaptiveMode = (prefs.colorIndex == 5)
         binding.previewCuesView.sensitivity = prefs.sensitivity / 100f
+        binding.previewCuesView.sizeScale = prefs.sizePercent / 100f
+        binding.previewCuesView.cueAreaFraction = prefs.cueAreaPercent / 100f
+        binding.previewCuesView.showHorizon = prefs.isHorizon
+        motionEstimator.smoothingSec = prefs.smoothingSec
 
         // 2. Synchronize Material You 3 colors into the official Lottie tutorial animation
         applyMaterialYouToLottie(binding.previewCuesView.getResolvedColor())
@@ -277,11 +286,37 @@ class MainActivity : AppCompatActivity() {
             updatePreviewView()
         }
 
-        binding.sliderSensitivity.addOnChangeListener { _, value, _ ->
-            val sensitivityVal = value.toInt()
-            prefs.sensitivity = sensitivityVal
-            binding.textSensitivityValue.text = "${getString(R.string.motion_assist_sensitivity_title)}: $sensitivityVal%"
-            binding.previewCuesView.sensitivity = sensitivityVal / 100f
+        binding.sliderSensitivity.addOnChangeListener { _, value, fromUser ->
+            if (!fromUser) return@addOnChangeListener
+            prefs.sensitivity = value.toInt()
+            binding.previewCuesView.sensitivity = value / 100f
+            updateSliderLabels()
+        }
+
+        binding.sliderSize.addOnChangeListener { _, value, fromUser ->
+            if (!fromUser) return@addOnChangeListener
+            prefs.sizePercent = value.toInt()
+            binding.previewCuesView.sizeScale = value / 100f
+            updateSliderLabels()
+        }
+
+        binding.sliderResponsiveness.addOnChangeListener { _, value, fromUser ->
+            if (!fromUser) return@addOnChangeListener
+            prefs.responsiveness = value.toInt()
+            motionEstimator.smoothingSec = prefs.smoothingSec
+            updateSliderLabels()
+        }
+
+        binding.sliderCueArea.addOnChangeListener { _, value, fromUser ->
+            if (!fromUser) return@addOnChangeListener
+            prefs.cueAreaPercent = value.toInt()
+            binding.previewCuesView.cueAreaFraction = value / 100f
+            updateSliderLabels()
+        }
+
+        binding.switchHorizon.setOnCheckedChangeListener { _, isChecked ->
+            prefs.isHorizon = isChecked
+            binding.previewCuesView.showHorizon = isChecked
         }
 
         binding.switchRandomize.setOnCheckedChangeListener { _, isChecked ->
@@ -300,6 +335,25 @@ class MainActivity : AppCompatActivity() {
         binding.cardQuickSettings.setOnClickListener {
             showQuickSettingsDialog()
         }
+    }
+
+    private fun updateSliderLabels() {
+        binding.textSensitivityValue.text = "${getString(R.string.motion_assist_sensitivity_title)}: ${prefs.sensitivity}%"
+        binding.textSizeValue.text = "${getString(R.string.motion_assist_size_title)}: ${prefs.sizePercent}%"
+        binding.textResponsivenessValue.text = "${getString(R.string.motion_assist_responsiveness_title)}: ${prefs.responsiveness}%"
+        val area = prefs.cueAreaPercent
+        binding.textCueAreaValue.text = if (area >= 50) {
+            "${getString(R.string.motion_assist_cue_area_title)}: ${getString(R.string.motion_assist_cue_area_full)}"
+        } else {
+            "${getString(R.string.motion_assist_cue_area_title)}: $area%"
+        }
+    }
+
+    /** Material Slider throws if the value is off its range/step grid, so snap stored values. */
+    private fun Slider.setSnapped(stored: Int) {
+        val step = if (stepSize > 0f) stepSize else 1f
+        val clamped = stored.toFloat().coerceIn(valueFrom, valueTo)
+        value = (valueFrom + Math.round((clamped - valueFrom) / step) * step).coerceIn(valueFrom, valueTo)
     }
 
     private fun showQuickSettingsDialog() {
@@ -372,6 +426,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // May have been switched off from the notification or the tile meanwhile
+        if (binding.switchMain.isChecked != prefs.isEnabled) {
+            binding.switchMain.isChecked = prefs.isEnabled
+        }
         binding.lottieTutorialView.resumeAnimation()
         motionEstimator.start()
         updatePreviewView()

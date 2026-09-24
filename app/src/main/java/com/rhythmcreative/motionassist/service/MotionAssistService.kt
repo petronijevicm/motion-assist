@@ -22,17 +22,20 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.graphics.PixelFormat
+import android.hardware.input.InputManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.os.PowerManager
 import android.provider.Settings
+import android.service.quicksettings.TileService
 import android.view.Gravity
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
@@ -41,6 +44,7 @@ import com.rhythmcreative.motionassist.R
 import com.rhythmcreative.motionassist.engine.MotionCuesView
 import com.rhythmcreative.motionassist.engine.MotionEstimator
 import com.rhythmcreative.motionassist.engine.MotionPreferences
+import com.rhythmcreative.motionassist.qs.MotionAssistTileService
 import com.rhythmcreative.motionassist.ui.MainActivity
 import java.util.Random
 
@@ -85,11 +89,20 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
             }
             MotionPreferences.KEY_SMOOTH_ANIMATION -> updateFrameRate()
             MotionPreferences.KEY_SENSITIVITY -> overlayView?.sensitivity = prefs.sensitivity / 100f
+            MotionPreferences.KEY_SIZE -> overlayView?.sizeScale = prefs.sizePercent / 100f
+            MotionPreferences.KEY_CUE_AREA -> overlayView?.cueAreaFraction = prefs.cueAreaPercent / 100f
+            MotionPreferences.KEY_HORIZON -> overlayView?.showHorizon = prefs.isHorizon
+            MotionPreferences.KEY_RESPONSIVENESS -> motionEstimator.smoothingSec = prefs.smoothingSec
         }
     }
 
     private val powerSaveReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) = updateFrameRate()
+    }
+
+    // Nothing to show while the screen is off: drop the overlay and idle the sensors
+    private val screenReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) = updateState()
     }
 
     override fun onCreate() {
@@ -108,9 +121,27 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
             IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED),
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
+        ContextCompat.registerReceiver(
+            this,
+            screenReceiver,
+            IntentFilter().apply {
+                addAction(Intent.ACTION_SCREEN_ON)
+                addAction(Intent.ACTION_SCREEN_OFF)
+            },
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_STOP) {
+            // Notification "Stop" action: same as switching it off in the app or tile
+            prefs.isEnabled = false
+            try {
+                TileService.requestListeningState(this, ComponentName(this, MotionAssistTileService::class.java))
+            } catch (e: Exception) {}
+            stopSelf()
+            return START_NOT_STICKY
+        }
         updateState()
         return START_STICKY
     }
@@ -121,13 +152,18 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
             return
         }
 
-        motionEstimator.start()
-
-        val shouldShowOverlay = if (prefs.isVehicleAuto) {
-            motionEstimator.isVehicleMoving
-        } else {
-            true
+        val interactive = (getSystemService(Context.POWER_SERVICE) as? PowerManager)?.isInteractive != false
+        if (!interactive && !prefs.isVehicleAuto) {
+            detachOverlay()
+            motionEstimator.stop()
+            return
         }
+
+        // Auto mode keeps watching for vehicle motion, but at a trickle while cues are hidden
+        val shouldShowOverlay = interactive && (!prefs.isVehicleAuto || motionEstimator.isVehicleMoving)
+        motionEstimator.lowPower = !shouldShowOverlay
+        motionEstimator.smoothingSec = prefs.smoothingSec
+        motionEstimator.start()
 
         if (shouldShowOverlay) {
             attachOverlay()
@@ -149,6 +185,9 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
             isRandomized = prefs.isRandomize
             isAdaptiveMode = (prefs.colorIndex == 5)
             sensitivity = prefs.sensitivity / 100f
+            sizeScale = prefs.sizePercent / 100f
+            cueAreaFraction = prefs.cueAreaPercent / 100f
+            showHorizon = prefs.isHorizon
             motionSource = { motionEstimator.latest }
         }
 
@@ -172,6 +211,14 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
             gravity = Gravity.TOP or Gravity.START
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                // Android 12+ blocks touches that pass through an untrusted overlay unless the
+                // window is at most "maximum obscuring opacity" (0.8 by default). Without this
+                // the full-screen overlay would make every app underneath untouchable.
+                val maxOpacity = getSystemService(InputManager::class.java)
+                    ?.maximumObscuringOpacityForTouch ?: DEFAULT_MAX_OBSCURING_OPACITY
+                alpha = (maxOpacity.coerceAtMost(DEFAULT_MAX_OBSCURING_OPACITY) - 0.01f).coerceAtLeast(0f)
             }
         }
 
@@ -220,6 +267,7 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
         super.onDestroy()
         try {
             unregisterReceiver(powerSaveReceiver)
+            unregisterReceiver(screenReceiver)
         } catch (e: IllegalArgumentException) {}
         prefs.unregisterListener(prefChangeListener)
         motionEstimator.stop()
@@ -251,11 +299,19 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
+        val stopIntent = PendingIntent.getService(
+            this,
+            1,
+            Intent(this, MotionAssistService::class.java).setAction(ACTION_STOP),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.notification_title))
             .setContentText(getString(R.string.notification_text))
             .setSmallIcon(R.drawable.ic_qs_motion_assist)
             .setContentIntent(pendingIntent)
+            .addAction(0, getString(R.string.notification_action_stop), stopIntent)
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
@@ -265,6 +321,8 @@ class MotionAssistService : Service(), MotionEstimator.Callback {
         private const val CHANNEL_ID = "motion_assist_channel"
         private const val NOTIFICATION_ID = 1001
         private const val REDUCED_FRAME_RATE = 30
+        private const val DEFAULT_MAX_OBSCURING_OPACITY = 0.8f
+        private const val ACTION_STOP = "com.rhythmcreative.motionassist.action.STOP"
 
         fun start(context: Context) {
             val intent = Intent(context, MotionAssistService::class.java)
