@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Motion Assist</string>
-    <string name="motion_assist_title">モーションアシスト</string>
+    <string name="motion_assist_title">Motion Assist</string>
     <string name="motion_assist_description">車両移動合図（Motion Assist）は、車の慣性に同期した動的視覚キューを表示することで、移動中の乗り物酔いを軽減します。</string>
     <string name="motion_assist_turn_on">モーションアシストを有効化</string>
     <string name="motion_assist_turn_on_summary">車両の動きに連動した視覚キューを表示します</string>

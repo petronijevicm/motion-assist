@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Motion Assist</string>
-    <string name="motion_assist_title">移动防晕车辅助</string>
+    <string name="motion_assist_title">Motion Assist</string>
     <string name="motion_assist_description">车辆移动视觉提示（Motion Assist）通过投射与车辆真实物理惯性同步的视觉锚点，有效缓解在乘车使用手机时的晕车不适。</string>
     <string name="motion_assist_turn_on">开启移动辅助提示</string>
     <string name="motion_assist_turn_on_summary">显示与车辆移动惯性同步的动态视觉提示点</string>

@@ -18,7 +18,8 @@
             android:layout_height="?attr/actionBarSize"
             app:title="@string/motion_assist_title"
             app:titleCentered="true"
-            app:navigationIcon="@drawable/ic_steering_wheel" />
+            app:navigationIcon="@drawable/ic_steering_wheel"
+            app:navigationIconTint="?attr/colorPrimary" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -31,16 +32,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="20dp"
-            android:paddingTop="12dp"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="8dp"
             android:paddingBottom="56dp">
 
             <!-- Interactive Live Preview Frame with Steering Wheel & Vehicle Cues -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                app:cardCornerRadius="28dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutlineVariant"
                 app:cardElevation="0dp"
@@ -63,15 +64,15 @@
 
                         <!-- Center steering wheel badge -->
                         <FrameLayout
-                            android:layout_width="68dp"
-                            android:layout_height="68dp"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_car_badge">
 
                             <ImageView
                                 android:id="@+id/imgCenterSteering"
-                                android:layout_width="38dp"
-                                android:layout_height="38dp"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_steering_wheel"
                                 app:tint="?attr/colorOnPrimaryContainer" />
@@ -84,7 +85,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="20dp">
+                        android:padding="16dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -111,8 +112,8 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                app:cardCornerRadius="24dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutlineVariant"
                 app:cardElevation="0dp"
@@ -122,7 +123,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="16dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -147,7 +148,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="3dp"
+                                android:layout_marginTop="2dp"
                                 android:text="@string/motion_assist_turn_on_summary"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -162,7 +163,7 @@
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="16dp" />
+                        android:layout_marginVertical="14dp" />
 
                     <!-- Auto Vehicle Detection Toggle -->
                     <LinearLayout
@@ -187,7 +188,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="3dp"
+                                android:layout_marginTop="2dp"
                                 android:text="@string/motion_assist_auto_vehicle_summary"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -208,8 +209,8 @@
                 android:id="@+id/cardQuickSettings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:cardCornerRadius="24dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="20dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutlineVariant"
                 app:cardElevation="0dp"
@@ -218,44 +219,52 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="20dp">
-
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@drawable/ic_qs_motion_assist"
-                        app:tint="?attr/colorPrimary"
-                        android:layout_marginEnd="16dp" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:paddingEnd="12dp">
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/motion_assist_qs_tile_title"
-                            android:textAppearance="?attr/textAppearanceTitleMedium" />
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_qs_motion_assist"
+                            app:tint="?attr/colorPrimary"
+                            android:layout_marginEnd="14dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="@string/motion_assist_qs_tile_summary"
-                            android:textAppearance="?attr/textAppearanceBodySmall"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/motion_assist_qs_tile_title"
+                                android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/motion_assist_qs_tile_summary"
+                                android:textAppearance="?attr/textAppearanceBodySmall"
+                                android:textColor="?attr/colorOnSurfaceVariant" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnQuickSettings"
                         style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        app:icon="@drawable/ic_qs_motion_assist"
+                        app:iconGravity="textStart"
                         android:text="@string/motion_assist_qs_tile_action" />
 
                 </LinearLayout>
@@ -266,18 +275,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/motion_assist_options_category"
-                android:textAppearance="?attr/textAppearanceTitleSmall"
+                android:textAppearance="?attr/textAppearanceLabelLarge"
                 android:textColor="?attr/colorPrimary"
                 android:textStyle="bold" />
 
-            <!-- Shape Selection Card with Visual Shape Icons -->
+            <!-- Shape Selection Card: Horizontal Scrollable Chips -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                app:cardCornerRadius="24dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutlineVariant"
                 app:cardElevation="0dp"
@@ -287,7 +296,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -295,54 +304,53 @@
                         android:text="@string/motion_assist_shape_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium" />
 
-                    <com.google.android.material.button.MaterialButtonToggleGroup
-                        android:id="@+id/toggleGroupShape"
+                    <HorizontalScrollView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        app:singleSelection="true">
+                        android:scrollbars="none"
+                        android:layout_marginTop="12dp">
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnShapeCircle"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:layout_width="0dp"
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipGroupShape"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            app:icon="@drawable/motion_assist_shape_circle"
-                            app:iconGravity="textStart"
-                            android:text="@string/motion_assist_shape_circle" />
+                            app:singleSelection="true">
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnShapeSquircle"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            app:icon="@drawable/motion_assist_shape_squircle"
-                            app:iconGravity="textStart"
-                            android:text="@string/motion_assist_shape_squircle" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipShapeCircle"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:chipIcon="@drawable/motion_assist_shape_circle"
+                                android:text="@string/motion_assist_shape_circle" />
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnShapePentagon"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            app:icon="@drawable/motion_assist_shape_pentagon"
-                            app:iconGravity="textStart"
-                            android:text="@string/motion_assist_shape_pentagon" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipShapeSquircle"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:chipIcon="@drawable/motion_assist_shape_squircle"
+                                android:text="@string/motion_assist_shape_squircle" />
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnShapeDiamond"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            app:icon="@drawable/motion_assist_shape_diamond"
-                            app:iconGravity="textStart"
-                            android:text="@string/motion_assist_shape_diamond" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipShapePentagon"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:chipIcon="@drawable/motion_assist_shape_pentagon"
+                                android:text="@string/motion_assist_shape_pentagon" />
 
-                    </com.google.android.material.button.MaterialButtonToggleGroup>
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipShapeDiamond"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:chipIcon="@drawable/motion_assist_shape_diamond"
+                                android:text="@string/motion_assist_shape_diamond" />
+
+                        </com.google.android.material.chip.ChipGroup>
+
+                    </HorizontalScrollView>
 
                 </LinearLayout>
 
@@ -352,8 +360,8 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                app:cardCornerRadius="24dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutlineVariant"
                 app:cardElevation="0dp"
@@ -363,7 +371,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -375,7 +383,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:scrollbars="none"
-                        android:layout_marginTop="16dp">
+                        android:layout_marginTop="12dp">
 
                         <com.google.android.material.chip.ChipGroup
                             android:id="@+id/chipGroupColor"
@@ -438,7 +446,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                app:cardCornerRadius="24dp"
+                app:cardCornerRadius="20dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutlineVariant"
                 app:cardElevation="0dp"
@@ -448,7 +456,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="16dp">
 
                     <TextView
                         android:id="@+id/textOpacityValue"
@@ -469,7 +477,7 @@
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="16dp" />
+                        android:layout_marginVertical="14dp" />
 
                     <!-- Randomize Toggle -->
                     <LinearLayout
@@ -494,7 +502,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="3dp"
+                                android:layout_marginTop="2dp"
                                 android:text="@string/motion_assist_randomization_summary"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -509,7 +517,7 @@
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="16dp" />
+                        android:layout_marginVertical="14dp" />
 
                     <!-- Smooth 120Hz Toggle -->
                     <LinearLayout
@@ -534,7 +542,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="3dp"
+                                android:layout_marginTop="2dp"
                                 android:text="@string/motion_assist_smooth_animation_summary"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />

@@ -61,12 +61,12 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
         binding.sliderOpacity.value = prefs.opacity.toFloat()
         binding.textOpacityValue.text = "${getString(R.string.motion_assist_opacity_title)}: ${prefs.opacity}%"
 
-        // Select shape button
+        // Select shape chip
         when (prefs.shapeIndex) {
-            1 -> binding.btnShapeSquircle.isChecked = true
-            2 -> binding.btnShapePentagon.isChecked = true
-            3 -> binding.btnShapeDiamond.isChecked = true
-            else -> binding.btnShapeCircle.isChecked = true
+            1 -> binding.chipShapeSquircle.isChecked = true
+            2 -> binding.chipShapePentagon.isChecked = true
+            3 -> binding.chipShapeDiamond.isChecked = true
+            else -> binding.chipShapeCircle.isChecked = true
         }
 
         // Select color chip
@@ -113,12 +113,12 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
             }
         }
 
-        binding.toggleGroupShape.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (isChecked) {
-                val shapeIdx = when (checkedId) {
-                    R.id.btnShapeSquircle -> 1
-                    R.id.btnShapePentagon -> 2
-                    R.id.btnShapeDiamond -> 3
+        binding.chipGroupShape.setOnCheckedStateChangeListener { _, checkedIds ->
+            if (checkedIds.isNotEmpty()) {
+                val shapeIdx = when (checkedIds[0]) {
+                    R.id.chipShapeSquircle -> 1
+                    R.id.chipShapePentagon -> 2
+                    R.id.chipShapeDiamond -> 3
                     else -> 0
                 }
                 prefs.shapeIndex = shapeIdx

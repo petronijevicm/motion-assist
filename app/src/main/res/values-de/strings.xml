@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Motion Assist</string>
-    <string name="motion_assist_title">Bewegungsassistent</string>
+    <string name="motion_assist_title">Motion Assist</string>
     <string name="motion_assist_description">Fahrzeug-Bewegungshinweise (Motion Assist) helfen Reisekrankheit vorzubeugen, indem sie dynamische optische Ankerpunkte anzeigen.</string>
     <string name="motion_assist_turn_on">Bewegungsassistent aktivieren</string>
     <string name="motion_assist_turn_on_summary">Visuelle Punkte synchron zur Fahrzeugbewegung anzeigen</string>

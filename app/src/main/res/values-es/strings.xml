@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Motion Assist</string>
-    <string name="motion_assist_title">Asistencia de movimiento</string>
+    <string name="motion_assist_title">Motion Assist</string>
     <string name="motion_assist_description">Las señales de movimiento para vehículos (Motion Assist) reducen el mareo por movimiento cinetosis al usar el móvil proyectando puntos visuales sincronizados con la inercia real.</string>
     <string name="motion_assist_turn_on">Activar Asistencia de movimiento</string>
     <string name="motion_assist_turn_on_summary">Muestra señales visuales reactivas a la aceleración del vehículo</string>
@@ -48,7 +48,7 @@
     <string name="motion_assist_preview_card_title">Vista previa interactiva</string>
     <string name="motion_assist_preview_card_desc">Inclina el dispositivo o arrastra esta tarjeta para probar la física de los puntos en tiempo real</string>
 
-    <string name="quick_settings_motion_assist_label">Asistencia de movimiento</string>
+    <string name="quick_settings_motion_assist_label">Motion Assist</string>
     <string name="quick_settings_motion_assist_secondary_label_on">Activada</string>
     <string name="quick_settings_motion_assist_secondary_label_off">Desactivada</string>
     <string name="quick_settings_motion_assist_secondary_label_auto">Automática (Vehículo)</string>

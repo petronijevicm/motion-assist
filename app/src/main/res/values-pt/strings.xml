@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Motion Assist</string>
-    <string name="motion_assist_title">Assistente de movimento</string>
+    <string name="motion_assist_title">Motion Assist</string>
     <string name="motion_assist_description">Os indicadores de movimento (Motion Assist) reduzem o enjoo de movimento ao projetar pontos visuais sincronizados com a inércia do veículo.</string>
     <string name="motion_assist_turn_on">Ativar Assistente de movimento</string>
     <string name="motion_assist_turn_on_summary">Exibe pontos visuais sincronizados com o movimento do veículo</string>

@@ -1,9 +1,8 @@
 <resources>
-    <!-- Material You 3 Dynamic Colors Theme -->
-    <style name="Theme.MotionAssist" parent="Theme.Material3.DynamicColors.DayNight">
+    <!-- Material You 3 Dynamic Colors Theme with NoActionBar -->
+    <style name="Theme.MotionAssist" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="shapeAppearanceCornerExtraLarge">@style/ShapeAppearance.Material3.Corner.ExtraLarge</item>
     </style>
 </resources>
