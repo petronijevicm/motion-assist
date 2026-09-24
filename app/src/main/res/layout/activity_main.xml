@@ -18,7 +18,7 @@
             android:layout_height="?attr/actionBarSize"
             app:title="@string/motion_assist_title"
             app:titleCentered="true"
-            app:navigationIcon="@drawable/ic_motion_assist_tile" />
+            app:navigationIcon="@drawable/ic_steering_wheel" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -31,35 +31,98 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingBottom="48dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="56dp">
 
-            <!-- Description Card -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:text="@string/motion_assist_description"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:lineSpacingMultiplier="1.2" />
-
-            <!-- Main Toggle Card -->
+            <!-- Interactive Live Preview Frame with Steering Wheel & Vehicle Cues -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="20dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="28dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutlineVariant"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLowest">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="220dp"
+                        android:background="?attr/colorSurfaceContainerHigh">
+
+                        <com.rhythmcreative.motionassist.engine.MotionCuesView
+                            android:id="@+id/previewCuesView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <!-- Center steering wheel badge -->
+                        <FrameLayout
+                            android:layout_width="68dp"
+                            android:layout_height="68dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/bg_car_badge">
+
+                            <ImageView
+                                android:id="@+id/imgCenterSteering"
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_steering_wheel"
+                                app:tint="?attr/colorOnPrimaryContainer" />
+
+                        </FrameLayout>
+
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/motion_assist_preview_card_title"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/motion_assist_preview_card_desc"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:lineSpacingMultiplier="1.2" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Main Master Switch Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="24dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutlineVariant"
+                app:cardElevation="0dp"
                 app:cardBackgroundColor="?attr/colorSurfaceContainer">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -71,7 +134,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:paddingEnd="12dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -83,7 +147,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
+                                android:layout_marginTop="3dp"
                                 android:text="@string/motion_assist_turn_on_summary"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -98,9 +162,9 @@
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="12dp" />
+                        android:layout_marginVertical="16dp" />
 
-                    <!-- Vehicle Auto Detection Option -->
+                    <!-- Auto Vehicle Detection Toggle -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -111,7 +175,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:paddingEnd="12dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -122,7 +187,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
+                                android:layout_marginTop="3dp"
                                 android:text="@string/motion_assist_auto_vehicle_summary"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -138,76 +203,16 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Live Interactive Cue Preview Frame -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="24dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:cardBackgroundColor="?attr/colorSurfaceContainerLow">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="220dp"
-                        android:background="?attr/colorSurfaceContainerHighest">
-
-                        <com.rhythmcreative.motionassist.engine.MotionCuesView
-                            android:id="@+id/previewCuesView"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-
-                        <!-- Center phone icon illustration -->
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_motion_assist_tile"
-                            app:tint="?attr/colorPrimary" />
-
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/motion_assist_preview_card_title"
-                            android:textAppearance="?attr/textAppearanceTitleMedium"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/motion_assist_preview_card_desc"
-                            android:textAppearance="?attr/textAppearanceBodySmall"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Quick Settings Tile Quick Action -->
+            <!-- Quick Settings Tile Action Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardQuickSettings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="20dp"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutlineVariant"
+                app:cardElevation="0dp"
                 app:cardBackgroundColor="?attr/colorSurfaceContainer">
 
                 <LinearLayout
@@ -215,11 +220,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:src="@drawable/ic_qs_motion_assist"
                         app:tint="?attr/colorPrimary"
                         android:layout_marginEnd="16dp" />
@@ -228,7 +233,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingEnd="12dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -256,31 +262,32 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Customization Category -->
+            <!-- Section Title: Customization -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"
                 android:text="@string/motion_assist_options_category"
-                android:textAppearance="?attr/textAppearanceLabelLarge"
-                android:textColor="?attr/colorPrimary" />
+                android:textAppearance="?attr/textAppearanceTitleSmall"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold" />
 
-            <!-- Shape Selection Card -->
+            <!-- Shape Selection Card with Visual Shape Icons -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="20dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutlineVariant"
+                app:cardElevation="0dp"
                 app:cardBackgroundColor="?attr/colorSurfaceContainer">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -288,12 +295,11 @@
                         android:text="@string/motion_assist_shape_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium" />
 
-                    <!-- Material Segmented Button for Shapes -->
                     <com.google.android.material.button.MaterialButtonToggleGroup
                         android:id="@+id/toggleGroupShape"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="16dp"
                         app:singleSelection="true">
 
                         <com.google.android.material.button.MaterialButton
@@ -302,6 +308,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            app:icon="@drawable/motion_assist_shape_circle"
+                            app:iconGravity="textStart"
                             android:text="@string/motion_assist_shape_circle" />
 
                         <com.google.android.material.button.MaterialButton
@@ -310,6 +318,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            app:icon="@drawable/motion_assist_shape_squircle"
+                            app:iconGravity="textStart"
                             android:text="@string/motion_assist_shape_squircle" />
 
                         <com.google.android.material.button.MaterialButton
@@ -318,6 +328,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            app:icon="@drawable/motion_assist_shape_pentagon"
+                            app:iconGravity="textStart"
                             android:text="@string/motion_assist_shape_pentagon" />
 
                         <com.google.android.material.button.MaterialButton
@@ -326,6 +338,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            app:icon="@drawable/motion_assist_shape_diamond"
+                            app:iconGravity="textStart"
                             android:text="@string/motion_assist_shape_diamond" />
 
                     </com.google.android.material.button.MaterialButtonToggleGroup>
@@ -334,21 +348,22 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Color Palette Card -->
+            <!-- Color Palette Selection Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="20dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutlineVariant"
+                app:cardElevation="0dp"
                 app:cardBackgroundColor="?attr/colorSurfaceContainer">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -360,7 +375,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:scrollbars="none"
-                        android:layout_marginTop="12dp">
+                        android:layout_marginTop="16dp">
 
                         <com.google.android.material.chip.ChipGroup
                             android:id="@+id/chipGroupColor"
@@ -418,21 +433,22 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Opacity & Behavior Card -->
+            <!-- Opacity & Physics Performance Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="20dp"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutlineVariant"
+                app:cardElevation="0dp"
                 app:cardBackgroundColor="?attr/colorSurfaceContainer">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:id="@+id/textOpacityValue"
@@ -453,7 +469,7 @@
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="12dp" />
+                        android:layout_marginVertical="16dp" />
 
                     <!-- Randomize Toggle -->
                     <LinearLayout
@@ -466,7 +482,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:paddingEnd="12dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -477,7 +494,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
+                                android:layout_marginTop="3dp"
                                 android:text="@string/motion_assist_randomization_summary"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -492,7 +509,7 @@
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="12dp" />
+                        android:layout_marginVertical="16dp" />
 
                     <!-- Smooth 120Hz Toggle -->
                     <LinearLayout
@@ -505,7 +522,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:paddingEnd="12dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -516,7 +534,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
+                                android:layout_marginTop="3dp"
                                 android:text="@string/motion_assist_smooth_animation_summary"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />

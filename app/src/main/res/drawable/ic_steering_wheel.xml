@@ -1,10 +1,10 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
+    android:width="96dp"
+    android:height="96dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-    <!-- Steering wheel vector icon -->
+    <!-- Outer ring of steering wheel -->
     <path
-        android:fillColor="#FFFFFFFF"
+        android:fillColor="?attr/colorPrimary"
         android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,4c4.08,0 7.44,3.05 7.93,7h-3.04c-0.45,-2.28 -2.25,-4.08 -4.53,-4.53V4.07C12.12,4.07 12,4 12,4zM4.07,12.36C4.56,8.28 7.92,5.23 12,5.23v2.41c-2.28,0.45 -4.08,2.25 -4.53,4.53H4.07zM5.07,14h3.04c0.38,1.91 1.73,3.46 3.53,4.11v2.82C7.94,20.24 5.07,17.47 5.07,14zM12.36,20.93v-2.82c1.8,-0.65 3.15,-2.2 3.53,-4.11h3.04C18.93,17.47 16.06,20.24 12.36,20.93zM12,14c-1.1,0 -2,-0.9 -2,-2s0.9,-2 2,-2 2,0.9 2,2 -0.9,2 -2,2z" />
 </vector>

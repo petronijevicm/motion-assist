@@ -181,10 +181,12 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
                     val dx = (event.x - startX) * 0.75f
                     val dy = (event.y - startY) * 0.75f
                     binding.previewCuesView.updateOffset(dx, dy)
+                    binding.imgCenterSteering.rotation = (-dx * 0.4f).coerceIn(-40f, 40f)
                     true
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     binding.previewCuesView.updateOffset(0f, 0f)
+                    binding.imgCenterSteering.animate().rotation(0f).setDuration(250).start()
                     true
                 }
                 else -> false
@@ -254,11 +256,14 @@ class MainActivity : AppCompatActivity(), MotionEstimator.Callback {
         motionEstimator.stop()
     }
 
-    override fun onMotionUpdated(motion: MotionVector) {
+override fun onMotionUpdated(motion: MotionVector) {
         val dx = motion.x * 20f
         val dy = motion.y * 20f
+        val rollDeg = Math.toDegrees(motion.rollRadians.toDouble()).toFloat()
+        val rotationDeg = (-dx * 1.5f + rollDeg).coerceIn(-45f, 45f)
         runOnUiThread {
             binding.previewCuesView.updateOffset(dx, dy)
+            binding.imgCenterSteering.rotation = rotationDeg
         }
     }
 }
